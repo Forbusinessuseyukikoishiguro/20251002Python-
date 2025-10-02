@@ -1,0 +1,292 @@
+Pythonのオブジェクト指向プログラミングを学習するための、実践的なコードを作成しますね！
+
+# Pythonオブジェクト指向プログラミング - 新人エンジニア向けサンプルコード
+
+# ==========================================================
+# 1. 基本クラスの定義（親クラス）
+# ==========================================================
+
+class Animal:
+    """動物を表す基本クラス"""
+    
+    # クラス変数（全インスタンスで共有される）
+    species_count = 0
+    
+    def __init__(self, name, age):
+        """
+        コンストラクタ：インスタンス作成時に自動的に呼ばれる
+        Args:
+            name: 動物の名前
+            age: 動物の年齢
+        """
+        # publicな属性（Pythonでは基本的にすべてpublic）
+        self.name = name
+        self.age = age
+        
+        # _で始まる属性は「内部使用」を意味する（慣習的にprotected）
+        self._energy = 100
+        
+        # __で始まる属性は「プライベート」を意味する（名前マングリング）
+        self.__secret_id = id(self)
+        
+        # クラス変数をインクリメント
+        Animal.species_count += 1
+    
+    def speak(self):
+        """動物が鳴く（基本メソッド - 子クラスでオーバーライドされる）"""
+        return f"{self.name}は何か音を出しています"
+    
+    def move(self):
+        """動物が移動する"""
+        self._energy -= 10  # エネルギーを消費
+        return f"{self.name}が移動しました（エネルギー: {self._energy}）"
+    
+    def _rest(self):
+        """内部メソッド（protectedな扱い）"""
+        self._energy += 20
+        return f"{self.name}は休憩してエネルギーを回復しました"
+    
+    def __private_method(self):
+        """プライベートメソッド（外部から直接呼べない）"""
+        return f"これは{self.name}の秘密のメソッドです"
+    
+    def get_secret_id(self):
+        """プライベート属性へのアクセサメソッド（getter）"""
+        return self.__secret_id
+    
+    def __str__(self):
+        """オブジェクトを文字列化する際に呼ばれる特殊メソッド"""
+        return f"{self.__class__.__name__}(名前: {self.name}, 年齢: {self.age}歳)"
+    
+    def __repr__(self):
+        """オブジェクトの公式な文字列表現"""
+        return f"{self.__class__.__name__}('{self.name}', {self.age})"
+
+
+# ==========================================================
+# 2. 継承とポリモーフィズム
+# ==========================================================
+
+class Dog(Animal):
+    """犬クラス - Animalクラスを継承"""
+    
+    def __init__(self, name, age, breed):
+        """
+        Dogクラスのコンストラクタ
+        Args:
+            name: 犬の名前
+            age: 犬の年齢
+            breed: 犬種
+        """
+        # 親クラスのコンストラクタを呼び出す
+        super().__init__(name, age)
+        # Dogクラス固有の属性
+        self.breed = breed
+    
+    def speak(self):
+        """メソッドのオーバーライド - 親クラスのメソッドを上書き"""
+        return f"{self.name}「ワンワン！」"
+    
+    def fetch(self, item):
+        """Dogクラス固有のメソッド"""
+        self._energy -= 15  # エネルギー消費
+        return f"{self.name}は{item}を取ってきました！"
+    
+    def __str__(self):
+        """親クラスのメソッドをオーバーライド"""
+        return f"犬(名前: {self.name}, 年齢: {self.age}歳, 犬種: {self.breed})"
+
+
+class Cat(Animal):
+    """猫クラス - Animalクラスを継承"""
+    
+    def __init__(self, name, age, color):
+        """Catクラスのコンストラクタ"""
+        super().__init__(name, age)  # 親クラスの初期化
+        self.color = color  # 猫固有の属性
+    
+    def speak(self):
+        """メソッドのオーバーライド"""
+        return f"{self.name}「ニャー」"
+    
+    def scratch(self):
+        """Catクラス固有のメソッド"""
+        return f"{self.name}が爪を研いでいます"
+    
+    def __str__(self):
+        """親クラスのメソッドをオーバーライド"""
+        return f"猫(名前: {self.name}, 年齢: {self.age}歳, 色: {self.color})"
+
+
+class Bird(Animal):
+    """鳥クラス - Animalクラスを継承"""
+    
+    def __init__(self, name, age, can_fly=True):
+        """Birdクラスのコンストラクタ"""
+        super().__init__(name, age)
+        self.can_fly = can_fly
+    
+    def speak(self):
+        """メソッドのオーバーライド"""
+        return f"{self.name}「ピヨピヨ」"
+    
+    def fly(self):
+        """Birdクラス固有のメソッド"""
+        if self.can_fly:
+            self._energy -= 20
+            return f"{self.name}が空を飛んでいます！"
+        else:
+            return f"{self.name}は飛べません"
+
+
+# ==========================================================
+# 3. メソッドオーバーロード（Pythonでの実装方法）
+# ==========================================================
+# 注: Pythonは他の言語のような厳密なオーバーロードをサポートしていません
+# 代わりに、デフォルト引数や可変長引数を使います
+
+class Calculator:
+    """計算機クラス - メソッドオーバーロードの例"""
+    
+    def add(self, a, b=0, c=0):
+        """
+        加算メソッド - デフォルト引数でオーバーロードを実現
+        Args:
+            a: 1つ目の数値（必須）
+            b: 2つ目の数値（オプション、デフォルト0）
+            c: 3つ目の数値（オプション、デフォルト0）
+        """
+        return a + b + c
+    
+    def multiply(self, *args):
+        """
+        乗算メソッド - 可変長引数で任意の数の引数を受け取る
+        Args:
+            *args: 任意の個数の数値
+        """
+        result = 1  # 初期値を1に設定
+        for num in args:  # すべての引数をループ
+            result *= num  # 掛け算を実行
+        return result
+    
+    def calculate(self, operation, **kwargs):
+        """
+        キーワード引数を使ったオーバーロードの例
+        Args:
+            operation: 実行する操作（'add', 'subtract', 'multiply'）
+            **kwargs: 任意のキーワード引数
+        """
+        if operation == 'add':
+            return kwargs.get('x', 0) + kwargs.get('y', 0)
+        elif operation == 'subtract':
+            return kwargs.get('x', 0) - kwargs.get('y', 0)
+        elif operation == 'multiply':
+            return kwargs.get('x', 1) * kwargs.get('y', 1)
+        else:
+            return "不明な操作です"
+
+
+# ==========================================================
+# 4. 実行例：ポリモーフィズムの威力
+# ==========================================================
+
+def main():
+    """メイン関数 - すべての機能を実演"""
+    
+    print("=" * 60)
+    print("Pythonオブジェクト指向プログラミング デモ")
+    print("=" * 60)
+    
+    # インスタンスの作成
+    dog = Dog("ポチ", 3, "柴犬")  # Dogクラスのインスタンス
+    cat = Cat("タマ", 2, "三毛猫")  # Catクラスのインスタンス
+    bird = Bird("ピヨ助", 1, can_fly=True)  # Birdクラスのインスタンス
+    
+    # すべての動物をリストに格納
+    animals = [dog, cat, bird]
+    
+    print("\n【1. インスタンスの情報表示】")
+    for animal in animals:  # リストをループ
+        print(animal)  # __str__メソッドが呼ばれる
+    
+    print(f"\n生成された動物の総数: {Animal.species_count}")
+    
+    # ポリモーフィズムの実演
+    print("\n【2. ポリモーフィズム - 同じメソッド名で異なる動作】")
+    for animal in animals:  # すべての動物に対して
+        print(animal.speak())  # 各クラスでオーバーライドされたメソッドが呼ばれる
+    
+    print("\n【3. 各クラス固有のメソッド】")
+    print(dog.fetch("ボール"))  # Dogクラス固有のメソッド
+    print(cat.scratch())  # Catクラス固有のメソッド
+    print(bird.fly())  # Birdクラス固有のメソッド
+    
+    print("\n【4. public / protected / private属性のテスト】")
+    print(f"publicな属性へのアクセス: {dog.name}")  # 直接アクセス可能
+    print(f"protectedな属性へのアクセス: {dog._energy}")  # アクセス可能だが推奨されない
+    print(f"privateな属性へのアクセス: {dog.get_secret_id()}")  # getterメソッド経由
+    
+    # 直接アクセスしようとするとエラーになる（コメントアウトしています）
+    # print(dog.__secret_id)  # AttributeError!
+    
+    print("\n【5. メソッドオーバーロードの実演】")
+    calc = Calculator()  # Calculatorクラスのインスタンス作成
+    print(f"2つの数値を加算: {calc.add(5, 3)}")  # 2引数
+    print(f"3つの数値を加算: {calc.add(5, 3, 2)}")  # 3引数
+    print(f"可変長引数で乗算: {calc.multiply(2, 3, 4)}")  # 任意個数の引数
+    print(f"キーワード引数で計算: {calc.calculate('add', x=10, y=20)}")
+    
+    print("\n【6. 動物の移動とエネルギー管理】")
+    for animal in animals:
+        print(animal.move())  # エネルギーが減少
+    
+    print("\n【7. protectedメソッドの使用】")
+    print(dog._rest())  # protectedメソッドだが呼び出し可能
+    
+    print("\n【8. 型チェックとインスタンスの確認】")
+    print(f"dogはDogクラスのインスタンス？: {isinstance(dog, Dog)}")
+    print(f"dogはAnimalクラスのインスタンス？: {isinstance(dog, Animal)}")
+    print(f"dogはCatクラスのインスタンス？: {isinstance(dog, Cat)}")
+    
+    print("\n" + "=" * 60)
+    print("デモ終了")
+    print("=" * 60)
+
+
+# プログラムのエントリーポイント
+if __name__ == "__main__":
+    # このファイルが直接実行された場合のみmain()を呼び出す
+    main()
+
+完成しました！このコードには以下の重要な概念が含まれています：
+
+## 📚 学べる内容
+
+### 1. **クラス継承**
+- `Animal`クラス（親クラス）から`Dog`、`Cat`、`Bird`が継承
+- `super()`を使った親クラスの呼び出し
+
+### 2. **ポリモーフィズム**
+- 同じ`speak()`メソッドが各クラスで異なる動作
+- リストに異なる型のオブジェクトを入れて同じインターフェースで操作
+
+### 3. **メソッドオーバーロード**
+- Pythonでは厳密なオーバーロードがないため、デフォルト引数や`*args`、`**kwargs`で実現
+- `Calculator`クラスで様々な実装方法を紹介
+
+### 4. **アクセス修飾子**
+- `public`: 通常の属性（`self.name`）
+- `protected`: `_`で始まる（`self._energy`）- 慣習的に内部使用
+- `private`: `__`で始まる（`self.__secret_id`）- 名前マングリング
+
+### 5. **特殊メソッド**
+- `__init__`: コンストラクタ
+- `__str__`: 文字列表現
+- `__repr__`: 公式な表現
+
+## 🚀 VSCodeでの実行方法
+
+1. ファイルを`oop_tutorial.py`として保存
+2. ターミナルで `python oop_tutorial.py` を実行
+
+コード全体に1行ずつコメントをつけているので、順番に読んでいけば理解できるはずです！
