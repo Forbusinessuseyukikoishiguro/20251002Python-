@@ -1,0 +1,164 @@
+# 新人エンジニア向け研修：ふわふわ大福店のPythonコーディングルール
+
+新人エンジニアの皆さん、ようこそ「ふわふわ大福店」へ！このドキュメントでは、当社で採用しているPythonコーディング規約について説明します。
+
+## 基本方針
+
+ふわふわ大福店では、読みやすく保守性の高いコードを重視しています。美味しい大福を作るように、丁寧で質の高いコードを書くことを心がけましょう。
+
+## コーディング規約
+
+### 1. 命名規則
+
+**変数名・関数名**
+- snake_caseを使用します
+- 具体的で分かりやすい名前をつけましょう
+
+```python
+# Good
+daifuku_price = 150
+customer_name = "田中太郎"
+
+def calculate_total_price(quantity, unit_price):
+    return quantity * unit_price
+
+# Bad
+x = 150
+n = "田中太郎"
+def calc(q, p):
+    return q * p
+```
+
+**クラス名**
+- PascalCaseを使用します
+
+```python
+class DaifukuOrder:
+    def __init__(self, flavor, quantity):
+        self.flavor = flavor
+        self.quantity = quantity
+```
+
+**定数**
+- UPPER_CASE_WITH_UNDERSCORESを使用します
+
+```python
+MAX_ORDER_QUANTITY = 100
+TAX_RATE = 0.10
+BUSINESS_HOURS = "10:00-18:00"
+```
+
+### 2. インデント
+
+- 4スペースを使用します（タブは使用しません）
+
+```python
+def process_order(order):
+    if order.is_valid():
+        price = calculate_price(order)
+        return price
+    else:
+        return None
+```
+
+### 3. 関数の書き方
+
+**docstringを記述する**
+
+```python
+def make_daifuku(flavor, size="medium"):
+    """
+    大福を作成する関数
+    
+    Args:
+        flavor (str): 大福の味（いちご、抹茶、つぶあんなど）
+        size (str): サイズ（small, medium, large）
+    
+    Returns:
+        Daifuku: 作成された大福オブジェクト
+    """
+    return Daifuku(flavor, size)
+```
+
+**1つの関数は1つの役割に**
+
+```python
+# Good - 関数が分かれている
+def validate_order(order):
+    return order.quantity > 0 and order.quantity <= MAX_ORDER_QUANTITY
+
+def calculate_order_total(order):
+    subtotal = order.quantity * order.unit_price
+    return subtotal * (1 + TAX_RATE)
+
+# Bad - 1つの関数で複数のことをしている
+def process(order):
+    # 検証、計算、保存を全部やってしまう...
+    pass
+```
+
+### 4. コメント
+
+コードの「なぜ」を説明しましょう。「何を」しているかは、良いコードなら読めば分かります。
+
+```python
+# Good
+# 営業時間外の注文は翌日扱いとする
+if current_time > CLOSING_TIME:
+    order.delivery_date = tomorrow
+
+# Bad
+# iが10より小さい間ループする
+for i in range(10):
+    print(i)
+```
+
+### 5. エラーハンドリング
+
+適切な例外処理を行いましょう。
+
+```python
+def get_daifuku_stock(flavor):
+    try:
+        stock = inventory.get(flavor)
+        if stock is None:
+            raise ValueError(f"在庫情報が見つかりません: {flavor}")
+        return stock
+    except KeyError:
+        logger.error(f"不明な商品: {flavor}")
+        return 0
+```
+
+### 6. import文
+
+- 標準ライブラリ、サードパーティ、自社モジュールの順に並べます
+- 各グループの間は1行空けます
+
+```python
+import os
+import sys
+from datetime import datetime
+
+import requests
+from flask import Flask
+
+from daifuku_shop.models import Order
+from daifuku_shop.utils import calculate_tax
+```
+
+## チェックリスト
+
+コードをコミットする前に確認しましょう：
+
+- [ ] 変数名・関数名は分かりやすいですか？
+- [ ] 関数は1つの役割だけを持っていますか？
+- [ ] 適切なコメントがありますか？
+- [ ] エラーハンドリングは適切ですか？
+- [ ] インデントは4スペースですか？
+- [ ] docstringは書きましたか？
+
+## まとめ
+
+良いコードは、美味しい大福のように、丁寧に作られています。最初は慣れないかもしれませんが、これらのルールを守ることで、チーム全体の生産性が向上します。
+
+分からないことがあれば、いつでも先輩エンジニアに質問してください。一緒に美味しい（読みやすい）コードを書いていきましょう！
