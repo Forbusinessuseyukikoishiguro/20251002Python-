@@ -1,0 +1,410 @@
+# 新人エンジニア向け研修プログラム
+## Git・Python・VSCodeによる円滑なチーム開発
+
+---
+
+## 📋 研修の目的
+- Gitを使ったバージョン管理の基礎習得
+- Pythonの基本文法とコーディング規約の理解
+- VSCodeを使った効率的な開発環境の構築
+- チーム開発における協調作業のベストプラクティス習得
+
+---
+
+## 🗓️ 研修スケジュール（5日間）
+
+### **Day 1: 開発環境構築とGit基礎**
+
+#### 午前: 環境構築
+1. **VSCodeのインストールと設定**
+   - 公式サイトからダウンロード・インストール
+   - 日本語化拡張機能のインストール
+   - 必須拡張機能のインストール:
+     - Python
+     - GitLens
+     - Prettier
+     - indent-rainbow
+
+2. **Pythonのインストール**
+   - Python 3.11以上を推奨
+   - 仮想環境の作成と有効化
+   ```bash
+   # 仮想環境の作成
+   python -m venv myenv
+   
+   # 有効化（Windows）
+   myenv\Scripts\activate
+   
+   # 有効化（Mac/Linux）
+   source myenv/bin/activate
+   ```
+
+3. **Gitのインストールと初期設定**
+   ```bash
+   # バージョン確認
+   git --version
+   
+   # ユーザー情報設定
+   git config --global user.name "Your Name"
+   git config --global user.email "your.email@example.com"
+   
+   # デフォルトブランチ名設定
+   git config --global init.defaultBranch main
+   
+   # 設定確認
+   git config --list
+   ```
+
+#### 午後: Git基礎操作
+1. **リポジトリの作成と基本操作**
+   ```bash
+   # 新規リポジトリ作成
+   git init my-project
+   cd my-project
+   
+   # ファイル作成
+   echo "# My First Project" > README.md
+   
+   # ステージング
+   git add README.md
+   
+   # コミット
+   git commit -m "初回コミット: READMEを追加"
+   
+   # 履歴確認
+   git log --oneline
+   ```
+
+2. **基本的なワークフロー**
+   - Working Directory（作業ディレクトリ）
+   - Staging Area（ステージングエリア）
+   - Repository（リポジトリ）の関係性を図解
+
+3. **練習問題**
+   - 簡単なPythonファイルを作成してコミット
+   - 変更を加えて再度コミット
+   - ログを確認して変更履歴を追跡
+
+---
+
+### **Day 2: ブランチ操作とPython基礎**
+
+#### 午前: ブランチ戦略
+1. **ブランチの基本**
+   ```bash
+   # ブランチ一覧表示
+   git branch
+   
+   # 新規ブランチ作成
+   git branch feature/new-function
+   
+   # ブランチ切り替え
+   git checkout feature/new-function
+   
+   # ブランチ作成と切り替えを同時に
+   git checkout -b feature/another-function
+   
+   # ブランチ削除
+   git branch -d feature/old-function
+   ```
+
+2. **マージの基礎**
+   ```bash
+   # mainブランチに戻る
+   git checkout main
+   
+   # featureブランチをマージ
+   git merge feature/new-function
+   ```
+
+3. **コンフリクト解決**
+   - 意図的にコンフリクトを発生させる演習
+   - VSCodeでのコンフリクト解決方法
+
+#### 午後: Python基礎
+1. **PEP 8コーディング規約**
+   ```python
+   # 良い例
+   def calculate_total_price(item_price, quantity):
+       """商品の合計金額を計算する
+       
+       Args:
+           item_price (float): 商品単価
+           quantity (int): 数量
+           
+       Returns:
+           float: 合計金額
+       """
+       return item_price * quantity
+   
+   
+   # クラス定義
+   class Product:
+       def __init__(self, name, price):
+           self.name = name
+           self.price = price
+   ```
+
+2. **仮想環境と依存関係管理**
+   ```bash
+   # requirements.txt作成
+   pip freeze > requirements.txt
+   
+   # 依存パッケージインストール
+   pip install -r requirements.txt
+   ```
+
+---
+
+### **Day 3: リモートリポジトリとチーム開発**
+
+#### 午前: GitHub/GitLab連携
+1. **リモートリポジトリの設定**
+   ```bash
+   # リモートリポジトリ追加
+   git remote add origin https://github.com/username/repo.git
+   
+   # リモートリポジトリ確認
+   git remote -v
+   
+   # プッシュ
+   git push -u origin main
+   
+   # プル
+   git pull origin main
+   ```
+
+2. **SSH鍵の設定**
+   ```bash
+   # SSH鍵生成
+   ssh-keygen -t ed25519 -C "your.email@example.com"
+   
+   # 公開鍵表示
+   cat ~/.ssh/id_ed25519.pub
+   ```
+
+#### 午後: プルリクエストフロー
+1. **プルリクエストの作成手順**
+   - featureブランチで作業
+   - コミット＆プッシュ
+   - PR作成（タイトル・説明文の書き方）
+   - レビュー依頼
+
+2. **コードレビューの基礎**
+   - レビューのポイント
+   - 建設的なフィードバックの仕方
+   - レビューコメントへの対応
+
+---
+
+### **Day 4: 実践的なGit操作とPythonテスト**
+
+#### 午前: 高度なGit操作
+1. **便利なGitコマンド**
+   ```bash
+   # 変更の一時退避
+   git stash
+   git stash pop
+   
+   # 特定のコミットを取り消し
+   git revert <commit-hash>
+   
+   # コミット履歴の書き換え（慎重に！）
+   git rebase -i HEAD~3
+   
+   # 変更差分確認
+   git diff
+   git diff --staged
+   
+   # 特定ファイルの履歴確認
+   git log -- filename.py
+   ```
+
+2. **.gitignoreの活用**
+   ```
+   # Python
+   __pycache__/
+   *.py[cod]
+   *$py.class
+   *.so
+   .Python
+   env/
+   venv/
+   .env
+   
+   # VSCode
+   .vscode/
+   
+   # OS
+   .DS_Store
+   Thumbs.db
+   ```
+
+#### 午後: Pythonテスト
+1. **unittestによるテスト**
+   ```python
+   import unittest
+   
+   def add(a, b):
+       return a + b
+   
+   
+   class TestMath(unittest.TestCase):
+       def test_add(self):
+           self.assertEqual(add(2, 3), 5)
+           self.assertEqual(add(-1, 1), 0)
+   
+   
+   if __name__ == '__main__':
+       unittest.main()
+   ```
+
+2. **VSCodeでのテスト実行**
+   - テストエクスプローラーの使い方
+   - デバッグ実行
+
+---
+
+### **Day 5: チーム開発実践演習**
+
+#### 終日: チーム開発シミュレーション
+
+**プロジェクト例: 簡易TODOアプリケーション**
+
+1. **チーム構成（3-4名）**
+   - それぞれが異なる機能を担当
+   - 機能例:
+     - TODOの追加機能
+     - TODOの削除機能
+     - TODOの完了フラグ切り替え
+     - TODOの一覧表示
+
+2. **開発フロー実践**
+   ```bash
+   # 1. Issueを確認・アサイン
+   # 2. featureブランチ作成
+   git checkout -b feature/add-todo
+   
+   # 3. コーディング
+   # todo_manager.py を実装
+   
+   # 4. テスト作成・実行
+   # test_todo_manager.py を実装
+   
+   # 5. コミット
+   git add .
+   git commit -m "feat: TODO追加機能を実装"
+   
+   # 6. プッシュ
+   git push origin feature/add-todo
+   
+   # 7. プルリクエスト作成
+   # 8. レビュー・修正
+   # 9. マージ
+   ```
+
+3. **振り返り**
+   - 困った点・学んだ点の共有
+   - ベストプラクティスの確認
+
+---
+
+## 🎯 重要なポイント
+
+### Gitのベストプラクティス
+1. **コミットメッセージの書き方**
+   ```
+   <type>: <subject>
+   
+   <body>
+   
+   例:
+   feat: ユーザー登録機能を追加
+   
+   - メールアドレスでの登録に対応
+   - パスワードのバリデーションを実装
+   ```
+
+2. **頻繁にコミットする**
+   - 小さな単位で頻繁にコミット
+   - 1つの機能追加・修正に対して1コミット
+
+3. **mainブランチは常に動作する状態に保つ**
+   - 直接mainにコミットしない
+   - 必ずfeatureブランチから作業
+
+### VSCodeショートカット
+- `Ctrl+Shift+P`: コマンドパレット
+- `Ctrl+`` `: ターミナル表示
+- `Ctrl+P`: ファイル検索
+- `Ctrl+Shift+F`: プロジェクト内検索
+- `F5`: デバッグ実行
+
+### Pythonコーディング規約
+- 変数名・関数名: `snake_case`
+- クラス名: `PascalCase`
+- 定数: `UPPER_CASE`
+- インデント: スペース4つ
+- 1行の長さ: 79文字以内
+
+---
+
+## 📚 参考資料
+
+### 公式ドキュメント
+- Git公式ドキュメント: https://git-scm.com/doc
+- Python公式チュートリアル: https://docs.python.org/ja/3/tutorial/
+- VSCode公式ドキュメント: https://code.visualstudio.com/docs
+
+### おすすめ学習リソース
+- Pro Git（無料オンライン書籍）
+- PEP 8 日本語訳
+- GitHubのガイド
+
+---
+
+## ✅ 研修後チェックリスト
+
+研修終了時に以下ができるようになっていることを確認:
+
+- [ ] Git基本コマンド（add, commit, push, pull）が使える
+- [ ] ブランチの作成・切り替え・マージができる
+- [ ] VSCodeで快適に開発できる
+- [ ] PEP 8に沿ったPythonコードが書ける
+- [ ] プルリクエストの作成・レビューができる
+- [ ] コンフリクトを解決できる
+- [ ] チームメンバーとコラボレーションできる
+
+---
+
+## 🔧 トラブルシューティング
+
+### よくある問題と解決方法
+
+**1. コミットできない**
+```bash
+# ユーザー情報が未設定の場合
+git config --global user.name "Your Name"
+git config --global user.email "your.email@example.com"
+```
+
+**2. プッシュが拒否される**
+```bash
+# リモートの変更を先にプル
+git pull origin main --rebase
+git push origin main
+```
+
+**3. マージコンフリクト**
+- VSCodeのマージエディタを使用
+- 手動で`<<<<<<<`、`=======`、`>>>>>>>`の間を編集
+- `git add`してコミット
+
+**4. 誤ってコミットした**
+```bash
+# 直前のコミットを取り消し（変更は保持）
+git reset --soft HEAD^
+
+# 直前のコミットを完全に取り消し
+git reset --hard HEAD^
+```
