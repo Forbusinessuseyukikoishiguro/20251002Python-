@@ -1,0 +1,856 @@
+# ==========================================================
+# Pythonコーディング規約完全チートシート（PEP 8準拠）
+# ==========================================================
+
+"""
+【PEP 8とは？】
+
+Python Enhancement Proposal 8の略
+Pythonの公式コーディング規約
+
+目的：
+- コードの可読性を高める
+- チーム開発での統一感
+- メンテナンスしやすいコード
+
+参考：https://peps.python.org/pep-0008/
+"""
+
+print("=" * 70)
+print("Pythonコーディング規約完全チートシート")
+print("=" * 70)
+
+# ==========================================================
+# 【1】命名規則 - Naming Conventions
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【1】命名規則")
+print("=" * 70)
+
+naming_rules = """
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                  命名規則一覧表                        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+対象               │ 形式              │ 例
+──────────────────┼──────────────────┼─────────────────
+変数               │ snake_case        │ user_name, total_count
+関数               │ snake_case        │ get_user(), calculate()
+定数               │ UPPER_SNAKE_CASE  │ MAX_SIZE, API_KEY
+クラス             │ PascalCase        │ UserProfile, DataManager
+メソッド           │ snake_case        │ get_name(), set_value()
+プライベート       │ _leading          │ _internal_func()
+プライベート（強）  │ __leading         │ __private_method()
+モジュール         │ lowercase         │ mymodule, utils
+パッケージ         │ lowercase         │ mypackage, helpers
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 良い例と悪い例
+"""
+
+print(naming_rules)
+
+# ===== 変数名 =====
+print("\n【変数名】")
+
+# ✅ 良い例
+user_name = "田中太郎"
+total_count = 100
+is_active = True
+max_retry_count = 3
+
+# ❌ 悪い例（使わない）
+# userName = "田中"      # キャメルケース（JavaScriptスタイル）
+# TotalCount = 100       # パスカルケース
+# ISACTIVE = True        # 全て大文字（定数ではない）
+# x = 3                  # 意味不明な名前
+
+print("""
+✅ 良い例：
+  user_name = "田中太郎"
+  total_count = 100
+  is_active = True
+
+❌ 悪い例：
+  userName = "田中"      # キャメルケース
+  TotalCount = 100       # パスカルケース
+  x = 3                  # 意味不明
+""")
+
+# ===== 関数名 =====
+print("\n【関数名】")
+
+# ✅ 良い例
+def get_user_name():
+    """ユーザー名を取得"""
+    return "田中"
+
+def calculate_total_price(price, quantity):
+    """合計金額を計算"""
+    return price * quantity
+
+def is_valid_email(email):
+    """メールアドレスが有効か判定"""
+    return "@" in email
+
+# ❌ 悪い例
+# def GetUserName():        # パスカルケース
+# def calculateTotalPrice(): # キャメルケース
+# def calc():               # 短すぎて意味不明
+
+print("""
+✅ 良い例：
+  def get_user_name():
+  def calculate_total_price():
+  def is_valid_email():
+
+❌ 悪い例：
+  def GetUserName():        # パスカルケース
+  def calculateTotalPrice() # キャメルケース
+  def calc()                # 短すぎる
+""")
+
+# ===== クラス名 =====
+print("\n【クラス名】")
+
+# ✅ 良い例
+class UserProfile:
+    """ユーザープロファイルクラス"""
+    pass
+
+class DataManager:
+    """データ管理クラス"""
+    pass
+
+class HTTPServer:
+    """HTTPサーバークラス（略語は大文字OK）"""
+    pass
+
+# ❌ 悪い例
+# class user_profile:    # スネークケース
+# class dataManager:     # キャメルケース
+# class Data_Manager:    # 混在
+
+print("""
+✅ 良い例：
+  class UserProfile:
+  class DataManager:
+  class HTTPServer:
+
+❌ 悪い例：
+  class user_profile:   # スネークケース
+  class dataManager:    # キャメルケース
+""")
+
+# ===== 定数 =====
+print("\n【定数】")
+
+# ✅ 良い例
+MAX_CONNECTIONS = 100
+API_KEY = "abc123"
+DEFAULT_TIMEOUT = 30
+PI = 3.14159
+
+# ❌ 悪い例
+# Max_Connections = 100  # パスカルケース
+# apiKey = "abc123"      # キャメルケース
+# max_connections = 100  # 小文字（定数と分からない）
+
+print("""
+✅ 良い例：
+  MAX_CONNECTIONS = 100
+  API_KEY = "abc123"
+  DEFAULT_TIMEOUT = 30
+
+❌ 悪い例：
+  Max_Connections = 100  # パスカルケース
+  max_connections = 100  # 小文字
+""")
+
+# ===== プライベート =====
+print("\n【プライベート変数・メソッド】")
+
+class BankAccount:
+    """銀行口座クラス"""
+    
+    def __init__(self):
+        self.owner = "田中"           # public
+        self._account_number = "123"  # protected（内部使用）
+        self.__balance = 10000        # private（外部アクセス不可）
+    
+    def _internal_method(self):
+        """内部メソッド（慣習的にprotected）"""
+        pass
+    
+    def __private_method(self):
+        """プライベートメソッド"""
+        pass
+
+print("""
+✅ アンダースコアの使い分け：
+  self.name            # public（普通）
+  self._name           # protected（内部用）
+  self.__name          # private（外部不可）
+  
+  def method():        # public
+  def _method():       # protected
+  def __method():      # private
+""")
+
+# ==========================================================
+# 【2】インデントとスペース
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【2】インデントとスペース")
+print("=" * 70)
+
+indentation_rules = """
+■ 基本ルール
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. インデント = スペース4つ（タブではない）
+2. 演算子の前後にスペース1つ
+3. カンマの後にスペース1つ
+4. 関数定義の後に空行2つ
+5. メソッド定義の後に空行1つ
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+print(indentation_rules)
+
+# ===== インデント =====
+print("\n【インデント】")
+
+# ✅ 良い例
+def good_example():
+    """スペース4つでインデント"""
+    if True:
+        print("正しい")
+        for i in range(3):
+            print(i)
+
+# ❌ 悪い例
+# def bad_example():
+#   print("スペース2つ（NG）")
+#         print("インデントがバラバラ（NG）")
+
+print("""
+✅ 良い例（スペース4つ）：
+def function():
+    if True:
+        print("OK")
+
+❌ 悪い例：
+def function():
+  print("スペース2つ")
+        print("バラバラ")
+""")
+
+# ===== 演算子のスペース =====
+print("\n【演算子のスペース】")
+
+# ✅ 良い例
+x = 1 + 2
+result = a * b + c
+is_valid = x == y
+total = price * (1 + tax_rate)
+
+# ❌ 悪い例
+# x=1+2              # スペースなし
+# result = a*b + c   # 不統一
+# is_valid=x==y      # スペースなし
+
+print("""
+✅ 良い例：
+  x = 1 + 2
+  result = a * b + c
+  is_valid = x == y
+
+❌ 悪い例：
+  x=1+2              # スペースなし
+  result = a*b + c   # 不統一
+""")
+
+# ===== カンマのスペース =====
+print("\n【カンマのスペース】")
+
+# ✅ 良い例
+numbers = [1, 2, 3, 4, 5]
+user = {"name": "田中", "age": 30}
+result = function(a, b, c)
+
+# ❌ 悪い例
+# numbers = [1,2,3,4,5]          # スペースなし
+# user = {"name":"田中","age":30} # スペースなし
+# result = function(a,b,c)       # スペースなし
+
+print("""
+✅ 良い例：
+  [1, 2, 3]
+  {"name": "田中", "age": 30}
+  function(a, b, c)
+
+❌ 悪い例：
+  [1,2,3]            # カンマの後にスペースなし
+  {"name":"田中"}    # コロンの後にスペースなし
+""")
+
+# ===== 空行 =====
+print("\n【空行】")
+
+# ✅ 良い例：関数の間に空行2つ
+def first_function():
+    """1つ目の関数"""
+    pass
+
+
+def second_function():
+    """2つ目の関数"""
+    pass
+
+
+# クラスの場合
+class MyClass:
+    """クラス"""
+    
+    def first_method(self):
+        """メソッド間は空行1つ"""
+        pass
+    
+    def second_method(self):
+        """メソッド"""
+        pass
+
+print("""
+✅ 空行のルール：
+  - 関数と関数の間：空行2つ
+  - クラスの定義の前後：空行2つ
+  - メソッドとメソッドの間：空行1つ
+  - 論理的なまとまりの間：空行1つ
+""")
+
+# ==========================================================
+# 【3】行の長さと改行
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【3】行の長さと改行")
+print("=" * 70)
+
+line_length_rules = """
+■ 基本ルール
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. 1行は最大79文字（docstringは72文字）
+2. 長い行は適切に改行
+3. 括弧内で改行する（推奨）
+4. バックスラッシュ（\\）は避ける
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+print(line_length_rules)
+
+# ===== 長い行の改行 =====
+print("\n【長い行の改行方法】")
+
+# ✅ 良い例1：括弧内で改行
+def function_with_many_params(
+    param1,
+    param2,
+    param3,
+    param4
+):
+    """パラメータが多い関数"""
+    pass
+
+# ✅ 良い例2：リストの改行
+long_list = [
+    "item1",
+    "item2",
+    "item3",
+    "item4",
+]
+
+# ✅ 良い例3：辞書の改行
+user_data = {
+    "name": "田中太郎",
+    "age": 30,
+    "email": "tanaka@example.com",
+    "address": "東京都渋谷区",
+}
+
+# ✅ 良い例4：長い文字列
+message = (
+    "これは非常に長いメッセージです。"
+    "複数行に分けて書くことで"
+    "読みやすくなります。"
+)
+
+# ✅ 良い例5：メソッドチェーン
+result = (
+    data
+    .filter(condition)
+    .map(transform)
+    .reduce(aggregate)
+)
+
+# ❌ 悪い例：バックスラッシュ（避ける）
+# message = "これは非常に長いメッセージで、\
+# 1行に収まらないので改行しています"
+
+print("""
+✅ 良い改行方法：
+
+1. 括弧内で改行
+   function(
+       arg1,
+       arg2
+   )
+
+2. リスト・辞書の改行
+   data = [
+       "item1",
+       "item2",
+   ]
+
+3. 文字列の連結
+   message = (
+       "文字列1"
+       "文字列2"
+   )
+
+❌ 避けるべき：
+   バックスラッシュ（\\）での改行
+""")
+
+# ==========================================================
+# 【4】インポート
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【4】インポート")
+print("=" * 70)
+
+import_rules = """
+■ インポートのルール
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. インポートは1行に1つ
+2. 順序：標準ライブラリ → サードパーティ → 自作
+3. グループ間は空行で区切る
+4. ワイルドカード（*）は避ける
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+print(import_rules)
+
+# ✅ 良い例：正しいインポート順序
+# ====================
+# 標準ライブラリ
+import os
+import sys
+from datetime import datetime
+
+# サードパーティライブラリ
+import numpy as np
+import pandas as pd
+import requests
+
+# 自作モジュール
+from my_module import my_function
+from my_package.utils import helper
+
+# ====================
+
+# ❌ 悪い例
+# import sys, os                    # 1行に複数
+# from datetime import *            # ワイルドカード
+# import requests                   # 順序がバラバラ
+# import os
+
+print("""
+✅ 良い例：
+
+# 標準ライブラリ
+import os
+import sys
+
+# サードパーティ
+import numpy as np
+import requests
+
+# 自作モジュール
+from my_module import function
+
+❌ 悪い例：
+
+import sys, os              # 1行に複数
+from datetime import *      # ワイルドカード
+（順序がバラバラ）
+""")
+
+# ==========================================================
+# 【5】コメントとdocstring
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【5】コメントとdocstring")
+print("=" * 70)
+
+comment_rules = """
+■ コメントのルール
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. コメントは # の後にスペース1つ
+2. コードと同じ行のコメントは2スペース空ける
+3. docstringは \"\"\"で囲む
+4. 関数には必ずdocstringを書く
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+print(comment_rules)
+
+# ===== コメント =====
+print("\n【コメント】")
+
+# ✅ 良い例
+# これは正しいコメント
+x = 5  # インラインコメント（2スペース空ける）
+
+# 複数行のコメント
+# 1行目
+# 2行目
+# 3行目
+
+# ❌ 悪い例
+#これはスペースがない
+# x = 5 # スペースが1つしかない
+
+print("""
+✅ 良い例：
+  # コメント（#の後にスペース）
+  x = 5  # インライン（2スペース）
+
+❌ 悪い例：
+  #スペースなし
+  x = 5 # スペース1つ
+""")
+
+# ===== docstring =====
+print("\n【docstring】")
+
+def good_docstring_example(param1, param2):
+    """関数の簡潔な説明（1行）
+    
+    詳細な説明（必要なら）
+    
+    Args:
+        param1 (int): 引数1の説明
+        param2 (str): 引数2の説明
+    
+    Returns:
+        bool: 戻り値の説明
+    
+    Examples:
+        >>> good_docstring_example(1, "test")
+        True
+    """
+    return True
+
+# 1行docstring
+def simple_function():
+    """シンプルな関数の説明"""
+    pass
+
+print("""
+✅ docstringの書き方：
+
+複数行：
+def function():
+    \"\"\"簡潔な説明
+    
+    Args:
+        param: 説明
+    
+    Returns:
+        説明
+    \"\"\"
+    pass
+
+1行：
+def function():
+    \"\"\"簡潔な説明\"\"\"
+    pass
+""")
+
+# ==========================================================
+# 【6】比較と条件式
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【6】比較と条件式")
+print("=" * 70)
+
+# ===== None との比較 =====
+print("\n【Noneとの比較】")
+
+x = None
+
+# ✅ 良い例
+if x is None:
+    print("xはNone")
+
+if x is not None:
+    print("xはNoneではない")
+
+# ❌ 悪い例
+# if x == None:      # is を使うべき
+# if not x == None:  # is not を使うべき
+
+print("""
+✅ 良い例：
+  if x is None:
+  if x is not None:
+
+❌ 悪い例：
+  if x == None:      # == ではなく is
+  if not x == None:  # is not を使う
+""")
+
+# ===== 真偽値の比較 =====
+print("\n【真偽値の比較】")
+
+is_active = True
+
+# ✅ 良い例
+if is_active:
+    print("有効")
+
+if not is_active:
+    print("無効")
+
+# ❌ 悪い例
+# if is_active == True:   # 冗長
+# if is_active is True:   # 冗長
+
+print("""
+✅ 良い例：
+  if is_active:
+  if not is_active:
+
+❌ 悪い例：
+  if is_active == True:  # 冗長
+  if is_active is True:  # 冗長
+""")
+
+# ===== 空のチェック =====
+print("\n【空のチェック】")
+
+my_list = []
+my_string = ""
+
+# ✅ 良い例
+if not my_list:
+    print("リストが空")
+
+if my_string:
+    print("文字列が空でない")
+
+# ❌ 悪い例
+# if len(my_list) == 0:  # 冗長
+# if my_list == []:      # 冗長
+
+print("""
+✅ 良い例：
+  if not my_list:        # 空チェック
+  if my_string:          # 空でないチェック
+
+❌ 悪い例：
+  if len(my_list) == 0:  # 冗長
+  if my_list == []:      # 冗長
+""")
+
+# ==========================================================
+# 【7】チートシート総まとめ
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【総まとめ】クイックリファレンス")
+print("=" * 70)
+
+cheatsheet = """
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃          Pythonコーディング規約クイックリファレンス    ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+■ 命名規則
+┌────────────────┬──────────────┬─────────────────┐
+│ 対象           │ 形式         │ 例              │
+├────────────────┼──────────────┼─────────────────┤
+│ 変数・関数     │ snake_case   │ user_name       │
+│ 定数           │ UPPER_CASE   │ MAX_SIZE        │
+│ クラス         │ PascalCase   │ UserProfile     │
+│ プライベート   │ _leading     │ _internal       │
+└────────────────┴──────────────┴─────────────────┘
+
+■ スペーシング
+  演算子: x = 1 + 2    （前後にスペース）
+  カンマ: [1, 2, 3]    （後にスペース）
+  コロン: {"key": val}  （後にスペース）
+
+■ インデント
+  スペース4つ（タブ禁止）
+
+■ 行の長さ
+  最大79文字（docstringは72文字）
+
+■ 空行
+  関数間: 2行
+  メソッド間: 1行
+  論理ブロック間: 1行
+
+■ インポート順序
+  1. 標準ライブラリ
+  2. サードパーティ
+  3. 自作モジュール
+  （各グループ間は空行）
+
+■ 比較
+  None:     x is None（is を使う）
+  真偽値:   if x:（そのまま）
+  空判定:   if not lst:（len()不要）
+
+■ 文字列
+  シングル（'）かダブル（\"）を統一
+  docstringは \"\"\" 
+
+■ 避けるべきこと
+  ❌ ワイルドカードインポート（from x import *）
+  ❌ 1行に複数のインポート（import os, sys）
+  ❌ バックスラッシュでの改行
+  ❌ グローバル変数の多用
+  ❌ 意味のない変数名（x, y, tmp）
+
+■ 推奨すること
+  ✅ 意味のある変数名
+  ✅ 関数にdocstring
+  ✅ 型ヒントの使用
+  ✅ 短い関数（1関数1機能）
+  ✅ コメントで意図を説明
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 自動チェックツール
+
+  black:    自動フォーマット
+    $ black your_file.py
+
+  flake8:   スタイルチェック
+    $ flake8 your_file.py
+
+  pylint:   総合チェック
+    $ pylint your_file.py
+
+  isort:    import整理
+    $ isort your_file.py
+
+  mypy:     型チェック
+    $ mypy your_file.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ VSCode設定（settings.json）
+
+{
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "editor.rulers": [79]  // 79文字目に線
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 完璧なコード例
+
+# モジュールdocstring
+\"\"\"このモジュールはユーザー管理機能を提供します。\"\"\"
+
+# インポート（標準 → サードパーティ → 自作）
+import os
+from datetime import datetime
+
+import requests
+
+from my_module import helper
+
+
+# 定数
+MAX_USERS = 100
+DEFAULT_TIMEOUT = 30
+
+
+# 関数（前後に空行2つ）
+def get_user_name(user_id: int) -> str:
+    \"\"\"ユーザー名を取得する
+    
+    Args:
+        user_id: ユーザーID
+    
+    Returns:
+        ユーザー名
+    \"\"\"
+    # 処理
+    return "田中太郎"
+
+
+def calculate_total(price: int, quantity: int) -> int:
+    \"\"\"合計金額を計算する
+    
+    Args:
+        price: 単価
+        quantity: 数量
+    
+    Returns:
+        合計金額
+    \"\"\"
+    return price * quantity
+
+
+# クラス（前後に空行2つ）
+class UserManager:
+    \"\"\"ユーザー管理クラス\"\"\"
+    
+    def __init__(self, name: str):
+        \"\"\"コンストラクタ
+        
+        Args:
+            name: ユーザー名
+        \"\"\"
+        self.name = name
+        self._internal_id = 0
+    
+    def get_name(self) -> str:
+        \"\"\"名前を取得
+        
+        Returns:
+            ユーザー名
+        \"\"\"
+        return self.name
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+print(cheatsheet)
+
+print("\n" + "=" * 70)
+print("これでPythonコーディング規約は完璧！")
+print("blackを使えば自動で整形できます")
+print("=" * 70)
