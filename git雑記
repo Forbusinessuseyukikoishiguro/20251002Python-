@@ -1,0 +1,795 @@
+Gitの間違いやすい操作に特化した解説記事を作成しますね。特にrevert、reset、rebaseなどの違いを詳しく説明します。
+
+# 【保存版】Gitで間違いやすいコマンド完全解説
+
+revert? reset? rebase? 似たような名前で混乱しがちなGitコマンドを徹底的に解説します。
+
+---
+
+## 📋 目次
+1. [よく混同される3つのコマンド](#よく混同される3つのコマンド)
+2. [git revert（取り消しコミットを作る）](#git-revert取り消しコミットを作る)
+3. [git reset（履歴を巻き戻す）](#git-reset履歴を巻き戻す)
+4. [git rebase（履歴を書き換える）](#git-rebase履歴を書き換える)
+5. [checkout vs switch vs restore](#checkout-vs-switch-vs-restore)
+6. [merge vs rebase](#merge-vs-rebase)
+7. [pull vs fetch](#pull-vs-fetch)
+8. [間違えたときの緊急対処法](#間違えたときの緊急対処法)
+
+---
+
+## よく混同される3つのコマンド
+
+### 一覧比較表
+
+| コマンド | 何をする？ | 履歴は変わる？ | 安全性 | いつ使う？ |
+|---------|----------|--------------|-------|----------|
+| **revert** | 取り消しコミットを新規作成 | 変わらない（追加される） | 🟢 安全 | pushした後に取り消したい |
+| **reset** | 履歴を巻き戻す | 変わる（消える） | 🔴 危険 | pushする前に取り消したい |
+| **rebase** | コミットを並べ替え・統合 | 変わる（書き換わる） | 🟡 注意 | 履歴を綺麗にしたい |
+
+### 視覚的に理解する
+
+```
+元の状態：
+A --- B --- C --- D (main)
+              ↑
+            間違ったコミット
+
+【revert を使った場合】
+A --- B --- C --- D --- E (main)
+                         ↑
+                    「Dを取り消す」というコミット
+履歴：A→B→C→D→E（Dを打ち消すEが追加される）
+
+【reset を使った場合】
+A --- B --- C (main)
+           ↑
+         ここまで戻る
+履歴：A→B→C（Dは消える）
+
+【rebase を使った場合】
+A --- B --- D --- C (main)
+           ↑
+      CとDの順番を入れ替え
+履歴：A→B→D→C（並び替わる）
+```
+
+---
+
+## git revert（取り消しコミットを作る）
+
+### 🎯 いつ使う？
+
+**「すでにpushしたコミットを取り消したい」ときに使います。**
+
+### 特徴
+
+✅ **安全**：履歴を消さない  
+✅ **協調性**：チームメンバーに影響が少ない  
+✅ **透明性**：何を取り消したか記録が残る  
+
+### 基本的な使い方
+
+```bash
+# 最新のコミットを取り消す
+git revert HEAD
+
+# 特定のコミットを取り消す
+git revert a1b2c3d
+
+# 複数のコミットを取り消す
+git revert HEAD~3..HEAD
+
+# 取り消しコミットを作るが、まだコミットしない
+git revert --no-commit HEAD
+```
+
+### 実践例
+
+**シナリオ：本番環境にバグを含むコードをpushしてしまった**
+
+```bash
+# 現在の状態
+git log --oneline
+# d4e5f6g バグを含む機能追加 ← これを取り消したい
+# c3d4e5f 前回のコミット
+# b2c3d4e その前のコミット
+
+# バグのあるコミットを取り消す
+git revert d4e5f6g
+
+# エディタが開くので、コミットメッセージを確認・編集
+# デフォルトで「Revert "バグを含む機能追加"」と入る
+
+# 保存して閉じる
+
+# pushする
+git push origin main
+
+# 新しい履歴
+git log --oneline
+# h7i8j9k Revert "バグを含む機能追加" ← 新しいコミット
+# d4e5f6g バグを含む機能追加
+# c3d4e5f 前回のコミット
+```
+
+### コンフリクトが起きた場合
+
+```bash
+git revert a1b2c3d
+
+# CONFLICT が表示される
+# Auto-merging index.html
+# CONFLICT (content): Merge conflict in index.html
+
+# 手動でコンフリクトを解決（VSCodeなどで編集）
+
+# 解決後
+git add index.html
+git revert --continue
+
+# または中止したい場合
+git revert --abort
+```
+
+### ⚠️ 注意点
+
+**マージコミットのrevertは特殊**
+
+```bash
+# マージコミットをrevertする場合は -m オプションが必要
+git revert -m 1 <merge-commit-hash>
+
+# -m 1：メインラインを指定
+# -m 2：マージされた側を指定
+```
+
+---
+
+## git reset（履歴を巻き戻す）
+
+### 🎯 いつ使う？
+
+**「まだpushしていないコミットをなかったことにしたい」ときに使います。**
+
+### 危険度：🔴 高い
+
+⚠️ **pushした後に使うとチームに大迷惑！**  
+⚠️ **コミットが消えるので復元が困難**
+
+### 3つのモード
+
+| モード | 変更内容 | 使い所 |
+|-------|---------|--------|
+| `--soft` | コミットだけ取り消し（変更はステージングエリアに残る） | コミットメッセージを修正したい |
+| `--mixed`（デフォルト） | コミット+addを取り消し（変更は作業ディレクトリに残る） | addからやり直したい |
+| `--hard` | 全て消す（変更も完全に削除） | 変更自体を捨てたい（危険！） |
+
+### 視覚的な違い
+
+```
+元の状態：
+Working Directory: 変更あり
+Staging Area: ファイルA, ファイルB
+Repository: コミットA, コミットB, コミットC
+
+【git reset --soft HEAD^】
+Working Directory: 変更あり
+Staging Area: ファイルA, ファイルB（そのまま）
+Repository: コミットA, コミットB（コミットCが消える）
+
+【git reset --mixed HEAD^】（デフォルト）
+Working Directory: 変更あり
+Staging Area: 空（addが取り消される）
+Repository: コミットA, コミットB（コミットCが消える）
+
+【git reset --hard HEAD^】
+Working Directory: 変更なし（変更も消える！）
+Staging Area: 空
+Repository: コミットA, コミットB（コミットCが消える）
+```
+
+### 基本的な使い方
+
+```bash
+# 1つ前のコミットに戻る（変更は残る）
+git reset HEAD^
+
+# 1つ前のコミットに戻る（変更は残してステージング状態に）
+git reset --soft HEAD^
+
+# 1つ前のコミットに戻る（変更も完全に削除）
+git reset --hard HEAD^
+
+# 3つ前のコミットに戻る
+git reset HEAD~3
+
+# 特定のコミットまで戻る
+git reset a1b2c3d
+
+# 特定のファイルだけをunadd（コミットは戻さない）
+git reset HEAD ファイル名
+```
+
+### 実践例1：コミットメッセージを修正したい
+
+```bash
+git commit -m "機能追加"
+# あ、タイポした！「追加」じゃなくて「修正」だった
+
+# コミットだけ取り消す（変更はステージングエリアに残る）
+git reset --soft HEAD^
+
+# 正しいメッセージで再コミット
+git commit -m "機能修正"
+```
+
+または
+
+```bash
+# より簡単な方法
+git commit --amend -m "正しいメッセージ"
+```
+
+### 実践例2：addを取り消したい
+
+```bash
+# 間違って全部addしてしまった
+git add .
+
+# addだけ取り消す
+git reset HEAD
+
+# 必要なファイルだけadd
+git add 必要なファイル.txt
+```
+
+### 実践例3：実験的な変更を完全に破棄
+
+```bash
+# 色々試したけど全部やめたい
+git reset --hard HEAD
+
+# 注意：これで未保存の変更が全て消える！
+```
+
+### 🚨 やってはいけないこと
+
+```bash
+# ❌ 絶対ダメ：pushした後にreset
+git push origin main
+git reset --hard HEAD^
+git push origin main  # エラーになる
+
+# もし無理やりpushすると...
+git push -f origin main  # チーム全員に大迷惑！
+
+# ✅ 正しい方法：pushした後はrevertを使う
+git revert HEAD
+git push origin main
+```
+
+---
+
+## git rebase（履歴を書き換える）
+
+### 🎯 いつ使う？
+
+1. **コミット履歴を綺麗にしたい**
+2. **複数のコミットを1つにまとめたい**
+3. **ブランチの分岐点を変更したい**
+
+### 危険度：🟡 中程度
+
+⚠️ **pushした後に使うと混乱の元**  
+⚠️ **コミットハッシュが変わる**  
+✅ **自分専用のブランチなら安全**
+
+### rebaseの種類
+
+#### 1. 通常のrebase（ブランチの付け替え）
+
+```bash
+# mainの最新にfeatureブランチを付け替える
+
+元の状態：
+      C --- D (feature)
+     /
+A --- B --- E --- F (main)
+
+git checkout feature
+git rebase main
+
+結果：
+              C' --- D' (feature)
+             /
+A --- B --- E --- F (main)
+
+# C'、D'は新しいコミット（内容は同じだがハッシュが違う）
+```
+
+**コマンド例：**
+
+```bash
+# featureブランチで作業中
+git checkout feature
+
+# mainブランチの最新を取り込む
+git rebase main
+
+# コンフリクトが起きたら
+# 1. ファイルを手動で修正
+# 2. git add <ファイル名>
+# 3. git rebase --continue
+
+# 中止したい場合
+git rebase --abort
+```
+
+#### 2. インタラクティブrebase（履歴の整理）
+
+```bash
+# 過去3つのコミットを編集
+git rebase -i HEAD~3
+```
+
+エディタが開いて、コミット一覧が表示されます：
+
+```
+pick a1b2c3d 機能Aを追加
+pick d4e5f6g バグ修正
+pick g7h8i9j タイポ修正
+
+# Commands:
+# p, pick = コミットをそのまま使う
+# r, reword = コミットメッセージを変更
+# e, edit = コミットを編集（分割など）
+# s, squash = 前のコミットに統合（メッセージも統合）
+# f, fixup = 前のコミットに統合（メッセージは破棄）
+# d, drop = コミットを削除
+```
+
+### 実践例1：複数のコミットを1つにまとめる
+
+```bash
+# 現在の履歴
+git log --oneline
+# g7h8i9j タイポ修正
+# d4e5f6g バグ修正  
+# a1b2c3d 機能Aを追加
+
+# インタラクティブrebaseを開始
+git rebase -i HEAD~3
+
+# エディタで以下のように編集
+pick a1b2c3d 機能Aを追加
+squash d4e5f6g バグ修正
+squash g7h8i9j タイポ修正
+
+# 保存して閉じる
+
+# 新しいコミットメッセージを入力するエディタが開く
+# 統合後のメッセージを入力
+
+# 結果
+git log --oneline
+# k1l2m3n 機能Aを追加（バグ修正とタイポ修正を含む）
+```
+
+### 実践例2：コミットメッセージを修正
+
+```bash
+git rebase -i HEAD~3
+
+# エディタで以下のように編集
+reword a1b2c3d 機能Aを追加  ← pickをrewordに変更
+pick d4e5f6g バグ修正
+pick g7h8i9j タイポ修正
+
+# 保存すると、メッセージ編集画面が開く
+# 新しいメッセージを入力して保存
+```
+
+### 実践例3：コミットの順番を入れ替え
+
+```bash
+git rebase -i HEAD~3
+
+# エディタで順番を入れ替える
+pick g7h8i9j タイポ修正       ← 3番目だったのを
+pick a1b2c3d 機能Aを追加      ← 1番目に
+pick d4e5f6g バグ修正
+
+# 保存すると順番が変わる
+```
+
+### ⚠️ rebaseの注意点
+
+**1. pushした後はrebaseしない**
+
+```bash
+# ❌ 危険な例
+git push origin feature
+git rebase main  # コミットハッシュが変わる
+git push origin feature  # エラー！
+
+# 無理やりpushすると...
+git push -f origin feature  # 他の人が混乱！
+```
+
+**2. rebase中のコンフリクト解決**
+
+```bash
+git rebase main
+
+# CONFLICT が表示される
+# <<<<<<< HEAD
+# =======
+# >>>>>>> 
+
+# 1. ファイルを手動で修正
+# 2. 修正したファイルをadd
+git add 修正したファイル
+
+# 3. rebaseを続ける
+git rebase --continue
+
+# うまくいかない場合は中止
+git rebase --abort
+```
+
+---
+
+## checkout vs switch vs restore
+
+Gitの新しいバージョンでは、`checkout`の機能が`switch`と`restore`に分割されました。
+
+### checkout（古い方法・まだ使える）
+
+```bash
+# ブランチ切り替え
+git checkout main
+
+# ブランチ作成+切り替え
+git checkout -b feature/new
+
+# ファイルの変更を破棄
+git checkout -- ファイル名
+```
+
+### switch（ブランチ切り替え専用）
+
+```bash
+# ブランチ切り替え
+git switch main
+
+# ブランチ作成+切り替え
+git switch -c feature/new
+
+# 前のブランチに戻る
+git switch -
+```
+
+### restore（ファイル復元専用）
+
+```bash
+# ファイルの変更を破棄
+git restore ファイル名
+
+# addを取り消す
+git restore --staged ファイル名
+
+# 特定のコミットから復元
+git restore --source=HEAD~2 ファイル名
+```
+
+### どれを使うべき？
+
+| やりたいこと | 古い方法 | 新しい方法 |
+|------------|---------|-----------|
+| ブランチ切り替え | `git checkout main` | `git switch main` ✅ |
+| ブランチ作成+切り替え | `git checkout -b feature` | `git switch -c feature` ✅ |
+| ファイル変更を破棄 | `git checkout -- file` | `git restore file` ✅ |
+| addを取り消し | `git reset HEAD file` | `git restore --staged file` ✅ |
+
+💡 **新しいコマンドの方が分かりやすいので、こちらを覚えましょう！**
+
+---
+
+## merge vs rebase
+
+どちらもブランチを統合するコマンドですが、履歴の見え方が違います。
+
+### merge（履歴を残す）
+
+```bash
+git checkout main
+git merge feature
+
+# 結果の履歴
+      C --- D (feature)
+     /       \
+A --- B --- E --- F (main)
+                   ↑
+              マージコミット
+```
+
+**特徴：**
+- ✅ 履歴がそのまま残る
+- ✅ 安全（元のブランチは変わらない）
+- ❌ 履歴が複雑になりがち
+
+### rebase（履歴を書き換える）
+
+```bash
+git checkout feature
+git rebase main
+git checkout main
+git merge feature  # fast-forward merge
+
+# 結果の履歴
+A --- B --- E --- C' --- D' (main, feature)
+              ↑
+        一直線の綺麗な履歴
+```
+
+**特徴：**
+- ✅ 履歴が一直線で綺麗
+- ✅ 読みやすい
+- ❌ 元のブランチ構造が分からなくなる
+- ❌ コミットハッシュが変わる
+
+### どちらを使うべき？
+
+| シチュエーション | 推奨 |
+|----------------|------|
+| 個人ブランチをmainに統合 | rebase → merge |
+| チーム共有ブランチ | merge |
+| 機能開発の途中でmainを取り込む | rebase |
+| リリースブランチ | merge |
+
+---
+
+## pull vs fetch
+
+### pull = fetch + merge
+
+```bash
+# pull は2つの操作を同時に行う
+git pull origin main
+
+# これは以下と同じ
+git fetch origin main
+git merge origin/main
+```
+
+### fetch（取得のみ）
+
+```bash
+# リモートの情報を取得（ローカルブランチは変更しない）
+git fetch origin
+
+# どんな変更があるか確認
+git log HEAD..origin/main
+
+# 問題なければmerge
+git merge origin/main
+```
+
+### pull --rebase
+
+```bash
+# fetchしてからrebaseする
+git pull --rebase origin main
+
+# これは以下と同じ
+git fetch origin main
+git rebase origin/main
+```
+
+### どちらを使うべき？
+
+| 状況 | 推奨 |
+|-----|------|
+| とりあえず最新にしたい | `git pull` |
+| 慎重に確認したい | `git fetch` → 確認 → `git merge` |
+| 綺麗な履歴にしたい | `git pull --rebase` |
+
+---
+
+## 間違えたときの緊急対処法
+
+### 🆘 パニックになったら
+
+```bash
+# まず落ち着いて現状確認
+git status
+git log --oneline -5
+
+# reflogを確認（最近の操作履歴）
+git reflog
+
+# reflogの出力例
+a1b2c3d HEAD@{0}: reset: moving to HEAD^
+d4e5f6g HEAD@{1}: commit: 重要な機能追加
+e5f6g7h HEAD@{2}: commit: バグ修正
+
+# 間違える前の状態に戻る
+git reset --hard HEAD@{1}
+```
+
+### よくある失敗と復旧方法
+
+#### 1. reset --hardで変更を消してしまった
+
+```bash
+# 直前の状態に戻る
+git reflog
+git reset --hard HEAD@{1}
+```
+
+#### 2. 間違ったブランチにコミットした
+
+```bash
+# コミットを移動
+git log  # コミットハッシュをコピー
+git checkout 正しいブランチ
+git cherry-pick <コミットハッシュ>
+
+# 元のブランチからコミットを削除
+git checkout 間違ったブランチ
+git reset --hard HEAD^
+```
+
+#### 3. コミットを間違えてpushしてしまった
+
+```bash
+# revertで取り消しコミットを作る
+git revert HEAD
+git push origin main
+```
+
+#### 4. rebase中に混乱した
+
+```bash
+# 中止して元に戻る
+git rebase --abort
+```
+
+#### 5. マージに失敗した
+
+```bash
+# マージを中止
+git merge --abort
+```
+
+### 🛟 最後の手段：reflog
+
+```bash
+# 過去30日間の操作履歴を全て表示
+git reflog
+
+# 任意の時点に戻れる
+git reset --hard HEAD@{n}
+```
+
+---
+
+## 📊 危険度別コマンド一覧
+
+### 🟢 安全（いつでも使える）
+
+```bash
+git add
+git commit
+git status
+git log
+git diff
+git branch
+git switch
+git fetch
+git stash
+git revert  # pushした後でもOK
+```
+
+### 🟡 注意（pushする前なら安全）
+
+```bash
+git reset --soft
+git reset --mixed
+git commit --amend
+git rebase -i  # 自分のブランチのみ
+```
+
+### 🔴 危険（十分理解してから使う）
+
+```bash
+git reset --hard
+git push -f
+git rebase  # 共有ブランチで
+git clean -fd  # 未追跡ファイルを削除
+```
+
+---
+
+## 🎯 まとめ：選択フローチャート
+
+```
+コミットを取り消したい
+    ↓
+pushした？
+    ├─ Yes → git revert（安全）
+    └─ No  → git reset（便利だが注意）
+
+履歴を綺麗にしたい
+    ↓
+共有ブランチ？
+    ├─ Yes → git merge（安全）
+    └─ No  → git rebase（綺麗）
+
+変更を一時退避
+    ↓
+git stash（いつでも安全）
+
+ファイルの変更を破棄
+    ↓
+git restore ファイル名（新しい方法）
+git checkout -- ファイル名（古い方法）
+```
+
+---
+
+## 💡 覚えておくべき原則
+
+1. **pushした後はrevert**
+   - reset、rebaseは使わない
+
+2. **共有ブランチは書き換えない**
+   - force pushは緊急時のみ
+
+3. **困ったらreflog**
+   - 大抵の失敗は復旧できる
+
+4. **実験はブランチで**
+   - mainでは慎重に
+
+5. **分からなかったら先輩に聞く**
+   - 一人で悩まない！
+
+これらのコマンドを正しく理解して、安全なGit運用を心がけましょう！
+
+Gitで間違いやすいコマンドに特化した詳しい解説を作成しました！
+
+## 📌 記事の特徴
+
+**🎯 3大混同コマンドを徹底解説**
+- **revert**：取り消しコミットを作る（安全）
+- **reset**：履歴を巻き戻す（危険）
+- **rebase**：履歴を書き換える（注意）
+
+**📊 視覚的な理解**
+- 各コマンドの動作を図で説明
+- ビフォー・アフターで違いが明確
+- 比較表で一目で分かる
+
+**⚠️ 危険度の明示**
+- 🟢 安全：いつでも使える
+- 🟡 注意：pushする前なら安全
+- 🔴 危険：十分理解してから
+
+**🆘 緊急対処法も完備**
+- 失敗したときの復旧方法
+- reflogを使った救済手段
+- よくある失敗パターンと解決策
+
+**💡 特に重要なポイント**
+
+1. **pushした後はrevert、pushする前ならreset**
+2. **共有ブランチではrebaseしない**
+3. **困ったらgit reflogで復旧できる**
+4. **checkout → switch/restoreへ（新しい方法）**
+
+この記事があれば、Gitの危険なコマンドも自信を持って使えるようになります！
+
+何か追加で知りたいことや、もっと詳しく説明してほしい部分があればお知らせください！
