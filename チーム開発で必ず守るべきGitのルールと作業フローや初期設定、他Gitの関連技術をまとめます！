@@ -1,0 +1,1274 @@
+チーム開発で必ず守るべきGitのルールと作業フローや初期設定、他Gitの関連技術をまとめます！
+
+🎯 絶対に守るべき基本ルール
+
+❌ 絶対にやってはいけないこと
+
+# 1. mainブランチで直接作業 ❌
+git checkout main
+# ファイル編集
+git commit -m "修正"  # NG！
+
+# 2. 他の人が使っているブランチで強制push ❌
+git push -f origin develop  # NG！
+
+# 3. pullせずにpush ❌
+git push  # コンフリクト発生
+
+# 4. 大きなファイルをコミット ❌
+git add large-file.zip  # NG！
+
+# 5. 秘密情報をコミット ❌
+git add .env  # パスワードやAPIキーNG！
+
+# 6. コミットメッセージが適当 ❌
+git commit -m "修正"  # NG！
+git commit -m "aaa"   # NG！
+
+
+✅ チーム開発の基本フロー
+
+📌 毎日の作業フロー
+
+# 1. 朝一番：最新を取得
+git checkout main
+git pull origin main
+
+# 2. 作業ブランチを作成
+git checkout -b feature/login-form
+
+# 3. 作業する
+# ファイル編集...
+
+# 4. こまめにコミット
+git add .
+git commit -m "feat: ログインフォームのバリデーション追加"
+
+# 5. リモートにプッシュ（最初は -u）
+git push -u origin feature/login-form
+
+# 6. 以降はこまめにプッシュ
+git push
+
+# 7. プルリクエスト作成
+# GitHubでプルリク作成
+
+# 8. レビュー後マージ
+
+# 9. ローカルを最新に
+git checkout main
+git pull origin main
+
+# 10. 作業ブランチを削除
+git branch -d feature/login-form
+
+
+🌿 ブランチ戦略（必須）
+
+Git Flow（推奨）
+
+# ブランチの役割
+main (master)     # 本番環境（絶対に直接コミットしない）
+develop           # 開発環境（機能をまとめる）
+feature/*         # 機能開発（個人作業）
+release/*         # リリース準備
+hotfix/*          # 緊急バグ修正
+
+# 実際の流れ
+# 1. developから機能ブランチを作成
+git checkout develop
+git pull origin develop
+git checkout -b feature/user-profile
+
+# 2. 作業してコミット
+git add .
+git commit -m "feat: ユーザープロフィール画面を追加"
+
+# 3. developに最新を取り込む
+git checkout develop
+git pull origin develop
+git checkout feature/user-profile
+git merge develop
+# コンフリクトがあれば解決
+
+# 4. プッシュしてプルリク
+git push -u origin feature/user-profile
+# GitHubでdevelopへのプルリク作成
+
+# 5. マージ後、ブランチ削除
+git checkout develop
+git pull origin develop
+git branch -d feature/user-profile
+git push origin --delete feature/user-profile
+
+
+GitHub Flow（シンプル）
+
+# ブランチの役割
+main              # 常にデプロイ可能な状態
+feature/*         # すべての作業
+
+# 実際の流れ
+# 1. mainから機能ブランチ
+git checkout main
+git pull origin main
+git checkout -b feature/add-search
+
+# 2. 作業
+# ...
+
+# 3. プッシュしてプルリク
+git push -u origin feature/add-search
+# mainへのプルリク作成
+
+# 4. マージ後すぐデプロイ
+
+
+💬 コミットメッセージのルール（必須）
+
+✅ 良いコミットメッセージ
+
+# フォーマット
+<type>: <subject>
+
+<body>（任意）
+
+# type の種類
+feat:     新機能
+fix:      バグ修正
+docs:     ドキュメント
+style:    コードスタイル（動作に影響なし）
+refactor: リファクタリング
+test:     テスト追加・修正
+chore:    ビルド、設定等
+
+# 良い例
+git commit -m "feat: ユーザー登録機能を追加"
+git commit -m "fix: ログイン時のバリデーションエラーを修正"
+git commit -m "docs: READMEにセットアップ手順を追加"
+git commit -m "refactor: ユーザーモデルのコードを整理"
+
+# さらに詳細を書く場合
+git commit -m "feat: パスワードリセット機能を追加
+
+- メール送信機能を実装
+- トークン生成とバリデーション
+- パスワード更新画面
+
+関連Issue: #123"
+
+
+❌ 悪いコミットメッセージ
+
+git commit -m "修正"           # 何を修正したか不明
+git commit -m "aaa"            # 意味不明
+git commit -m "動いた"         # 具体性なし
+git commit -m "update"         # 何をupdateしたか不明
+git commit -m "バグ修正"       # どのバグか不明
+
+
+🔄 pullとpushのルール
+
+必ず守る順序
+
+# ❌ 間違い
+git push  # いきなりpush
+
+# ✅ 正解
+# 1. まずpull
+git pull origin main
+
+# 2. コンフリクトがあれば解決
+# ...
+
+# 3. 問題なければpush
+git push origin main
+
+
+毎回の作業前
+
+# 1. mainを最新に
+git checkout main
+git pull origin main
+
+# 2. 作業ブランチに反映
+git checkout feature/my-work
+git merge main
+# または
+git rebase main
+
+# 3. 問題なければ続行
+
+
+🚨 コンフリクト解決（必須スキル）
+
+コンフリクトが起きたら
+
+# 1. pullやmerge時にコンフリクト発生
+git pull origin main
+# CONFLICT (content): Merge conflict in file.txt
+
+# 2. 状態確認
+git status
+# both modified: file.txt
+
+# 3. ファイルを開いて編集
+# <<<<<<< HEAD
+# あなたの変更
+# =======
+# 相手の変更
+# >>>>>>> main
+
+# 4. マーカーを削除して正しい内容に修正
+
+# 5. 解決後
+git add file.txt
+git commit -m "fix: コンフリクトを解決"
+
+# 6. push
+git push
+
+
+VSCodeでコンフリクト解決
+
+1. ファイルを開く
+2. ボタンが表示される：
+   - 現在の変更を採用
+   - 入力側の変更を採用
+   - 両方の変更を採用
+   - 変更の比較
+3. 適切なものを選択
+4. 保存してコミット
+
+
+👥 プルリクエストのルール
+
+プルリク作成時
+
+# 1. わかりやすいタイトル
+✅ "feat: ユーザー検索機能を追加"
+❌ "更新"
+
+# 2. 説明を詳しく書く
+## 変更内容
+- ユーザー名で検索できる機能を追加
+- 検索結果のページネーション実装
+
+## 確認方法
+1. /users/searchにアクセス
+2. ユーザー名を入力して検索
+
+## スクリーンショット
+（画像添付）
+
+## 関連Issue
+Closes #123
+
+# 3. レビュワーを指定
+
+# 4. ラベルを付ける（feature, bug, etc）
+
+
+プルリクレビュー時
+
+# レビュワーがすること
+1. コードを確認
+2. 動作確認（可能なら）
+3. コメント
+4. Approve または Request changes
+
+# レビュー後の修正
+git add .
+git commit -m "review: レビュー指摘を修正"
+git push
+# 自動的にプルリクに反映される
+
+
+🔐 機密情報の管理（重要！）
+
+.gitignoreに必ず追加
+
+# .gitignore
+.env
+.env.local
+.env.production
+config/secrets.yml
+*.key
+*.pem
+.aws/
+credentials
+
+# 依存関係
+node_modules/
+vendor/
+
+# ビルド成果物
+dist/
+build/
+*.log
+
+# IDE設定
+.vscode/
+.idea/
+
+
+誤ってコミットした場合
+
+# 1. 追跡を解除
+git rm --cached .env
+
+# 2. .gitignoreに追加
+echo ".env" >> .gitignore
+
+# 3. コミット
+git add .gitignore
+git commit -m "chore: .envを除外"
+
+# 4. プッシュ
+git push
+
+# ⚠️ すでにプッシュ済みの場合は履歴から完全削除が必要
+# 管理者に相談！
+
+
+📅 チーム開発のタイムライン
+
+朝（始業時）
+
+# 1. 最新を取得
+git checkout main
+git pull origin main
+
+# 2. 今日の作業ブランチ作成または切り替え
+git checkout -b feature/today-task
+# または
+git checkout feature/ongoing-task
+git merge main  # 最新を取り込む
+
+
+作業中（こまめに）
+
+# 1時間〜2時間に1回
+git add .
+git commit -m "feat: ○○機能の△△部分を実装"
+git push
+
+
+夕方（終業前）
+
+# 1. 作業を一区切り
+git add .
+git commit -m "wip: ○○機能の実装途中"
+git push
+
+# 2. プルリク準備
+# ある程度完成したらプルリク作成
+
+
+🛡️ トラブル時の対処
+
+間違ってmainで作業してしまった
+
+# 1. 変更を退避
+git stash
+
+# 2. ブランチ作成して切り替え
+git checkout -b feature/correct-branch
+
+# 3. 変更を戻す
+git stash pop
+
+# 4. コミット
+git add .
+git commit -m "feat: 正しいブランチで作業"
+git push -u origin feature/correct-branch
+
+
+他の人の変更を上書きしそう
+
+# 強制pushは絶対NG！
+# 必ずpullしてマージ
+git pull origin main
+# コンフリクト解決
+git push
+
+
+大きなファイルをコミットしてしまった
+
+# コミット前に気づいた場合
+git reset HEAD large-file.zip
+git checkout large-file.zip
+
+# コミット後、プッシュ前
+git reset --soft HEAD^
+git reset HEAD large-file.zip
+
+# プッシュ後
+# 管理者に相談！
+
+
+📋 チーム開発チェックリスト
+
+# 毎日の開始時
+☐ git pull origin main
+
+# 作業時
+☐ 必ずブランチを作成
+☐ こまめにコミット（意味のある単位で）
+☐ わかりやすいコミットメッセージ
+☐ 定期的にpush
+
+# プルリク前
+☐ mainの最新を取り込む
+☐ コンフリクト解決
+☐ 動作確認
+☐ 不要なファイルが含まれていないか確認
+
+# プルリク作成
+☐ わかりやすいタイトル
+☐ 詳細な説明
+☐ レビュワー指定
+☐ 関連Issueを紐付け
+
+# マージ後
+☐ ローカルのmainを更新
+☐ 作業ブランチを削除
+
+
+💡 チーム開発のベストプラクティス
+
+1. コミュニケーション
+
+# プルリクで質問
+「この実装で問題ないでしょうか？」
+
+# Slackで共有
+「feature/login をプッシュしました」
+
+# 大きな変更は事前相談
+「認証方式を変更したいのですが...」
+
+
+2. ドキュメント整備
+
+# READMEに必ず書く
+- セットアップ手順
+- 開発ルール
+- ブランチ戦略
+- コミットメッセージ規約
+
+
+3. 定期的な同期
+
+# 毎日mainを更新
+git checkout main
+git pull origin main
+
+# 長期ブランチは頻繁にmainを取り込む
+git merge main
+
+
+🎓 まとめ：絶対に守ること
+
+1. mainで直接作業しない
+2. pullせずにpushしない
+3. 他人のブランチで強制pushしない
+4. わかりやすいコミットメッセージ
+5. こまめにコミット・プッシュ
+6. 機密情報をコミットしない
+7. プルリクで必ずレビュー
+8. コンフリクトは丁寧に解決
+9. 大きな変更は事前相談
+10. チームのルールを守る
+
+
+GitのSSH設定を最初から最後まで完全解説します！
+
+🔐 SSH設定の完全ガイド
+
+1️⃣ SSH鍵の生成
+
+新しい鍵を作成
+
+# ED25519方式（推奨・最新）
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# RSA方式（古いシステム用）
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+
+
+対話形式で進む
+
+# 実行すると以下のように聞かれる：
+
+Enter file in which to save the key (/Users/you/.ssh/id_ed25519): 
+# → Enterを押す（デフォルトでOK）
+
+Enter passphrase (empty for no passphrase): 
+# → パスフレーズを入力（推奨）または空Enter
+
+Enter same passphrase again: 
+# → もう一度入力
+
+
+鍵が作成される場所
+
+# Windows
+C:\Users\YourName\.ssh\id_ed25519       # 秘密鍵
+C:\Users\YourName\.ssh\id_ed25519.pub   # 公開鍵
+
+# Mac/Linux
+~/.ssh/id_ed25519       # 秘密鍵
+~/.ssh/id_ed25519.pub   # 公開鍵
+
+
+2️⃣ SSH鍵の確認
+
+鍵が存在するか確認
+
+# Mac/Linux
+ls -la ~/.ssh
+
+# Windows（PowerShell）
+dir $env:USERPROFILE\.ssh
+
+# 出力例：
+# id_ed25519      ← 秘密鍵（絶対に共有しない！）
+# id_ed25519.pub  ← 公開鍵（GitHubに登録する）
+
+
+公開鍵の内容を表示
+
+# Mac/Linux
+cat ~/.ssh/id_ed25519.pub
+
+# Windows（PowerShell）
+type $env:USERPROFILE\.ssh\id_ed25519.pub
+
+# Windows（Git Bash）
+cat ~/.ssh/id_ed25519.pub
+
+# 出力例：
+# ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAI... your_email@example.com
+
+
+クリップボードにコピー
+
+# Mac
+pbcopy < ~/.ssh/id_ed25519.pub
+
+# Windows（PowerShell）
+Get-Content $env:USERPROFILE\.ssh\id_ed25519.pub | Set-Clipboard
+
+# Linux（xclip）
+xclip -selection clipboard < ~/.ssh/id_ed25519.pub
+
+# Linux（xsel）
+xsel --clipboard < ~/.ssh/id_ed25519.pub
+
+
+3️⃣ GitHubにSSH鍵を登録
+
+GitHub での設定手順
+
+GitHubにログイン
+
+Settings（設定）を開く
+
+右上のプロフィールアイコン → Settings
+
+SSH and GPG keysを選択
+
+左メニュー → SSH and GPG keys
+
+New SSH keyをクリック
+
+鍵を登録
+
+Title: 自分のPC（例：MacBook Pro） Key type: Authentication Key Key: ssh-ed25519 AAAAC3Nza... （公開鍵の内容を貼り付け）
+
+Add SSH keyをクリック
+
+パスワードで確認
+
+4️⃣ SSH接続テスト
+
+GitHubへの接続確認
+
+ssh -T git@github.com
+
+# 初回は警証明書の確認が出る：
+# The authenticity of host 'github.com' can't be established.
+# Are you sure you want to continue connecting (yes/no)?
+# → yes と入力
+
+# 成功すると：
+# Hi username! You've successfully authenticated, but GitHub does not provide shell access.
+
+
+GitLabへの接続確認
+
+ssh -T git@gitlab.com
+
+
+Bitbucketへの接続確認
+
+ssh -T git@bitbucket.org
+
+
+5️⃣ SSH Agentの設定
+
+SSH Agentを起動
+
+# Mac/Linux
+eval "$(ssh-agent -s)"
+# → Agent pid 12345
+
+# Windows（Git Bash）
+eval $(ssh-agent -s)
+
+
+秘密鍵を登録
+
+ssh-add ~/.ssh/id_ed25519
+
+# パスフレーズを設定している場合は入力
+# Identity added: /Users/you/.ssh/id_ed25519
+
+
+登録済み鍵の確認
+
+ssh-add -l
+
+# 出力例：
+# 256 SHA256:abcd1234... your_email@example.com (ED25519)
+
+
+6️⃣ SSH設定ファイル（config）
+
+configファイルを作成
+
+# Mac/Linux
+touch ~/.ssh/config
+chmod 600 ~/.ssh/config
+
+# Windows
+# メモ帳等で作成： C:\Users\YourName\.ssh\config
+
+
+configファイルの基本設定
+
+# ~/.ssh/config
+
+# GitHub用
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+    AddKeysToAgent yes
+    UseKeychain yes  # Macのみ
+
+# GitLab用
+Host gitlab.com
+    HostName gitlab.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519
+
+# 複数アカウントを使う場合
+Host github-work
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_work
+
+Host github-personal
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_personal
+
+
+Macでキーチェーンに保存
+
+# ~/.ssh/config に追加
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    IdentityFile ~/.ssh/id_ed25519
+
+
+7️⃣ リポジトリのURLをSSHに変更
+
+既存リポジトリをHTTPSからSSHに変更
+
+# 現在のURLを確認
+git remote -v
+# origin  https://github.com/user/repo.git (fetch)
+# origin  https://github.com/user/repo.git (push)
+
+# SSHに変更
+git remote set-url origin git@github.com:user/repo.git
+
+# 確認
+git remote -v
+# origin  git@github.com:user/repo.git (fetch)
+# origin  git@github.com:user/repo.git (push)
+
+
+新規クローン時にSSHを使う
+
+# HTTPS（古い方法）
+git clone https://github.com/user/repo.git
+
+# SSH（推奨）
+git clone git@github.com:user/repo.git
+
+
+8️⃣ 複数アカウントの設定
+
+複数の鍵を作成
+
+# 仕事用
+ssh-keygen -t ed25519 -C "work@example.com" -f ~/.ssh/id_ed25519_work
+
+# 個人用
+ssh-keygen -t ed25519 -C "personal@example.com" -f ~/.ssh/id_ed25519_personal
+
+
+configファイルで使い分け
+
+# ~/.ssh/config
+
+# 仕事用GitHub
+Host github-work
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_work
+
+# 個人用GitHub
+Host github-personal
+    HostName github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_personal
+
+
+リポジトリで使い分け
+
+# 仕事用リポジトリ
+git clone git@github-work:company/project.git
+
+# 個人用リポジトリ
+git clone git@github-personal:yourname/project.git
+
+# 既存リポジトリの変更
+git remote set-url origin git@github-work:company/project.git
+
+
+9️⃣ トラブルシューティング
+
+エラー1: Permission denied
+
+# エラー
+Permission denied (publickey).
+
+# 原因確認
+ssh -vT git@github.com
+
+# 対処法
+# 1. 鍵が正しく登録されているか確認
+ssh-add -l
+
+# 2. 鍵を再登録
+ssh-add ~/.ssh/id_ed25519
+
+# 3. GitHubに公開鍵が登録されているか確認
+# https://github.com/settings/keys
+
+
+エラー2: Could not open a connection
+
+# エラー
+Could not open a connection to your authentication agent.
+
+# 対処法
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_ed25519
+
+
+エラー3: Bad permissions
+
+# エラー
+Permissions 0644 for '/Users/you/.ssh/id_ed25519' are too open.
+
+# 対処法（Mac/Linux）
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+chmod 700 ~/.ssh
+
+# Windows（PowerShell - 管理者権限）
+icacls $env:USERPROFILE\.ssh\id_ed25519 /inheritance:r
+icacls $env:USERPROFILE\.ssh\id_ed25519 /grant:r "$($env:USERNAME):(R)"
+
+
+エラー4: Host key verification failed
+
+# 対処法
+ssh-keygen -R github.com
+ssh -T git@github.com
+# → yes と入力
+
+
+🔟 SSH鍵の管理
+
+複数鍵の確認
+
+# 登録済みの鍵を表示
+ssh-add -l
+
+# すべての鍵を削除
+ssh-add -D
+
+# 特定の鍵を削除
+ssh-add -d ~/.ssh/id_ed25519
+
+
+鍵の削除
+
+# 鍵ファイルを削除
+rm ~/.ssh/id_ed25519
+rm ~/.ssh/id_ed25519.pub
+
+# GitHubからも削除
+# https://github.com/settings/keys で該当する鍵を削除
+
+
+鍵のバックアップ
+
+# 秘密鍵は安全な場所に保管
+cp ~/.ssh/id_ed25519 /path/to/secure/location/
+
+# ⚠️ 絶対にGitリポジトリにコミットしない！
+
+
+📋 SSH設定チェックリスト
+
+# ✅ 1. 鍵の生成
+ssh-keygen -t ed25519 -C "your_email@example.com"
+
+# ✅ 2. 公開鍵の表示
+cat ~/.ssh/id_ed25519.pub
+
+# ✅ 3. GitHubに登録
+# https://github.com/settings/keys
+
+# ✅ 4. 接続テスト
+ssh -T git@github.com
+
+# ✅ 5. SSH Agentに追加
+ssh-add ~/.ssh/id_ed25519
+
+# ✅ 6. リポジトリのURL変更
+git remote set-url origin git@github.com:user/repo.git
+
+# ✅ 7. 動作確認
+git pull
+git push
+
+
+🎯 よくある質問
+
+Q: HTTPSとSSHどっちがいい？ → SSH推奨（毎回パスワード不要）
+
+Q: パスフレーズは必要？ → 推奨（秘密鍵が盗まれても安全）
+
+Q: 会社と個人で使い分けたい → config設定で可能（上記の複数アカウント設定参照）
+
+Q: 鍵を作り直したい → 古い鍵を削除してから新規作成
+
+Q: Macで再起動すると鍵が消える → configにUseKeychain yes を追加
+
+💡 SSH設定後の確認
+
+# すべて正常か最終チェック
+ssh -T git@github.com           # 接続確認
+git remote -v                   # URLがSSH形式か確認
+git pull                        # パスワード不要で実行できるか
+git push                        # パスワード不要で実行できるか
+
+
+Gitのpushに関連するコマンドを全部まとめます！
+
+🚀 基本的なpush
+
+通常のpush
+
+# 追跡ブランチにプッシュ
+git push
+
+# 特定のリモート・ブランチを指定
+git push origin main
+
+# 現在のブランチを同名でプッシュ
+git push origin HEAD
+
+
+初回push（追跡設定付き）
+
+# -u で追跡ブランチを設定
+git push -u origin feature-branch
+
+# 以降は git push だけでOK
+git push
+
+
+🔧 特殊なpush
+
+1️⃣ 強制push（危険）
+
+# 強制的に上書き（危険！）
+git push -f origin branch-name
+git push --force origin branch-name
+
+# より安全な強制push（他の人の変更は保護）
+git push --force-with-lease origin branch-name
+
+
+使用場面：
+
+rebaseした後
+
+コミット履歴を書き換えた後
+
+⚠️ チーム開発では基本使わない！
+
+2️⃣ すべてのブランチをpush
+
+# すべてのブランチをプッシュ
+git push --all origin
+
+# すべてのタグもプッシュ
+git push --tags origin
+
+# ブランチもタグもすべて
+git push --all origin && git push --tags origin
+
+
+3️⃣ タグのpush
+
+# 特定のタグをプッシュ
+git tag v1.0.0
+git push origin v1.0.0
+
+# すべてのタグをプッシュ
+git push --tags
+
+# ブランチとタグを同時に
+git push origin main --tags
+
+
+4️⃣ 削除のpush
+
+# リモートブランチを削除
+git push origin --delete branch-name
+git push origin :branch-name  # 古い書き方
+
+# リモートタグを削除
+git push origin --delete tag-name
+git push origin :refs/tags/v1.0.0
+
+
+5️⃣ dry-run（確認だけ）
+
+# 実際にプッシュせず、何が起こるか確認
+git push --dry-run origin main
+
+# 出力例で確認できる
+
+
+6️⃣ 上流ブランチ設定
+
+# 方法1: プッシュ時に設定
+git push -u origin feature-branch
+git push --set-upstream origin feature-branch
+
+# 方法2: 設定だけ
+git branch --set-upstream-to=origin/feature-branch
+
+# 方法3: pushのデフォルト動作を設定
+git config --global push.default current
+# 以降、git push だけで現在のブランチを同名でプッシュ
+
+
+7️⃣ 特定のコミットまでpush
+
+# 特定のコミットまでプッシュ
+git push origin abc123:main
+
+# HEADから2つ前までプッシュ
+git push origin HEAD~2:main
+
+
+⚠️ pushでよくあるエラーと対処法
+
+エラー1: rejected (non-fast-forward)
+
+# エラーメッセージ
+! [rejected]        main -> main (non-fast-forward)
+
+# 原因: リモートに新しいコミットがある
+
+# 対処法1: pullしてからpush（推奨）
+git pull origin main
+# コンフリクトがあれば解決
+git push origin main
+
+# 対処法2: rebaseしてからpush
+git pull --rebase origin main
+git push origin main
+
+# 対処法3: 強制push（危険！）
+git push -f origin main
+
+
+エラー2: no upstream branch
+
+# エラーメッセージ
+fatal: The current branch feature has no upstream branch
+
+# 対処法: 追跡ブランチを設定
+git push -u origin feature-branch
+
+
+エラー3: permission denied
+
+# エラーメッセージ
+Permission denied (publickey)
+
+# 対処法1: SSH鍵を設定
+ssh-keygen -t ed25519 -C "your_email@example.com"
+# GitHubに公開鍵を登録
+
+# 対処法2: HTTPSを使う
+git remote set-url origin https://github.com/user/repo.git
+
+
+エラー4: repository not found
+
+# エラーメッセージ
+ERROR: Repository not found
+
+# 対処法: URLを確認
+git remote -v
+git remote set-url origin https://github.com/correct-user/repo.git
+
+
+エラー5: large file （ファイルサイズ制限）
+
+# エラーメッセージ
+remote: error: File large-file.zip is 120MB; exceeds GitHub's 100MB limit
+
+# 対処法1: 履歴から削除
+git rm --cached large-file.zip
+git commit --amend -m "大きなファイルを削除"
+git push
+
+# 対処法2: Git LFSを使う
+git lfs install
+git lfs track "*.zip"
+git add .gitattributes
+git add large-file.zip
+git commit -m "LFSで管理"
+git push
+
+
+🎯 pushの実用パターン
+
+パターン1: 初めてのpush
+
+# 1. リポジトリ作成
+git init
+
+# 2. ファイル追加
+git add .
+git commit -m "初回コミット"
+
+# 3. リモート追加
+git remote add origin https://github.com/user/repo.git
+
+# 4. プッシュ
+git push -u origin main
+
+
+パターン2: 機能開発のpush
+
+# 1. ブランチ作成
+git checkout -b feature/new-login
+
+# 2. 作業してコミット
+git add .
+git commit -m "ログイン機能を追加"
+
+# 3. プッシュ
+git push -u origin feature/new-login
+
+# 4. プルリク作成（GitHub等で）
+
+
+パターン3: コミットを修正してpush
+
+# 1. 直前のコミットを修正
+git commit --amend -m "修正したメッセージ"
+
+# 2. すでにプッシュ済みの場合
+git push --force-with-lease origin branch-name
+
+
+パターン4: 複数コミットをまとめてpush
+
+# 1. 複数回コミット
+git commit -m "作業1"
+git commit -m "作業2"
+git commit -m "作業3"
+
+# 2. まとめてプッシュ
+git push origin feature-branch
+
+
+パターン5: rebase後のpush
+
+# 1. mainを最新に
+git checkout main
+git pull origin main
+
+# 2. featureブランチをrebase
+git checkout feature-branch
+git rebase main
+
+# 3. 強制プッシュ（自分だけのブランチ）
+git push --force-with-lease origin feature-branch
+
+
+🛡️ 安全なpushの使い分け
+
+通常のpush
+
+git push
+
+
+✅ 使う場面：
+
+初めてプッシュする
+
+普通に新しいコミットを追加
+
+チームで作業中
+
+force-with-lease（安全な強制push）
+
+git push --force-with-lease
+
+
+✅ 使う場面：
+
+rebaseした後
+
+コミットを修正した後
+
+自分だけのブランチ
+
+❌ 使わない場面：
+
+他の人も使っているブランチ
+
+mainやdevelopブランチ
+
+force（危険な強制push）
+
+git push -f
+
+
+⚠️ 使う場面：
+
+本当に緊急の場合のみ
+
+完全に理解している場合のみ
+
+❌ 基本的に使わない！
+
+📋 push設定のカスタマイズ
+
+デフォルト動作を変更
+
+# 現在のブランチだけpush（推奨）
+git config --global push.default current
+
+# 追跡ブランチにpush（デフォルト）
+git config --global push.default simple
+
+# すべてのブランチをpush
+git config --global push.default matching
+
+
+自動で追跡ブランチを設定
+
+git config --global push.autoSetupRemote true
+# 以降、git push だけで自動的に -u される
+
+
+🔍 pushの状態確認
+
+# 何がプッシュされるか確認
+git log origin/main..HEAD
+
+# プッシュされていないコミット数
+git rev-list --count origin/main..HEAD
+
+# プッシュされていない変更を確認
+git diff origin/main..HEAD
+
+# 追跡ブランチの状態
+git branch -vv
+
+
+💡 pushのチートシート
+
+# 基本
+git push                              # 通常プッシュ
+git push -u origin branch             # 追跡設定＋プッシュ
+git push origin main                  # ブランチ指定
+
+# 強制
+git push --force-with-lease           # 安全な強制
+git push -f                           # 危険な強制
+
+# 削除
+git push origin --delete branch       # ブランチ削除
+git push origin --delete tag-name     # タグ削除
+
+# 全体
+git push --all                        # すべてのブランチ
+git push --tags                       # すべてのタグ
+
+# 確認
+git push --dry-run                    # 確認だけ
+git log origin/main..HEAD             # プッシュ対象確認
+
+
+🎓 pushの基本ルール
+
+プッシュ前に必ずpull
+
+git pull git push
+
+プッシュ前に状態確認
+
+git status git log --oneline -5 git push
+
+共有ブランチは強制pushしない
+
+# main/developでは絶対NG git push -f origin main # ❌
+
+初回は -u を使う
+
+git push -u origin feature-branch
+
+pushで困っていることはありますか？
+
