@@ -1,0 +1,547 @@
+Pythonのモジュールについて、実践的なコードを作成しますね！
+
+# ==========================================================
+# Pythonモジュール完全ガイド - 新人エンジニア向け
+# ==========================================================
+# このファイルをコピーして、複数のファイルに分割して学習できます
+
+"""
+【フォルダ構成の説明】
+以下のように複数のファイルに分割することを想定しています：
+
+my_project/
+├── main.py                    # メインプログラム（このファイル）
+├── math_utils.py              # 数学関連のモジュール
+├── string_utils.py            # 文字列処理モジュール
+└── my_package/                # パッケージ（フォルダ）
+    ├── __init__.py           # パッケージ初期化ファイル
+    ├── calculator.py         # 計算機モジュール
+    └── formatter.py          # フォーマッターモジュール
+"""
+
+# ==========================================================
+# ファイル1: math_utils.py
+# 数学関連のユーティリティモジュール
+# ==========================================================
+
+# 以下の内容を math_utils.py として別ファイルに保存してください
+"""
+# math_utils.py の内容
+
+# モジュールレベルの定数（大文字で書く慣習）
+PI = 3.14159  # 円周率
+E = 2.71828   # 自然対数の底
+
+# モジュールレベルの変数
+calculation_count = 0  # 計算回数をカウント
+
+def add(a, b):
+    '''
+    2つの数値を加算する関数
+    Args:
+        a: 1つ目の数値
+        b: 2つ目の数値
+    Returns:
+        aとbの合計
+    '''
+    global calculation_count  # グローバル変数を変更するためのキーワード
+    calculation_count += 1  # 計算回数をインクリメント
+    return a + b  # 結果を返す
+
+def subtract(a, b):
+    '''2つの数値を減算する関数'''
+    global calculation_count
+    calculation_count += 1
+    return a - b
+
+def multiply(a, b):
+    '''2つの数値を乗算する関数'''
+    global calculation_count
+    calculation_count += 1
+    return a * b
+
+def divide(a, b):
+    '''
+    2つの数値を除算する関数
+    ゼロ除算のエラー処理付き
+    '''
+    global calculation_count
+    calculation_count += 1
+    if b == 0:  # ゼロ除算チェック
+        raise ValueError("ゼロで割ることはできません")
+    return a / b
+
+def circle_area(radius):
+    '''円の面積を計算（モジュール定数PIを使用）'''
+    return PI * radius * radius
+
+def _internal_function():
+    '''
+    内部使用の関数（アンダースコアで始まる）
+    from module import * では読み込まれない
+    '''
+    return "これは内部関数です"
+
+# このモジュールが直接実行された時のみ実行されるコード
+if __name__ == "__main__":
+    print("math_utils.py が直接実行されました")
+    print(f"5 + 3 = {add(5, 3)}")
+"""
+
+# ==========================================================
+# ファイル2: string_utils.py
+# 文字列処理のユーティリティモジュール
+# ==========================================================
+
+"""
+# string_utils.py の内容
+
+def reverse_string(text):
+    '''文字列を反転させる'''
+    return text[::-1]  # スライスで逆順に
+
+def count_words(text):
+    '''文字列内の単語数をカウント'''
+    return len(text.split())  # 空白で分割してカウント
+
+def capitalize_words(text):
+    '''各単語の先頭を大文字にする'''
+    return text.title()  # title()メソッドを使用
+
+def remove_spaces(text):
+    '''すべての空白を削除'''
+    return text.replace(" ", "")  # 空白を空文字に置換
+
+class TextAnalyzer:
+    '''文字列を分析するクラス'''
+    
+    def __init__(self, text):
+        '''コンストラクタ'''
+        self.text = text  # 分析対象のテキストを保存
+    
+    def get_length(self):
+        '''文字数を取得'''
+        return len(self.text)
+    
+    def get_word_count(self):
+        '''単語数を取得'''
+        return count_words(self.text)  # モジュール内の関数を呼び出し
+    
+    def get_char_frequency(self):
+        '''各文字の出現頻度を辞書で返す'''
+        frequency = {}  # 空の辞書を作成
+        for char in self.text:  # 各文字をループ
+            if char in frequency:  # すでに辞書に存在する場合
+                frequency[char] += 1  # カウントを増やす
+            else:  # 初めて出現する場合
+                frequency[char] = 1  # 新しいキーを作成
+        return frequency
+
+if __name__ == "__main__":
+    print("string_utils.py が直接実行されました")
+    print(reverse_string("Hello"))
+"""
+
+# ==========================================================
+# ファイル3: my_package/__init__.py
+# パッケージの初期化ファイル
+# ==========================================================
+
+"""
+# my_package/__init__.py の内容
+
+# パッケージがインポートされた時に実行されるコード
+print("my_packageが初期化されました")
+
+# パッケージのバージョン情報
+__version__ = "1.0.0"
+
+# パッケージの作者情報
+__author__ = "新人エンジニア"
+
+# from my_package import * で読み込まれるモジュールを指定
+__all__ = ['calculator', 'formatter']
+
+# パッケージレベルの変数
+package_name = "My Utility Package"
+
+# 便利な関数をパッケージレベルで提供
+def get_package_info():
+    '''パッケージ情報を返す'''
+    return f"{package_name} v{__version__} by {__author__}"
+"""
+
+# ==========================================================
+# ファイル4: my_package/calculator.py
+# パッケージ内の計算機モジュール
+# ==========================================================
+
+"""
+# my_package/calculator.py の内容
+
+class Calculator:
+    '''高度な計算機クラス'''
+    
+    def __init__(self):
+        '''コンストラクタ'''
+        self.history = []  # 計算履歴を保存するリスト
+    
+    def calculate(self, expression):
+        '''
+        数式を文字列で受け取り計算する
+        Args:
+            expression: "2 + 3" のような文字列
+        Returns:
+            計算結果
+        '''
+        try:
+            result = eval(expression)  # 文字列を式として評価
+            self.history.append(f"{expression} = {result}")  # 履歴に追加
+            return result
+        except Exception as e:  # エラーが発生した場合
+            return f"エラー: {e}"
+    
+    def get_history(self):
+        '''計算履歴を取得'''
+        return self.history  # 履歴リストを返す
+    
+    def clear_history(self):
+        '''計算履歴をクリア'''
+        self.history = []  # 空のリストで上書き
+        return "履歴がクリアされました"
+
+def power(base, exponent):
+    '''累乗を計算'''
+    return base ** exponent
+
+def factorial(n):
+    '''階乗を計算'''
+    if n == 0 or n == 1:  # 基底条件
+        return 1
+    return n * factorial(n - 1)  # 再帰呼び出し
+"""
+
+# ==========================================================
+# ファイル5: my_package/formatter.py
+# パッケージ内のフォーマッターモジュール
+# ==========================================================
+
+"""
+# my_package/formatter.py の内容
+
+def format_currency(amount, currency="円"):
+    '''金額をフォーマット'''
+    return f"{amount:,}{currency}"  # 3桁区切りでフォーマット
+
+def format_percentage(value, decimal_places=2):
+    '''パーセンテージをフォーマット'''
+    return f"{value:.{decimal_places}f}%"
+
+def format_date(year, month, day):
+    '''日付をフォーマット'''
+    return f"{year}年{month:02d}月{day:02d}日"  # ゼロ埋めで2桁
+
+class TableFormatter:
+    '''テーブル形式でデータを整形するクラス'''
+    
+    def __init__(self, headers):
+        '''
+        コンストラクタ
+        Args:
+            headers: ヘッダーのリスト
+        '''
+        self.headers = headers  # ヘッダーを保存
+        self.rows = []  # データ行を保存するリスト
+    
+    def add_row(self, row):
+        '''行を追加'''
+        if len(row) == len(self.headers):  # カラム数が一致するかチェック
+            self.rows.append(row)  # 行を追加
+        else:
+            raise ValueError("カラム数が一致しません")
+    
+    def display(self):
+        '''テーブルを表示'''
+        # ヘッダーを表示
+        print(" | ".join(self.headers))
+        print("-" * 50)  # 区切り線
+        # 各行を表示
+        for row in self.rows:
+            print(" | ".join(str(cell) for cell in row))
+"""
+
+# ==========================================================
+# メインプログラム: main.py
+# 様々なインポート方法のデモンストレーション
+# ==========================================================
+
+print("=" * 70)
+print("Pythonモジュール・パッケージ 完全ガイド")
+print("=" * 70)
+
+# ------------------------------------------------------
+# 【1】基本的なインポート方法
+# ------------------------------------------------------
+
+print("\n【1. 標準ライブラリのインポート】")
+
+# 方法1: モジュール全体をインポート
+import math  # mathモジュール全体をインポート
+print(f"円周率（math.pi）: {math.pi}")  # モジュール名.関数名で使用
+print(f"平方根（math.sqrt(16)）: {math.sqrt(16)}")
+
+# 方法2: モジュールに別名をつけてインポート
+import datetime as dt  # dtという短い名前で使用できる
+current_time = dt.datetime.now()  # dt.datetime でアクセス
+print(f"現在時刻: {current_time}")
+
+# 方法3: 特定の関数・クラスだけをインポート
+from random import randint, choice  # 必要なものだけインポート
+print(f"ランダムな数値: {randint(1, 100)}")  # 直接関数名で呼び出せる
+print(f"ランダムな選択: {choice(['A', 'B', 'C'])}")
+
+# 方法4: 関数に別名をつけてインポート
+from os import getcwd as get_current_directory  # 長い名前を短くする
+print(f"現在のディレクトリ: {get_current_directory()}")
+
+# 方法5: すべてをインポート（非推奨だが説明のため）
+# from math import *  # すべてをインポート（名前の衝突の可能性あり）
+# print(sqrt(25))  # モジュール名なしで使える
+
+# ------------------------------------------------------
+# 【2】自作モジュールのインポート（シミュレーション）
+# ------------------------------------------------------
+
+print("\n【2. 自作モジュールのインポート例】")
+print("※ 以下は実際のファイルが必要です")
+
+# 実際には以下のようにインポートします：
+# import math_utils
+# result = math_utils.add(10, 20)
+# print(f"加算結果: {result}")
+
+# from string_utils import reverse_string, TextAnalyzer
+# print(reverse_string("Python"))
+
+# ------------------------------------------------------
+# 【3】パッケージのインポート
+# ------------------------------------------------------
+
+print("\n【3. パッケージのインポート例】")
+
+# パターン1: パッケージ内のモジュールをインポート
+# import my_package.calculator
+# calc = my_package.calculator.Calculator()
+
+# パターン2: パッケージから特定のモジュールをインポート
+# from my_package import calculator
+# calc = calculator.Calculator()
+
+# パターン3: モジュールから特定のクラスをインポート
+# from my_package.calculator import Calculator
+# calc = Calculator()
+
+# パターン4: パッケージの情報を取得
+# import my_package
+# print(my_package.get_package_info())
+
+# ------------------------------------------------------
+# 【4】相対インポートと絶対インポート
+# ------------------------------------------------------
+
+print("\n【4. インポートの種類】")
+print("""
+絶対インポート（推奨）:
+  from my_package.calculator import Calculator
+  
+相対インポート（パッケージ内で使用）:
+  from . import calculator        # 同じパッケージ内
+  from .. import other_module     # 一つ上の階層
+  from .calculator import power   # 同じパッケージ内のモジュールから
+""")
+
+# ------------------------------------------------------
+# 【5】モジュールの特殊変数
+# ------------------------------------------------------
+
+print("\n【5. モジュールの特殊変数】")
+
+# __name__: モジュール名（直接実行時は "__main__"）
+print(f"現在のモジュール名: {__name__}")
+
+# __file__: このファイルのパス
+print(f"このファイルのパス: {__file__}")
+
+# __doc__: モジュールのドキュメント文字列
+print(f"このモジュールのdocstring: {__doc__[:50]}...")
+
+# ------------------------------------------------------
+# 【6】インポートされたモジュールの確認
+# ------------------------------------------------------
+
+print("\n【6. インポートされたモジュール一覧】")
+
+import sys  # システム関連のモジュール
+
+# インポート済みのモジュール一覧（一部のみ表示）
+imported_modules = list(sys.modules.keys())[:10]
+print(f"インポート済みモジュール（最初の10個）: {imported_modules}")
+
+# モジュール検索パス
+print(f"\nモジュール検索パス（最初の3つ）:")
+for i, path in enumerate(sys.path[:3], 1):
+    print(f"  {i}. {path}")
+
+# ------------------------------------------------------
+# 【7】実践例：様々なモジュールの組み合わせ
+# ------------------------------------------------------
+
+print("\n【7. 実践例：モジュールの組み合わせ使用】")
+
+import json  # JSON処理
+import os    # OS操作
+
+# データを作成
+data = {
+    "name": "Python学習者",
+    "modules_learned": ["math", "datetime", "random", "json", "os"],
+    "progress": 75.5
+}
+
+# JSONに変換
+json_string = json.dumps(data, ensure_ascii=False, indent=2)
+print(f"JSON形式のデータ:\n{json_string}")
+
+# 環境変数の取得
+print(f"\nPythonのバージョン: {sys.version.split()[0]}")
+print(f"OS: {os.name}")
+
+# ------------------------------------------------------
+# 【8】モジュールのリロード
+# ------------------------------------------------------
+
+print("\n【8. モジュールのリロード】")
+
+import importlib  # importlib モジュール
+
+# モジュールをリロードする方法
+# importlib.reload(math_utils)  # 変更したモジュールを再読み込み
+
+print("モジュールを変更した後、importlib.reload()で再読み込みできます")
+
+# ------------------------------------------------------
+# 【9】まとめと実践的な使い方
+# ------------------------------------------------------
+
+print("\n" + "=" * 70)
+print("【まとめ】モジュールの使い分け")
+print("=" * 70)
+
+summary = """
+1. 標準ライブラリ：
+   - そのまま使える（math, datetime, random など）
+   - import 文でインポートするだけ
+
+2. 自作モジュール：
+   - 同じディレクトリに .py ファイルを作成
+   - import ファイル名 でインポート
+
+3. パッケージ：
+   - フォルダに __init__.py を配置
+   - 複数のモジュールをまとめて管理
+
+4. ベストプラクティス：
+   - 絶対インポートを使う
+   - 必要なものだけインポートする
+   - 循環インポートを避ける
+   - __name__ == "__main__" でテストコードを書く
+"""
+
+print(summary)
+
+# ------------------------------------------------------
+# 【10】実際に使える簡易デモ
+# ------------------------------------------------------
+
+print("\n【10. すぐに試せる簡易デモ】")
+
+# 簡易的な数学モジュールの例（インライン実装）
+class SimpleMathModule:
+    """簡易数学モジュール（デモ用）"""
+    PI = 3.14159
+    
+    @staticmethod
+    def circle_area(radius):
+        """円の面積を計算"""
+        return SimpleMathModule.PI * radius ** 2
+    
+    @staticmethod
+    def circle_circumference(radius):
+        """円周を計算"""
+        return 2 * SimpleMathModule.PI * radius
+
+# 使用例
+radius = 5
+print(f"半径{radius}の円:")
+print(f"  面積: {SimpleMathModule.circle_area(radius):.2f}")
+print(f"  円周: {SimpleMathModule.circle_circumference(radius):.2f}")
+
+print("\n" + "=" * 70)
+print("デモ終了！実際にファイルを分割して試してみましょう！")
+print("=" * 70)
+
+Pythonのモジュールについて、詳細なコードを作成しました！
+
+## 📁 実際のファイル構成
+
+このコードを実践するには、以下のようにファイルを分割します：
+
+```
+my_project/
+├── main.py              # メインプログラム
+├── math_utils.py        # 数学関連モジュール
+├── string_utils.py      # 文字列処理モジュール
+└── my_package/          # パッケージフォルダ
+    ├── __init__.py      # パッケージ初期化
+    ├── calculator.py    # 計算機モジュール
+    └── formatter.py     # フォーマッターモジュール
+```
+
+## 🎯 学べる重要ポイント
+
+### 1. **インポート方法**
+- `import module` - 基本形
+- `import module as alias` - 別名
+- `from module import function` - 特定の要素だけ
+- `from module import *` - すべて（非推奨）
+
+### 2. **モジュールの作り方**
+- 普通の`.py`ファイルがモジュールになる
+- `if __name__ == "__main__":` でテストコード記述
+
+### 3. **パッケージの作り方**
+- フォルダに`__init__.py`を配置
+- 複数のモジュールをまとめて管理
+
+### 4. **特殊変数**
+- `__name__`: モジュール名
+- `__file__`: ファイルパス
+- `__all__`: エクスポートする名前リスト
+
+## 🚀 実践手順
+
+### ステップ1: ファイルを作成
+コード内のコメント部分をコピーして、各ファイルを作成してください。
+
+### ステップ2: main.pyを実行
+```bash
+python main.py
+```
+
+### ステップ3: 各モジュールを個別に実行してテスト
+```bash
+python math_utils.py
+python string_utils.py
+```
+
+すべてのコードに詳細なコメントがついているので、順番に読んでいけばモジュールの仕組みが理解できます！
