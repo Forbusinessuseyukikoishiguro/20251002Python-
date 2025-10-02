@@ -1,0 +1,134 @@
+# 真偽値の比較
+if is_active:        # ✅ そのまま
+if is_active == True:  # ❌ 冗長
+
+# 空のチェック
+if not my_list:      # ✅ シンプル
+if len(my_list) == 0:  # ❌ 冗長
+```
+
+### 5️⃣ **docstring**
+
+```python
+def calculate(price: int, quantity: int) -> int:
+    """合計金額を計算する
+    
+    Args:
+        price: 単価
+        quantity: 数量
+    
+    Returns:
+        合計金額
+    """
+    return price * quantity
+```
+
+## 🎨 完璧なコードの例
+
+```python
+"""ユーザー管理モジュール"""
+
+# 標準ライブラリ
+import os
+from datetime import datetime
+
+# サードパーティ
+import requests
+
+# 自作モジュール
+from my_module import helper
+
+
+# 定数
+MAX_USERS = 100
+DEFAULT_TIMEOUT = 30
+
+
+def get_user_name(user_id: int) -> str:
+    """ユーザー名を取得する
+    
+    Args:
+        user_id: ユーザーID
+    
+    Returns:
+        ユーザー名
+    """
+    return "田中太郎"
+
+
+class UserManager:
+    """ユーザー管理クラス"""
+    
+    def __init__(self, name: str):
+        """コンストラクタ"""
+        self.name = name
+        self._internal_id = 0
+    
+    def get_name(self) -> str:
+        """名前を取得"""
+        return self.name
+```
+
+## 🛠️ 自動チェックツール
+
+```bash
+# インストール
+pip install black flake8 pylint isort mypy
+
+# 使い方
+black your_file.py     # 自動フォーマット
+flake8 your_file.py    # スタイルチェック
+pylint your_file.py    # 総合チェック
+isort your_file.py     # import整理
+mypy your_file.py      # 型チェック
+```
+
+## ⚙️ VSCode設定
+
+```json
+{
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "editor.rulers": [79]
+}
+```
+
+## ✅ チェックリスト
+
+```
+□ 変数名は snake_case
+□ クラス名は PascalCase
+□ 定数は UPPER_SNAKE_CASE
+□ 演算子の前後にスペース
+□ カンマの後にスペース
+□ インデントはスペース4つ
+□ 1行は79文字以内
+□ 関数間に空行2つ
+□ インポートは標準→サードパーティ→自作
+□ None比較は is を使う
+□ docstringを書いている
+□ blackで自動整形している
+```
+
+## 🎯 まとめ：5つの黄金ルール
+
+```
+1. snake_case & PascalCase
+   変数・関数はsnake_case、クラスはPascalCase
+
+2. スペースを適切に
+   演算子とカンマの後にスペース
+
+3. インポートは3グループ
+   標準→サードパーティ→自作
+
+4. blackを使う
+   自動で整形、議論不要
+
+5. docstringは必須
+   関数には必ず説明を書く
+```
+
+これでPythonコーディング規約は完璧！`black`を使えば自動で整形できるので、まずは`pip install black`から始めましょう 🎉
