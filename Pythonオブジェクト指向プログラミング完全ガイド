@@ -1,0 +1,660 @@
+# ==========================================================
+# Pythonオブジェクト指向プログラミング完全ガイド
+# ==========================================================
+
+"""
+【オブジェクト指向とは？】
+
+簡単に言うと：
+  「モノ」を中心にプログラムを組み立てる考え方
+  
+例：
+  犬という「モノ」は...
+  - 属性: 名前、年齢、犬種
+  - 行動: 吠える、走る、食べる
+  
+  これを「クラス」として定義する
+
+重要な概念：
+  1. クラス          設計図
+  2. インスタンス    実際のモノ
+  3. 継承           親子関係
+  4. ポリモーフィズム 同じ命令で違う動き
+  5. カプセル化      隠蔽（public/private）
+"""
+
+print("=" * 70)
+print("Pythonオブジェクト指向プログラミング完全ガイド")
+print("=" * 70)
+
+# ==========================================================
+# 【1】クラスとインスタンスの基本
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【1】クラスとインスタンス - 設計図と実物")
+print("=" * 70)
+
+# --- 最もシンプルなクラス ---
+class Dog:
+    """犬を表すクラス（設計図）"""
+    
+    def __init__(self, name, age):
+        """
+        コンストラクタ: インスタンス作成時に呼ばれる
+        self: 自分自身を指す（必須）
+        """
+        self.name = name  # インスタンス変数（属性）
+        self.age = age    # インスタンス変数（属性）
+    
+    def bark(self):
+        """メソッド: インスタンスの行動"""
+        return f"{self.name}「ワンワン！」"
+    
+    def get_info(self):
+        """情報を返すメソッド"""
+        return f"{self.name}（{self.age}歳）"
+
+# --- インスタンスの作成 ---
+print("\n■ インスタンスを作る")
+dog1 = Dog("ポチ", 3)      # インスタンス1を作成
+dog2 = Dog("タロー", 5)    # インスタンス2を作成
+
+print(f"犬1: {dog1.get_info()}")  # ポチ（3歳）
+print(f"犬2: {dog2.get_info()}")  # タロー（5歳）
+print(dog1.bark())  # ポチ「ワンワン！」
+print(dog2.bark())  # タロー「ワンワン！」
+
+# --- クラス vs インスタンス ---
+print("\n■ クラスとインスタンスの違い")
+print("""
+クラス（Dog）          : 設計図、レシピ
+インスタンス（dog1）   : 実際に作られた物
+
+例え：
+  クラス      = たい焼きの型
+  インスタンス = 実際に焼いたたい焼き
+  
+  同じ型（クラス）から、
+  何個でもたい焼き（インスタンス）を作れる！
+""")
+
+# ==========================================================
+# 【2】メリット - なぜクラスを使うのか？
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【2】クラスを使うメリット")
+print("=" * 70)
+
+print("""
+■ メリット1: コードの整理
+  関連するデータと機能をまとめられる
+  
+  クラスなし:
+    user_name = "田中"
+    user_age = 30
+    user_email = "tanaka@example.com"
+    
+    def get_user_info(name, age, email):
+        return f"{name}（{age}歳）"
+    
+    # 関数呼び出しが面倒...
+    get_user_info(user_name, user_age, user_email)
+  
+  クラスあり:
+    user = User("田中", 30, "tanaka@example.com")
+    user.get_info()  # シンプル！
+
+■ メリット2: 再利用性
+  一度クラスを作れば、何度でも使い回せる
+  
+  user1 = User("田中", 30, "tanaka@xx.com")
+  user2 = User("佐藤", 25, "sato@xx.com")
+  user3 = User("鈴木", 35, "suzuki@xx.com")
+
+■ メリット3: 保守性
+  変更が1箇所で済む
+  
+  クラスの定義を変えれば、
+  全てのインスタンスに反映される
+
+■ メリット4: 現実世界のモデル化
+  現実の「モノ」をそのままコードにできる
+  
+  例: ゲーム
+    - プレイヤークラス
+    - 敵クラス
+    - アイテムクラス
+
+■ メリット5: チーム開発
+  クラスごとに担当を分けられる
+  インターフェース（使い方）を決めれば、
+  中身は別々に作れる
+""")
+
+# ==========================================================
+# 【3】public と private - カプセル化
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【3】public と private - 情報の隠蔽")
+print("=" * 70)
+
+class BankAccount:
+    """銀行口座クラス - カプセル化の例"""
+    
+    def __init__(self, owner, initial_balance=0):
+        # public属性（普通の属性）
+        self.owner = owner  # 誰でもアクセス可能
+        
+        # protected属性（_で始まる）慣習的に内部使用
+        self._account_number = "123-456-789"
+        
+        # private属性（__で始まる）外部から直接アクセス不可
+        self.__balance = initial_balance  # 残高は隠す
+    
+    # publicメソッド（外部から使える）
+    def deposit(self, amount):
+        """入金（公開メソッド）"""
+        if amount > 0:
+            self.__balance += amount  # privateにアクセス
+            return f"{amount}円を入金しました"
+        return "入金額は正の数である必要があります"
+    
+    def withdraw(self, amount):
+        """出金（公開メソッド）"""
+        if amount > self.__balance:
+            return "残高不足です"
+        self.__balance -= amount
+        return f"{amount}円を出金しました"
+    
+    # getter（privateな値を取得）
+    def get_balance(self):
+        """残高を取得"""
+        return self.__balance
+    
+    # setter（privateな値を設定）
+    def set_balance(self, amount):
+        """残高を設定（検証付き）"""
+        if amount >= 0:
+            self.__balance = amount
+        else:
+            raise ValueError("残高は0以上である必要があります")
+    
+    # protectedメソッド（_で始まる）
+    def _internal_process(self):
+        """内部処理用メソッド"""
+        return "内部処理中..."
+    
+    # privateメソッド（__で始まる）
+    def __validate(self, amount):
+        """検証用のプライベートメソッド"""
+        return amount > 0
+
+# --- 使用例 ---
+print("\n■ public と private の動作")
+account = BankAccount("田中太郎", 10000)
+
+# public属性はアクセス可能
+print(f"口座名義: {account.owner}")  # OK
+
+# publicメソッドで操作
+print(account.deposit(5000))         # OK
+print(f"残高: {account.get_balance()}円")  # OK
+
+# private属性に直接アクセスしようとすると...
+# print(account.__balance)  # エラー！AttributeError
+
+# 正しい方法: getterを使う
+print(f"残高（正しい方法）: {account.get_balance()}円")
+
+print("\n■ アクセス制御のまとめ")
+print("""
+┌─────────────┬────────────┬──────────────┐
+│ 記法        │ 名前       │ アクセス     │
+├─────────────┼────────────┼──────────────┤
+│ name        │ public     │ どこからでも │
+│ _name       │ protected  │ 慣習的に内部 │
+│ __name      │ private    │ 外部不可     │
+└─────────────┴────────────┴──────────────┘
+
+注意: Pythonには厳密なprivateはない
+     __name は名前マングリングで隠蔽されるだけ
+     _ClassName__name でアクセス可能（非推奨）
+""")
+
+# ==========================================================
+# 【4】継承 - 親子関係
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【4】継承 - 親クラスと子クラス")
+print("=" * 70)
+
+# --- 親クラス（基底クラス）---
+class Animal:
+    """動物クラス（親）"""
+    
+    def __init__(self, name, age):
+        self.name = name  # 名前
+        self.age = age    # 年齢
+    
+    def eat(self):
+        """食べる（共通の行動）"""
+        return f"{self.name}が食べています"
+    
+    def sleep(self):
+        """寝る（共通の行動）"""
+        return f"{self.name}が寝ています"
+    
+    def speak(self):
+        """鳴く（子クラスでオーバーライドされる）"""
+        return f"{self.name}が何か音を出しています"
+
+# --- 子クラス1（派生クラス）---
+class Cat(Animal):  # Animalを継承
+    """猫クラス（子）"""
+    
+    def __init__(self, name, age, color):
+        # 親クラスのコンストラクタを呼ぶ
+        super().__init__(name, age)
+        # 子クラス独自の属性
+        self.color = color
+    
+    def speak(self):
+        """メソッドのオーバーライド（上書き）"""
+        return f"{self.name}「ニャー」"
+    
+    def scratch(self):
+        """猫独自のメソッド"""
+        return f"{self.name}が爪を研いでいます"
+
+# --- 子クラス2 ---
+class Bird(Animal):  # Animalを継承
+    """鳥クラス（子）"""
+    
+    def __init__(self, name, age, can_fly=True):
+        super().__init__(name, age)
+        self.can_fly = can_fly
+    
+    def speak(self):
+        """メソッドのオーバーライド"""
+        return f"{self.name}「ピヨピヨ」"
+    
+    def fly(self):
+        """鳥独自のメソッド"""
+        if self.can_fly:
+            return f"{self.name}が飛んでいます"
+        return f"{self.name}は飛べません"
+
+# --- 使用例 ---
+print("\n■ 継承の動作確認")
+cat = Cat("タマ", 3, "三毛")
+bird = Bird("ピーちゃん", 1, can_fly=True)
+
+# 親クラスのメソッドが使える
+print(cat.eat())    # Animalから継承
+print(bird.sleep()) # Animalから継承
+
+# 子クラスでオーバーライドされたメソッド
+print(cat.speak())  # ニャー
+print(bird.speak()) # ピヨピヨ
+
+# 子クラス独自のメソッド
+print(cat.scratch())  # 猫だけ
+print(bird.fly())     # 鳥だけ
+
+print("\n■ 継承のメリット")
+print("""
+✅ コードの再利用
+   共通部分（eat, sleep）は親に書くだけ
+   
+✅ 階層構造
+   Animal
+   ├── Cat
+   ├── Dog
+   └── Bird
+   
+✅ 拡張が容易
+   新しい動物を追加しやすい
+   
+✅ 保守性
+   共通処理の変更が1箇所で済む
+""")
+
+# ==========================================================
+# 【5】ポリモーフィズム - 多態性
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【5】ポリモーフィズム - 同じ命令で違う動き")
+print("=" * 70)
+
+# ポリモーフィズムの実演
+def make_sound(animal):
+    """どんな動物でも鳴かせる関数"""
+    print(animal.speak())  # 同じメソッド名を呼ぶだけ
+
+# 異なる種類の動物を作成
+animals = [
+    Cat("ミケ", 2, "三毛"),
+    Bird("ポッポ", 1, True),
+    Cat("クロ", 4, "黒"),
+    Bird("ペンペン", 3, False)
+]
+
+print("\n■ ポリモーフィズムの実演")
+for animal in animals:
+    make_sound(animal)  # 同じ関数で違う結果！
+
+print("\n■ ポリモーフィズムとは")
+print("""
+「同じ命令」で「違う動作」をする仕組み
+
+例：
+  make_sound(猫)  → ニャー
+  make_sound(鳥)  → ピヨピヨ
+  make_sound(犬)  → ワンワン
+  
+  関数は animal.speak() を呼ぶだけ
+  具体的な動作は各クラスが決める
+
+メリット:
+  ✅ 柔軟なコード
+  ✅ 拡張が容易（新しい動物を追加しやすい）
+  ✅ 統一されたインターフェース
+""")
+
+# ==========================================================
+# 【6】オーバーライド vs オーバーロード
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【6】オーバーライド vs オーバーロード")
+print("=" * 70)
+
+# --- オーバーライド ---
+print("\n■ オーバーライド（上書き）")
+
+class Parent:
+    """親クラス"""
+    def greet(self):
+        return "こんにちは（親）"
+
+class Child(Parent):
+    """子クラス"""
+    def greet(self):
+        """親のメソッドをオーバーライド"""
+        return "こんにちは（子）"
+
+parent = Parent()
+child = Child()
+print(f"親: {parent.greet()}")  # こんにちは（親）
+print(f"子: {child.greet()}")   # こんにちは（子）← 上書きされた
+
+# --- オーバーロード（Pythonでは特殊）---
+print("\n■ オーバーロード（Pythonの方法）")
+
+class Calculator:
+    """計算機クラス"""
+    
+    # Pythonには厳密なオーバーロードがない
+    # デフォルト引数で実現
+    def add(self, a, b=0, c=0):
+        """
+        引数の数に応じて動作が変わる
+        add(5)      → 5 + 0 + 0 = 5
+        add(5, 3)   → 5 + 3 + 0 = 8
+        add(5, 3, 2) → 5 + 3 + 2 = 10
+        """
+        return a + b + c
+    
+    # 可変長引数でも実現可能
+    def multiply(self, *args):
+        """
+        任意の個数の引数を掛け算
+        multiply(2, 3)       → 6
+        multiply(2, 3, 4)    → 24
+        multiply(2, 3, 4, 5) → 120
+        """
+        result = 1
+        for num in args:
+            result *= num
+        return result
+
+calc = Calculator()
+print(f"add(5): {calc.add(5)}")           # 5
+print(f"add(5, 3): {calc.add(5, 3)}")     # 8
+print(f"add(5, 3, 2): {calc.add(5, 3, 2)}")  # 10
+print(f"multiply(2, 3): {calc.multiply(2, 3)}")        # 6
+print(f"multiply(2, 3, 4): {calc.multiply(2, 3, 4)}")  # 24
+
+print("\n■ オーバーライド vs オーバーロード")
+print("""
+┌──────────────┬────────────────────────┐
+│ オーバーライド │ 親のメソッドを子が上書き │
+│ (Override)   │ 継承で使う             │
+├──────────────┼────────────────────────┤
+│ オーバーロード │ 同じ名前で引数が違う   │
+│ (Overload)   │ Pythonは非対応*        │
+└──────────────┴────────────────────────┘
+
+*Pythonでは:
+  - デフォルト引数
+  - 可変長引数（*args, **kwargs）
+  で似たことを実現
+""")
+
+# ==========================================================
+# 【7】チートシート - OOPの全体像
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【7】オブジェクト指向チートシート")
+print("=" * 70)
+
+cheatsheet = """
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃        オブジェクト指向プログラミング全体像        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+■ 基本用語
+┌─────────────┬──────────────────────────┐
+│ クラス      │ 設計図、レシピ、型        │
+│ インスタンス│ 実際に作られた物          │
+│ 属性        │ データ（変数）            │
+│ メソッド    │ 動作（関数）              │
+│ self        │ 自分自身を指す            │
+│ __init__    │ コンストラクタ（初期化）  │
+└─────────────┴──────────────────────────┘
+
+■ アクセス制御
+┌────────┬─────────┬──────────────┐
+│ 記法   │ 意味    │ 外部アクセス │
+├────────┼─────────┼──────────────┤
+│ name   │ public  │ ○           │
+│ _name  │ protect │ △（慣習）   │
+│ __name │ private │ ×           │
+└────────┴─────────┴──────────────┘
+
+■ 継承
+  class 子クラス(親クラス):
+      def __init__(self):
+          super().__init__()  # 親の初期化
+  
+  用語:
+    - 親クラス = 基底クラス = スーパークラス
+    - 子クラス = 派生クラス = サブクラス
+  
+  メリット:
+    ✅ コードの再利用
+    ✅ 階層構造
+    ✅ 拡張が容易
+
+■ ポリモーフィズム
+  同じメソッド名で違う動作
+  
+  例:
+    animal.speak()
+    ├─ 猫なら「ニャー」
+    ├─ 犬なら「ワンワン」
+    └─ 鳥なら「ピヨピヨ」
+  
+  実現方法:
+    - オーバーライド（メソッドの上書き）
+
+■ オーバーライド vs オーバーロード
+  オーバーライド:
+    親のメソッドを子が上書き
+    class Child(Parent):
+        def method(self):  # 親を上書き
+            pass
+  
+  オーバーロード:
+    同じ名前で引数違い（Pythonは非対応）
+    → デフォルト引数や*argsで代用
+
+■ カプセル化
+  データと機能をまとめて、内部を隠す
+  
+  目的:
+    ✅ データ保護
+    ✅ 使いやすいインターフェース
+    ✅ 変更の影響を最小化
+  
+  実装:
+    - privateな属性（__balance）
+    - publicなメソッド（get_balance）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ クラス設計のフローチャート
+
+Q1: 共通する属性や動作がある？
+    ├─ YES → クラスを作る
+    └─ NO  → 関数で十分
+
+Q2: 似たようなクラスが複数ある？
+    ├─ YES → 親クラスに共通部分をまとめる（継承）
+    └─ NO  → 単独のクラス
+
+Q3: 外部から直接変更されたくない属性がある？
+    ├─ YES → private（__属性）にする
+    └─ NO  → publicのまま
+
+Q4: 同じメソッド名で違う動作が必要？
+    ├─ YES → オーバーライド
+    └─ NO  → 新しいメソッド名
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ よくあるパターン
+
+パターン1: データの管理
+  class User:
+      def __init__(self, name, email):
+          self.name = name
+          self.email = email
+
+パターン2: 処理のカプセル化
+  class FileManager:
+      def read(self, path):
+          pass
+      def write(self, path, data):
+          pass
+
+パターン3: 階層構造
+  class Vehicle:        # 乗り物（親）
+      pass
+  
+  class Car(Vehicle):   # 車（子）
+      pass
+  
+  class Bike(Vehicle):  # バイク（子）
+      pass
+
+パターン4: 状態管理
+  class Game:
+      def __init__(self):
+          self.__score = 0
+      
+      def add_score(self, points):
+          self.__score += points
+      
+      def get_score(self):
+          return self.__score
+"""
+
+print(cheatsheet)
+
+# ==========================================================
+# 【8】実践例 - RPGゲーム
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【8】実践例 - RPGゲームキャラクター")
+print("=" * 70)
+
+class Character:
+    """キャラクタークラス（親）"""
+    
+    def __init__(self, name, hp, attack):
+        self.name = name      # 名前
+        self.__hp = hp        # HP（private）
+        self.attack = attack  # 攻撃力
+    
+    def get_hp(self):
+        """HPを取得"""
+        return self.__hp
+    
+    def take_damage(self, damage):
+        """ダメージを受ける"""
+        self.__hp -= damage
+        if self.__hp < 0:
+            self.__hp = 0
+        return f"{self.name}は{damage}のダメージを受けた！（残りHP: {self.__hp}）"
+    
+    def is_alive(self):
+        """生きているか"""
+        return self.__hp > 0
+    
+    def special_attack(self):
+        """特殊攻撃（子クラスでオーバーライド）"""
+        return f"{self.name}の攻撃！"
+
+class Warrior(Character):
+    """戦士クラス（子）"""
+    
+    def special_attack(self):
+        """特殊攻撃をオーバーライド"""
+        return f"{self.name}の剣技！ダメージ: {self.attack * 2}"
+
+class Mage(Character):
+    """魔法使いクラス（子）"""
+    
+    def __init__(self, name, hp, attack, mp):
+        super().__init__(name, hp, attack)
+        self.__mp = mp  # 魔法使い独自の属性
+    
+    def special_attack(self):
+        """特殊攻撃をオーバーライド"""
+        if self.__mp >= 10:
+            self.__mp -= 10
+            return f"{self.name}の魔法！ダメージ: {self.attack * 3}"
+        return f"{self.name}はMPが足りない！"
+
+# ゲームの実行
+print("\n■ バトル開始")
+warrior = Warrior("勇者", 100, 20)
+mage = Mage("魔法使い", 80, 15, 50)
+
+print(warrior.special_attack())  # ポリモーフィズム
+print(mage.special_attack())     # ポリモーフィズム
+
+print(mage.take_damage(30))
+print(f"{mage.name}は生きている？: {mage.is_alive()}")
+
+print("\n" + "=" * 70)
+print("これでオブジェクト指向マスター！")
+print("=" * 70)
