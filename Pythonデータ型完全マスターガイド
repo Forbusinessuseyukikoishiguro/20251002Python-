@@ -1,0 +1,526 @@
+# ==========================================================
+# Pythonデータ型完全マスターガイド - 新人エンジニア向け
+# ==========================================================
+
+"""
+【Pythonの主要なデータ型】
+
+基本型：
+  int       整数
+  float     小数
+  str       文字列
+  bool      真偽値
+
+コレクション型：
+  list      リスト（可変、順序あり）
+  tuple     タプル（不変、順序あり）
+  set       セット（可変、順序なし、重複なし）
+  dict      辞書（可変、キー・バリューのペア）
+
+特殊型：
+  None      値が存在しないことを表す
+"""
+
+print("=" * 70)
+print("Pythonデータ型完全マスターガイド")
+print("=" * 70)
+
+# ==========================================================
+# 【1】基本型（プリミティブ型）
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【1】基本型 - int, float, str, bool")
+print("=" * 70)
+
+# --- int（整数）---
+print("\n■ int（整数型）")
+age = 25  # 整数を代入
+count = -10  # 負の整数も可能
+big_number = 1000000  # 大きな数値も扱える
+
+print(f"年齢: {age}, 型: {type(age)}")  # 型を確認
+print(f"計算: {age + 5}")  # 足し算
+print(f"計算: {age * 2}")  # 掛け算
+print(f"計算: {age // 3}")  # 整数除算（小数点以下切り捨て）
+print(f"計算: {age % 3}")  # 余り
+
+# --- float（小数）---
+print("\n■ float（浮動小数点型）")
+price = 99.99  # 小数を代入
+temperature = -5.5  # 負の小数も可能
+
+print(f"価格: {price}, 型: {type(price)}")
+print(f"計算: {price * 1.1}")  # 小数の計算
+print(f"小数点2桁: {price:.2f}")  # フォーマット
+print(f"整数に変換: {int(price)}")  # 型変換
+
+# --- str（文字列）---
+print("\n■ str（文字列型）")
+name = "山田太郎"  # 文字列を代入
+message = 'こんにちは'  # シングルクォートも可能
+multi_line = """これは
+複数行の
+文字列です"""  # 複数行の文字列
+
+print(f"名前: {name}, 型: {type(name)}")
+print(f"長さ: {len(name)}")  # 文字数を取得
+print(f"大文字: {'hello'.upper()}")  # 大文字に変換
+print(f"結合: {name + 'さん'}")  # 文字列の結合
+print(f"分割: {'a,b,c'.split(',')}")  # カンマで分割
+print(f"置換: {name.replace('太郎', '花子')}")  # 置換
+
+# --- bool（真偽値）---
+print("\n■ bool（ブール型）")
+is_student = True  # 真
+is_working = False  # 偽
+
+print(f"学生？: {is_student}, 型: {type(is_student)}")
+print(f"論理演算: {is_student and is_working}")  # AND
+print(f"論理演算: {is_student or is_working}")  # OR
+print(f"論理演算: {not is_student}")  # NOT
+
+# --- None（値なし）---
+print("\n■ None（値が存在しない）")
+result = None  # 値が存在しない状態
+
+print(f"結果: {result}, 型: {type(result)}")
+if result is None:  # Noneのチェックは is を使う
+    print("結果がありません")
+
+# ==========================================================
+# 【2】リスト（list）- 最もよく使う！
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【2】リスト（list）- 順序あり、可変、重複OK")
+print("=" * 70)
+
+# --- 基本的な使い方 ---
+print("\n■ 基本操作")
+fruits = ["りんご", "バナナ", "オレンジ"]  # リストの作成
+numbers = [1, 2, 3, 4, 5]  # 数値のリスト
+mixed = [1, "hello", 3.14, True]  # 異なる型を混在可能
+
+print(f"リスト: {fruits}")
+print(f"長さ: {len(fruits)}")  # 要素数
+print(f"最初の要素: {fruits[0]}")  # インデックスでアクセス（0始まり）
+print(f"最後の要素: {fruits[-1]}")  # 負のインデックス（最後から）
+print(f"スライス: {numbers[1:4]}")  # 範囲取得（1番目から3番目まで）
+
+# --- 要素の追加 ---
+print("\n■ 要素の追加")
+fruits.append("ぶどう")  # 末尾に追加
+print(f"append後: {fruits}")
+
+fruits.insert(1, "いちご")  # 指定位置に挿入
+print(f"insert後: {fruits}")
+
+fruits.extend(["メロン", "すいか"])  # 複数追加
+print(f"extend後: {fruits}")
+
+# --- 要素の削除 ---
+print("\n■ 要素の削除")
+fruits.remove("バナナ")  # 値で削除（最初の一致）
+print(f"remove後: {fruits}")
+
+removed = fruits.pop()  # 末尾を削除して返す
+print(f"pop後: {fruits}, 削除された: {removed}")
+
+removed = fruits.pop(0)  # 指定位置を削除
+print(f"pop(0)後: {fruits}, 削除された: {removed}")
+
+del fruits[0]  # インデックスで削除
+print(f"del後: {fruits}")
+
+fruits.clear()  # 全削除
+print(f"clear後: {fruits}")
+
+# --- 便利な操作 ---
+print("\n■ 便利な操作")
+numbers = [3, 1, 4, 1, 5, 9, 2, 6]
+print(f"元のリスト: {numbers}")
+print(f"ソート: {sorted(numbers)}")  # ソート（元は変更しない）
+numbers.sort()  # ソート（元を変更）
+print(f"sort後: {numbers}")
+numbers.reverse()  # 逆順
+print(f"reverse後: {numbers}")
+print(f"最大値: {max(numbers)}")  # 最大
+print(f"最小値: {min(numbers)}")  # 最小
+print(f"合計: {sum(numbers)}")  # 合計
+print(f"カウント: {numbers.count(1)}")  # 特定の値の個数
+print(f"インデックス: {numbers.index(9)}")  # 値の位置
+
+# --- リスト内包表記（超重要！）---
+print("\n■ リスト内包表記")
+squares = [x**2 for x in range(5)]  # 0-4の2乗
+print(f"2乗のリスト: {squares}")
+
+evens = [x for x in range(10) if x % 2 == 0]  # 偶数のみ
+print(f"偶数のリスト: {evens}")
+
+# ==========================================================
+# 【3】タプル（tuple）- 変更不可のリスト
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【3】タプル（tuple）- 順序あり、不変、重複OK")
+print("=" * 70)
+
+# --- 基本的な使い方 ---
+print("\n■ 基本操作")
+coordinates = (35.6895, 139.6917)  # 座標（変更されたくないデータ）
+rgb = (255, 128, 0)  # RGB値
+single = (42,)  # 1要素のタプル（カンマ必須）
+
+print(f"座標: {coordinates}, 型: {type(coordinates)}")
+print(f"緯度: {coordinates[0]}")  # インデックスでアクセス
+print(f"経度: {coordinates[1]}")
+
+# タプルは変更できない
+# coordinates[0] = 40  # エラー！TypeError
+
+# --- タプルのアンパック ---
+print("\n■ アンパック（分解代入）")
+lat, lon = coordinates  # タプルを変数に分解
+print(f"緯度: {lat}, 経度: {lon}")
+
+r, g, b = rgb  # RGB値を分解
+print(f"R: {r}, G: {g}, B: {b}")
+
+# --- 複数の値を返す関数でよく使う ---
+print("\n■ 関数での使用例")
+def get_min_max(numbers):
+    """最小値と最大値をタプルで返す"""
+    return min(numbers), max(numbers)  # タプルで返す
+
+min_val, max_val = get_min_max([1, 5, 3, 9, 2])
+print(f"最小: {min_val}, 最大: {max_val}")
+
+# ==========================================================
+# 【4】セット（set）- 重複なし、順序なし
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【4】セット（set）- 順序なし、可変、重複なし")
+print("=" * 70)
+
+# --- 基本的な使い方 ---
+print("\n■ 基本操作")
+unique_numbers = {1, 2, 3, 4, 5}  # セットの作成
+colors = {"赤", "青", "緑"}
+
+print(f"セット: {unique_numbers}")
+print(f"長さ: {len(unique_numbers)}")
+
+# 重複は自動的に削除される
+duplicates = {1, 2, 2, 3, 3, 3}
+print(f"重複削除: {duplicates}")  # {1, 2, 3}
+
+# リストから重複を削除
+numbers_list = [1, 2, 2, 3, 3, 3, 4, 4]
+unique = list(set(numbers_list))  # リスト→セット→リスト
+print(f"重複削除されたリスト: {unique}")
+
+# --- 要素の追加・削除 ---
+print("\n■ 要素の追加・削除")
+colors.add("黄色")  # 要素を追加
+print(f"add後: {colors}")
+
+colors.remove("青")  # 要素を削除（存在しないとエラー）
+print(f"remove後: {colors}")
+
+colors.discard("紫")  # 要素を削除（存在しなくてもエラーなし）
+print(f"discard後: {colors}")
+
+# --- 集合演算（数学的な演算）---
+print("\n■ 集合演算")
+set_a = {1, 2, 3, 4, 5}
+set_b = {4, 5, 6, 7, 8}
+
+print(f"A: {set_a}")
+print(f"B: {set_b}")
+print(f"和集合（A∪B）: {set_a | set_b}")  # どちらかにある
+print(f"積集合（A∩B）: {set_a & set_b}")  # 両方にある
+print(f"差集合（A-B）: {set_a - set_b}")  # Aにあって、Bにない
+print(f"対称差（A⊕B）: {set_a ^ set_b}")  # どちらか片方だけにある
+
+# --- 実用例：タグの管理 ---
+print("\n■ 実用例：タグ")
+post1_tags = {"Python", "プログラミング", "初心者"}
+post2_tags = {"Python", "機械学習", "AI"}
+
+common = post1_tags & post2_tags  # 共通タグ
+all_tags = post1_tags | post2_tags  # 全タグ
+print(f"共通タグ: {common}")
+print(f"全タグ: {all_tags}")
+
+# ==========================================================
+# 【5】辞書（dict）- キー・バリューのペア
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【5】辞書（dict）- キー・バリューのペア、順序あり※")
+print("※Python 3.7以降は挿入順を保持")
+print("=" * 70)
+
+# --- 基本的な使い方 ---
+print("\n■ 基本操作")
+user = {
+    "name": "山田太郎",
+    "age": 30,
+    "email": "yamada@example.com",
+    "is_active": True
+}
+
+print(f"辞書: {user}")
+print(f"名前: {user['name']}")  # キーで値を取得
+print(f"年齢: {user.get('age')}")  # getメソッド（安全）
+print(f"存在しないキー: {user.get('phone', 'なし')}")  # デフォルト値
+
+# --- 要素の追加・更新 ---
+print("\n■ 要素の追加・更新")
+user["phone"] = "090-1234-5678"  # 新しいキーを追加
+print(f"追加後: {user}")
+
+user["age"] = 31  # 既存のキーを更新
+print(f"更新後: {user}")
+
+user.update({"city": "東京", "country": "日本"})  # 複数追加
+print(f"update後: {user}")
+
+# --- 要素の削除 ---
+print("\n■ 要素の削除")
+del user["phone"]  # キーで削除
+print(f"del後: {user}")
+
+removed = user.pop("email")  # キーで削除して値を返す
+print(f"pop後: {user}, 削除された: {removed}")
+
+# --- 便利な操作 ---
+print("\n■ 便利な操作")
+print(f"キー一覧: {list(user.keys())}")  # 全キー
+print(f"値一覧: {list(user.values())}")  # 全値
+print(f"ペア一覧: {list(user.items())}")  # キー・値のペア
+
+print(f"キーの存在確認: {'name' in user}")  # キーがあるか
+print(f"値の存在確認: {'山田太郎' in user.values()}")  # 値があるか
+
+# --- ループ処理 ---
+print("\n■ ループ処理")
+for key in user:  # キーでループ
+    print(f"{key}: {user[key]}")
+
+print()
+for key, value in user.items():  # キーと値でループ
+    print(f"{key} = {value}")
+
+# --- ネストした辞書 ---
+print("\n■ ネストした辞書")
+company = {
+    "name": "ABC株式会社",
+    "employees": [
+        {"name": "田中", "age": 25},
+        {"name": "佐藤", "age": 30},
+        {"name": "鈴木", "age": 28}
+    ],
+    "location": {
+        "city": "東京",
+        "address": "渋谷区1-2-3"
+    }
+}
+
+print(f"会社名: {company['name']}")
+print(f"従業員1: {company['employees'][0]['name']}")
+print(f"所在地: {company['location']['city']}")
+
+# --- 辞書内包表記 ---
+print("\n■ 辞書内包表記")
+squares_dict = {x: x**2 for x in range(5)}  # 数値と2乗のペア
+print(f"2乗の辞書: {squares_dict}")
+
+# ==========================================================
+# 【6】データ型の変換
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【6】データ型の変換")
+print("=" * 70)
+
+print("\n■ 型変換の例")
+# 文字列 → 数値
+str_num = "123"
+int_num = int(str_num)  # 整数に変換
+float_num = float(str_num)  # 小数に変換
+print(f"文字列→整数: {int_num}, 型: {type(int_num)}")
+print(f"文字列→小数: {float_num}, 型: {type(float_num)}")
+
+# 数値 → 文字列
+num = 456
+str_from_num = str(num)
+print(f"数値→文字列: '{str_from_num}', 型: {type(str_from_num)}")
+
+# リスト → タプル → セット
+my_list = [1, 2, 3, 2, 1]
+my_tuple = tuple(my_list)  # タプルに変換
+my_set = set(my_list)  # セットに変換（重複削除）
+print(f"リスト: {my_list}")
+print(f"タプル: {my_tuple}")
+print(f"セット: {my_set}")
+
+# 文字列 → リスト
+text = "Hello"
+char_list = list(text)  # 1文字ずつリストに
+print(f"文字列→リスト: {char_list}")
+
+# ==========================================================
+# 【7】チートシート：どのデータ型を使う？
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【7】チートシート：データ型の選び方")
+print("=" * 70)
+
+cheatsheet = """
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃              データ型選択フローチャート                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Q1: 単一の値？複数の値？
+    単一 → 基本型へ（Q2）
+    複数 → コレクション型へ（Q3）
+
+Q2: 【基本型】どんな値？
+    整数                → int
+    小数                → float
+    文字                → str
+    真偽値              → bool
+    値がない            → None
+
+Q3: 【コレクション型】どんな使い方？
+    
+    順序が重要？
+    ├─ YES → Q4へ
+    └─ NO  → Q5へ
+
+Q4: 【順序が重要】変更する？
+    ├─ する    → list（リスト）
+    └─ しない  → tuple（タプル）
+
+Q5: 【順序が不要】重複は？
+    ├─ 許可    → Q6へ
+    └─ 禁止    → set（セット）
+
+Q6: キー・値のペア？
+    ├─ YES → dict（辞書）
+    └─ NO  → list（リスト）
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 具体的な使い分け例：
+
+【list】こんな時に使う
+  ✅ 順番が重要（例: タスクリスト、ランキング）
+  ✅ 追加・削除が頻繁（例: ショッピングカート）
+  ✅ 重複OK（例: アクセスログ）
+  ✅ インデックスでアクセス（例: データの並び）
+  
+  例：
+    todo_list = ["買い物", "掃除", "勉強"]
+    scores = [85, 92, 78, 85]  # 重複OK
+
+【tuple】こんな時に使う
+  ✅ 変更されたくない（例: 座標、設定値）
+  ✅ 関数から複数の値を返す
+  ✅ 辞書のキーにしたい（listはキーにできない）
+  ✅ メモリ効率が良い
+  
+  例：
+    position = (35.6895, 139.6917)  # 座標
+    rgb = (255, 128, 0)  # RGB値
+    def get_user(): return ("田中", 30)  # 複数返す
+
+【set】こんな時に使う
+  ✅ 重複を削除したい
+  ✅ 高速な検索（リストより速い）
+  ✅ 集合演算（和・積・差）
+  ✅ ユニークな値だけ欲しい
+  
+  例：
+    unique_ids = {101, 102, 103}
+    tags = {"Python", "プログラミング", "AI"}
+    visited_urls = set()  # 訪問済みURL
+
+【dict】こんな時に使う
+  ✅ キー・値のペアでデータ管理
+  ✅ 名前でアクセスしたい
+  ✅ JSONデータ
+  ✅ 設定やオプション
+  
+  例：
+    user = {"name": "田中", "age": 30}
+    config = {"host": "localhost", "port": 8080}
+    scores = {"math": 85, "english": 92}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 性能比較：
+
+操作速度（一般的な傾向）：
+  要素の検索:    set > dict > list
+  要素の追加:    list.append > set.add > dict
+  メモリ使用量:  tuple < list < set < dict
+
+迷った時のデフォルト：
+  → とりあえず list を使う！
+  → 重複削除が必要なら set に変換
+  → キー・値が必要なら dict に変換
+"""
+
+print(cheatsheet)
+
+# ==========================================================
+# 【8】実践的な使用例
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【8】実践的な使用例")
+print("=" * 70)
+
+# 例1: ショッピングカート（list + dict）
+print("\n■ 例1: ショッピングカート")
+cart = [
+    {"name": "りんご", "price": 100, "quantity": 3},
+    {"name": "バナナ", "price": 150, "quantity": 2},
+    {"name": "オレンジ", "price": 120, "quantity": 5}
+]
+
+total = sum(item["price"] * item["quantity"] for item in cart)
+print(f"商品数: {len(cart)}")
+print(f"合計金額: {total}円")
+
+# 例2: ユーザー管理（dict）
+print("\n■ 例2: ユーザー管理")
+users = {
+    "user001": {"name": "田中", "role": "admin"},
+    "user002": {"name": "佐藤", "role": "user"},
+    "user003": {"name": "鈴木", "role": "user"}
+}
+
+admin_count = sum(1 for u in users.values() if u["role"] == "admin")
+print(f"管理者数: {admin_count}")
+
+# 例3: タグの集約（set）
+print("\n■ 例3: タグの集約")
+post1 = {"tags": {"Python", "初心者", "プログラミング"}}
+post2 = {"tags": {"Python", "Web開発", "Django"}}
+post3 = {"tags": {"JavaScript", "プログラミング", "React"}}
+
+all_tags = post1["tags"] | post2["tags"] | post3["tags"]
+python_related = [p for p in [post1, post2, post3] if "Python" in p["tags"]]
+print(f"全タグ: {all_tags}")
+print(f"Python関連の投稿数: {len(python_related)}")
+
+print("\n" + "=" * 70)
+print("これでPythonのデータ型マスター！")
+print("=" * 70)
