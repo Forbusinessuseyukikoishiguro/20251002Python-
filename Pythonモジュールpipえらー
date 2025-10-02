@@ -1,0 +1,1185 @@
+# ==========================================================
+# Python モジュール・pip・静的解析トラブルシューティング完全ガイド
+# ==========================================================
+
+"""
+【よくあるトラブル】
+
+■ モジュール関連
+1. ModuleNotFoundError
+2. ImportError
+3. 循環インポート
+4. relative import の問題
+5. __init__.py がない
+
+■ pip関連
+6. pip が動かない
+7. パッケージがインストールできない
+8. バージョン競合
+9. requirements.txt の問題
+10. SSL証明書エラー
+
+■ 静的解析関連
+11. pylint/flake8 が動かない
+12. エラーが多すぎる
+13. 設定が反映されない
+14. VSCodeで Linter が動かない
+15. 型チェック（mypy）のエラー
+"""
+
+print("=" * 70)
+print("Python モジュール・pip・静的解析トラブルシューティング")
+print("=" * 70)
+
+# ==========================================================
+# 【1】ModuleNotFoundError - 最頻出！
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【トラブル1】ModuleNotFoundError: No module named 'xxx'")
+print("=" * 70)
+
+trouble1 = """
+■ エラーメッセージ：
+  ModuleNotFoundError: No module named 'requests'
+
+■ 原因と解決方法
+
+原因1: パッケージがインストールされていない
+-----------------------------------------------------------
+# 確認
+pip list
+
+# 解決：インストール
+pip install requests
+
+# または
+python -m pip install requests
+-----------------------------------------------------------
+
+原因2: 仮想環境を使っていない
+-----------------------------------------------------------
+# 問題：システム全体にインストールしたが、仮想環境で実行している
+
+# 解決：仮想環境を有効化してからインストール
+# Windows:
+venv\\Scripts\\activate
+pip install requests
+
+# Mac/Linux:
+source venv/bin/activate
+pip install requests
+-----------------------------------------------------------
+
+原因3: 複数のPythonバージョンがある
+-----------------------------------------------------------
+# 問題：Python 3.11にインストールしたが、Python 3.9で実行している
+
+# 確認：どのPythonを使っているか
+python --version
+which python  # Mac/Linux
+where python  # Windows
+
+# 解決：明示的にバージョン指定
+python3.11 -m pip install requests
+python3.11 your_script.py
+-----------------------------------------------------------
+
+原因4: VSCodeが違うインタープリタを使っている
+-----------------------------------------------------------
+# 解決：
+1. Ctrl + Shift + P
+2. "Python: Select Interpreter"
+3. 仮想環境内のPythonを選択
+4. VSCodeを再起動
+-----------------------------------------------------------
+
+原因5: パッケージ名とインポート名が違う
+-----------------------------------------------------------
+# ❌ 間違い
+pip install beautifulsoup4
+import beautifulsoup4  # エラー！
+
+# ✅ 正しい
+pip install beautifulsoup4
+import bs4  # インポート名が違う
+
+# よくある例：
+# pip install pillow → import PIL
+# pip install scikit-learn → import sklearn
+# pip install python-dotenv → import dotenv
+-----------------------------------------------------------
+
+原因6: スペルミス
+-----------------------------------------------------------
+# ❌ 間違い
+import requets  # typo!
+
+# ✅ 正しい
+import requests
+-----------------------------------------------------------
+
+■ デバッグ方法
+-----------------------------------------------------------
+# 1. インストールされているか確認
+pip show requests
+
+# 2. インストール場所を確認
+pip show requests | grep Location
+
+# 3. Pythonがどこを探しているか確認
+import sys
+print(sys.path)
+
+# 4. 強制再インストール
+pip uninstall requests
+pip install requests
+-----------------------------------------------------------
+"""
+
+print(trouble1)
+
+# 実際に動作例
+print("\n■ 動作例：モジュール検索パス確認")
+import sys
+
+print("【Pythonがモジュールを探す場所】")
+for i, path in enumerate(sys.path[:5], 1):
+    print(f"{i}. {path}")
+
+# ==========================================================
+# 【2】ImportError と循環インポート
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【トラブル2】ImportError と循環インポート")
+print("=" * 70)
+
+trouble2 = """
+■ 問題1: ImportError: cannot import name 'xxx'
+-----------------------------------------------------------
+原因：循環インポート（2つのファイルが互いにインポート）
+
+例：
+# module_a.py
+from module_b import function_b
+
+def function_a():
+    return function_b()
+
+# module_b.py
+from module_a import function_a  # 循環！
+
+def function_b():
+    return function_a()
+
+# main.py
+import module_a  # ImportError!
+-----------------------------------------------------------
+
+■ 解決方法1: インポートを関数内に移動
+-----------------------------------------------------------
+# module_a.py
+def function_a():
+    from module_b import function_b  # 関数内でインポート
+    return function_b()
+
+# module_b.py
+def function_b():
+    from module_a import function_a
+    return function_a()
+-----------------------------------------------------------
+
+■ 解決方法2: 共通のモジュールを作る
+-----------------------------------------------------------
+# common.py
+def shared_function():
+    pass
+
+# module_a.py
+from common import shared_function
+
+def function_a():
+    return shared_function()
+
+# module_b.py
+from common import shared_function
+
+def function_b():
+    return shared_function()
+-----------------------------------------------------------
+
+■ 解決方法3: 設計を見直す
+-----------------------------------------------------------
+# 循環依存は設計の問題
+# 依存関係を一方向にする
+
+# ❌ 悪い設計
+A ⇄ B  # 相互依存
+
+# ✅ 良い設計
+A → B  # 一方向
+C → A  # 一方向
+C → B  # 一方向
+-----------------------------------------------------------
+
+■ 問題2: ImportError: attempted relative import with no known parent package
+-----------------------------------------------------------
+原因：相対インポートをスクリプトとして実行
+
+# ❌ 間違い
+# my_package/module.py
+from . import other_module  # 相対インポート
+
+# 実行
+python my_package/module.py  # エラー！
+
+# ✅ 解決1: パッケージとして実行
+python -m my_package.module
+
+# ✅ 解決2: 絶対インポートを使う
+from my_package import other_module
+-----------------------------------------------------------
+"""
+
+print(trouble2)
+
+# ==========================================================
+# 【3】pip が動かない
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【トラブル3】pip が動かない・認識されない")
+print("=" * 70)
+
+trouble3 = """
+■ エラー1: 'pip' は、内部コマンドまたは外部コマンド...
+-----------------------------------------------------------
+原因：pipがPATHに登録されていない
+
+# 解決：python -m pip を使う（最も確実）
+python -m pip install requests
+python -m pip list
+python -m pip --version
+-----------------------------------------------------------
+
+■ エラー2: WARNING: pip is configured with locations that require TLS/SSL
+-----------------------------------------------------------
+原因：SSL証明書の問題
+
+# 解決1: --trusted-host を使う
+pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org requests
+
+# 解決2: 証明書を更新
+pip install --upgrade certifi
+
+# 解決3: Python自体を再インストール
+-----------------------------------------------------------
+
+■ エラー3: Could not find a version that satisfies the requirement
+-----------------------------------------------------------
+原因1：パッケージ名のスペルミス
+# 確認
+pip search パッケージ名  # ※現在は無効
+
+# PyPI で検索
+https://pypi.org/
+
+原因2：Pythonバージョンが古い
+# 確認
+python --version
+
+# パッケージが要求するバージョンを確認
+pip show パッケージ名
+-----------------------------------------------------------
+
+■ エラー4: ERROR: Could not install packages due to an EnvironmentError
+-----------------------------------------------------------
+原因：権限の問題
+
+# 解決1: --user を使う
+pip install --user requests
+
+# 解決2: 仮想環境を使う（推奨）
+python -m venv venv
+source venv/bin/activate  # Mac/Linux
+venv\\Scripts\\activate    # Windows
+pip install requests
+-----------------------------------------------------------
+
+■ エラー5: pip が古い
+-----------------------------------------------------------
+警告：WARNING: You are using pip version X.X.X
+
+# 解決：pipを更新
+python -m pip install --upgrade pip
+
+# Windowsで失敗する場合
+python -m pip install --upgrade --force-reinstall pip
+-----------------------------------------------------------
+"""
+
+print(trouble3)
+
+# ==========================================================
+# 【4】requirements.txt のトラブル
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【トラブル4】requirements.txt の問題")
+print("=" * 70)
+
+trouble4 = """
+■ 問題1: requirements.txt からインストールできない
+-----------------------------------------------------------
+# エラー例
+ERROR: Could not find a version that satisfies the requirement xxx==1.2.3
+
+原因1：バージョンが古い・存在しない
+# 解決：バージョン指定を緩める
+# ❌ 厳密すぎる
+requests==2.28.1
+
+# ✅ 柔軟
+requests>=2.28.0
+requests~=2.28.0  # 2.28.x
+requests  # 最新版
+
+原因2：依存関係の競合
+# 解決：一つずつインストール
+pip install -r requirements.txt --no-deps
+pip install パッケージ名
+-----------------------------------------------------------
+
+■ 問題2: requirements.txt が古い
+-----------------------------------------------------------
+# 現在の環境と一致していない
+
+# 解決：再生成
+pip freeze > requirements.txt
+
+# 確認
+cat requirements.txt  # Mac/Linux
+type requirements.txt  # Windows
+-----------------------------------------------------------
+
+■ 問題3: 開発用と本番用が混在
+-----------------------------------------------------------
+# 解決：ファイルを分ける
+
+# requirements.txt（本番用）
+django==4.2.0
+psycopg2==2.9.0
+
+# requirements-dev.txt（開発用）
+-r requirements.txt  # 本番用を含む
+pytest==7.2.0
+black==23.1.0
+flake8==6.0.0
+
+# インストール
+pip install -r requirements.txt        # 本番
+pip install -r requirements-dev.txt   # 開発
+-----------------------------------------------------------
+
+■ 問題4: コメントやオプションが認識されない
+-----------------------------------------------------------
+# requirements.txt の書き方
+
+# コメント（#で始まる行）
+requests==2.28.1  # これもコメント
+
+# バージョン指定
+requests==2.28.1     # 完全一致
+requests>=2.28.0     # 以上
+requests<=2.28.1     # 以下
+requests~=2.28.0     # 2.28.x
+requests!=2.28.0     # この版を除外
+requests>=2.28,<3.0  # 範囲指定
+
+# Git リポジトリから
+git+https://github.com/user/repo.git@main
+
+# ローカルパッケージ
+-e ./my_package  # 編集可能モード
+
+# 他のrequirementsファイルを含む
+-r requirements-base.txt
+-----------------------------------------------------------
+"""
+
+print(trouble4)
+
+# ==========================================================
+# 【5】静的解析ツールが動かない
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【トラブル5】pylint / flake8 が動かない")
+print("=" * 70)
+
+trouble5 = """
+■ 問題1: pylint / flake8 コマンドが認識されない
+-----------------------------------------------------------
+原因：インストールされていない
+
+# 確認
+pip list | grep pylint
+pip list | grep flake8
+
+# 解決：インストール
+pip install pylint
+pip install flake8
+pip install mypy  # 型チェック
+-----------------------------------------------------------
+
+■ 問題2: VSCodeでLinterが動かない
+-----------------------------------------------------------
+# 解決手順
+
+1. Python拡張機能がインストールされているか確認
+
+2. settings.json に設定
+{
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.lintOnSave": true
+}
+
+3. 正しいインタープリタを選択
+Ctrl + Shift + P → "Python: Select Interpreter"
+
+4. VSCodeを再起動
+
+5. 出力パネルで確認
+表示 → 出力 → Python を選択
+-----------------------------------------------------------
+
+■ 問題3: エラーが多すぎる
+-----------------------------------------------------------
+# pylint のエラーを減らす
+
+# プロジェクトルートに .pylintrc を作成
+[MESSAGES CONTROL]
+disable=
+    C0111,  # missing-docstring
+    C0103,  # invalid-name
+    R0913,  # too-many-arguments
+    R0914,  # too-many-locals
+    W0621   # redefined-outer-name
+
+[FORMAT]
+max-line-length=100
+
+# flake8 の設定（.flake8 または setup.cfg）
+[flake8]
+max-line-length = 100
+ignore = E203, W503, E501
+exclude = .git,__pycache__,venv
+
+# 特定の行だけ無視
+def my_function():  # noqa: E501
+    pass
+-----------------------------------------------------------
+
+■ 問題4: import の順序でエラー
+-----------------------------------------------------------
+# エラー: Wrong import order
+
+# 解決：isort でソート
+pip install isort
+isort your_file.py
+
+# または自動設定
+# .isort.cfg
+[settings]
+profile = black
+line_length = 100
+
+# VSCode設定
+{
+    "python.sortImports.args": [
+        "--profile=black"
+    ]
+}
+-----------------------------------------------------------
+
+■ 問題5: 型チェック（mypy）のエラー
+-----------------------------------------------------------
+# エラー: error: Cannot find implementation or library stub
+
+# 原因：型スタブがない
+
+# 解決：型スタブをインストール
+pip install types-requests
+pip install types-PyYAML
+
+# または全て無視
+# mypy.ini
+[mypy]
+ignore_missing_imports = True
+
+# 特定の行だけ無視
+import requests  # type: ignore
+-----------------------------------------------------------
+"""
+
+print(trouble5)
+
+# ==========================================================
+# 【6】__init__.py の問題
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【トラブル6】__init__.py がない・動かない")
+print("=" * 70)
+
+trouble6 = """
+■ 問題：パッケージとして認識されない
+-----------------------------------------------------------
+# フォルダ構成
+my_package/
+├── module1.py
+└── module2.py
+
+# インポート
+from my_package import module1  # エラー！
+
+原因：__init__.py がない（Python 3.3以降は不要だが推奨）
+-----------------------------------------------------------
+
+■ 解決：__init__.py を作成
+-----------------------------------------------------------
+# my_package/__init__.py を作成（空でもOK）
+
+my_package/
+├── __init__.py  # ← これを追加
+├── module1.py
+└── module2.py
+
+# これでインポート可能
+from my_package import module1
+-----------------------------------------------------------
+
+■ __init__.py の活用
+-----------------------------------------------------------
+# my_package/__init__.py
+
+# バージョン情報
+__version__ = "1.0.0"
+
+# 便利な関数をパッケージレベルで公開
+from .module1 import func1
+from .module2 import func2
+
+# from my_package import * で読み込まれるもの
+__all__ = ['func1', 'func2']
+
+# 使用例
+from my_package import func1  # シンプル
+# from my_package.module1 import func1  # 長い
+-----------------------------------------------------------
+
+■ サブパッケージの __init__.py
+-----------------------------------------------------------
+# フォルダ構成
+my_package/
+├── __init__.py
+├── subpackage/
+│   ├── __init__.py  # サブパッケージにも必要
+│   └── module.py
+└── other.py
+
+# インポート
+from my_package.subpackage import module
+-----------------------------------------------------------
+"""
+
+print(trouble6)
+
+# ==========================================================
+# 【7】チートシート
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【チートシート】トラブル解決早見表")
+print("=" * 70)
+
+cheatsheet = """
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃     モジュール・pip・静的解析トラブル解決早見表        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+■ ModuleNotFoundError
+┌────────────────────────────────────────────────┐
+│ 原因: パッケージ未インストール                 │
+│ 解決: pip install パッケージ名                 │
+│                                               │
+│ 原因: 仮想環境が有効化されていない             │
+│ 解決: venv\\Scripts\\activate                  │
+│                                               │
+│ 原因: パッケージ名とインポート名が違う         │
+│ 解決: 正しいインポート名を確認                │
+│   pip install beautifulsoup4 → import bs4    │
+└────────────────────────────────────────────────┘
+
+■ ImportError（循環インポート）
+┌────────────────────────────────────────────────┐
+│ 原因: 2つのファイルが互いにインポート          │
+│ 解決1: インポートを関数内に移動               │
+│ 解決2: 共通モジュールを作る                   │
+│ 解決3: 設計を見直す                           │
+└────────────────────────────────────────────────┘
+
+■ pip が動かない
+┌────────────────────────────────────────────────┐
+│ 解決: python -m pip を使う（万能）            │
+│   python -m pip install パッケージ名          │
+│   python -m pip list                          │
+│   python -m pip --version                     │
+└────────────────────────────────────────────────┘
+
+■ requirements.txt
+┌────────────────────────────────────────────────┐
+│ 作成: pip freeze > requirements.txt           │
+│ 使用: pip install -r requirements.txt         │
+│                                               │
+│ バージョン指定:                               │
+│   パッケージ==1.0.0    完全一致               │
+│   パッケージ>=1.0.0    以上                   │
+│   パッケージ~=1.0.0    1.0.x                  │
+└────────────────────────────────────────────────┘
+
+■ 静的解析ツール
+┌────────────────────────────────────────────────┐
+│ インストール:                                 │
+│   pip install pylint flake8 mypy black        │
+│                                               │
+│ 実行:                                         │
+│   pylint your_file.py                         │
+│   flake8 your_file.py                         │
+│   mypy your_file.py                           │
+│   black your_file.py                          │
+│                                               │
+│ エラーを無視:                                 │
+│   # pylint: disable=エラーコード              │
+│   # noqa: エラーコード                        │
+│   # type: ignore                              │
+└────────────────────────────────────────────────┘
+
+■ VSCode設定
+┌────────────────────────────────────────────────┐
+│ settings.json:                                │
+│ {                                             │
+│     "python.linting.enabled": true,           │
+│     "python.linting.pylintEnabled": true,     │
+│     "python.linting.flake8Enabled": true,     │
+│     "python.formatting.provider": "black",    │
+│     "editor.formatOnSave": true               │
+│ }                                             │
+└────────────────────────────────────────────────┘
+
+■ トラブル対処フローチャート
+┌────────────────────────────────────────────────┐
+│ ModuleNotFoundError?                          │
+│ ├─ pip list で確認                            │
+│ ├─ 仮想環境を有効化                           │
+│ └─ pip install                                │
+│                                               │
+│ pip が動かない?                               │
+│ └─ python -m pip を使う                       │
+│                                               │
+│ Linter が動かない?                            │
+│ ├─ pip install pylint flake8                  │
+│ ├─ VSCode設定を確認                           │
+│ └─ インタープリタを確認                       │
+│                                               │
+│ 循環インポート?                               │
+│ └─ インポートを関数内に移動                   │
+└────────────────────────────────────────────────┘
+
+■ 万能コマンド集
+┌────────────────────────────────────────────────┐
+│ # 環境確認                                    │
+│ python --version                              │
+│ pip list                                      │
+│ pip show パッケージ名                         │
+│                                               │
+│ # パッケージ管理                              │
+│ python -m pip install パッケージ              │
+│ python -m pip uninstall パッケージ            │
+│ python -m pip install --upgrade パッケージ    │
+│                                               │
+│ # 仮想環境                                    │
+│ python -m venv venv                           │
+│ venv\\Scripts\\activate  # Windows            │
+│ source venv/bin/activate  # Mac/Linux        │
+│                                               │
+│ # 静的解析                                    │
+│ pylint --generate-rcfile > .pylintrc          │
+│ flake8 --ignore=E501 .                        │
+│ black --check .                               │
+└────────────────────────────────────────────────┘
+"""
+
+print(cheatsheet)
+
+# ==========================================================
+# 【8】実践的なトラブルシューティング
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【実践】環境診断スクリプト")
+print("=" * 70)
+
+# 診断スクリプト
+import subprocess
+import sys
+import os
+
+def diagnose_environment():
+    """Python環境を診断する"""
+    print("\n【Python環境診断】")
+    print("=" * 50)
+    
+    # Pythonバージョン
+    print(f"\nPythonバージョン: {sys.version}")
+    print(f"実行パス: {sys.executable}")
+    
+    # 仮想環境チェック
+    in_venv = (
+        hasattr(sys, 'real_prefix') or
+        (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix)
+    )
+    print(f"\n仮想環境: {'✅ 有効' if in_venv else '❌ 無効'}")
+    
+    if in_venv:
+        venv_path = os.environ.get('VIRTUAL_ENV', '不明')
+        print(f"仮想環境パス: {venv_path}")
+    
+    # pipバージョン
+    try:
+        result = subprocess.run(
+            [sys.executable, '-m', 'pip', '--version'],
+            capture_output=True,
+            text=True
+        )
+        print(f"\npip: {result.stdout.strip()}")
+    except:
+        print("\n❌ pipが利用できません")
+    
+    # インストール済みパッケージ数
+    try:
+        result = subprocess.run(
+            [sys.executable, '-m', 'pip', 'list'],
+            capture_output=True,
+            text=True
+        )
+        packages = result.stdout.strip().split('\n')[2:]  # ヘッダーを除く
+        print(f"\nインストール済みパッケージ: {len(packages)}個")
+    except:
+        print("\nパッケージ情報を取得できません")
+    
+    # モジュール検索パス
+    print(f"\nモジュール検索パス（最初の3つ）:")
+    for i, path in enumerate(sys.path[:3], 1):
+        print(f"  {i}. {path}")
+    
+    print("\n" + "=" * 50)
+
+# 診断実行
+diagnose_environment()
+
+print("\n" + "=" * 70)
+print("これでモジュール・pip・静的解析のトラブルは解決！")
+print("=" * 70)
+
+ーーーー
+__init__.py
+
+ーーーーー
+python --version                # Pythonバージョン
+python -m pip --version        # pipバージョン
+pip list                       # インストール済み一覧
+pip show パッケージ名           # 詳細情報
+
+# === パッケージ管理 ===
+python -m pip install パッケージ         # インストール
+python -m pip uninstall パッケージ       # アンインストール
+python -m pip install --upgrade パッケージ  # 更新
+python -m pip install --upgrade pip      # pip自体を更新
+
+# === 仮想環境 ===
+python -m venv venv            # 作成
+venv\Scripts\activate          # 有効化（Windows）
+source venv/bin/activate       # 有効化（Mac/Linux）
+deactivate                     # 無効化
+
+# === requirements.txt ===
+pip freeze > requirements.txt              # 作成
+pip install -r requirements.txt            # インストール
+pip install -r requirements.txt --upgrade  # 全更新
+
+# === 静的解析 ===
+pylint your_file.py            # コード品質チェック
+flake8 your_file.py            # スタイルチェック
+mypy your_file.py              # 型チェック
+black your_file.py             # 自動フォーマット
+isort your_file.py             # import整理
+```
+
+## 🔍 トラブルシューティングフロー
+
+```
+エラーが出た！
+│
+├─ ModuleNotFoundError?
+│  ├─ pip list で確認
+│  ├─ 仮想環境を有効化した？
+│  ├─ パッケージ名は正しい？
+│  └─ pip install パッケージ名
+│
+├─ ImportError（循環）?
+│  ├─ 2つのファイルが互いにimport？
+│  ├─ インポートを関数内に移動
+│  └─ 設計を見直す
+│
+├─ pip が動かない?
+│  └─ python -m pip を使う
+│
+├─ SSL証明書エラー?
+│  └─ --trusted-host pypi.org --trusted-host files.pythonhosted.org
+│
+└─ Linterが動かない?
+   ├─ pip install pylint flake8
+   ├─ VSCode設定を確認
+   └─ インタープリタを確認
+```
+
+## ⚙️ VSCode完全設定
+
+### settings.json（完全版）
+
+```json
+{
+    // Python インタープリタ
+    "python.defaultInterpreterPath": "${workspaceFolder}/venv/Scripts/python.exe",
+    
+    // Linting（コード検査）
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.lintOnSave": true,
+    
+    // Formatting（整形）
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    
+    // Import整理
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true
+    },
+    
+    // ターミナル
+    "python.terminal.activateEnvironment": true
+}
+```
+
+### .pylintrc（Pylint設定）
+
+```ini
+[MASTER]
+# 無視するディレクトリ
+ignore=venv,.venv,env,.git,__pycache__
+
+[MESSAGES CONTROL]
+# 無視するエラー
+disable=
+    C0111,  # missing-docstring（docstring必須を無効）
+    C0103,  # invalid-name（変数名の規則を緩和）
+    R0913,  # too-many-arguments（引数が多すぎる警告）
+    R0914,  # too-many-locals（ローカル変数が多すぎる警告）
+    W0621,  # redefined-outer-name
+    C0301   # line-too-long（行が長すぎる）
+
+[FORMAT]
+# 1行の最大文字数
+max-line-length=100
+
+# インデント
+indent-string='    '
+```
+
+### .flake8（Flake8設定）
+
+```ini
+[flake8]
+# 1行の最大文字数
+max-line-length = 100
+
+# 無視するエラー
+ignore = 
+    E203,  # whitespace before ':'
+    W503,  # line break before binary operator
+    E501   # line too long
+
+# チェック対象外
+exclude = 
+    .git,
+    __pycache__,
+    venv,
+    .venv,
+    env,
+    .env
+
+# 複雑さの上限
+max-complexity = 10
+```
+
+### pyproject.toml（Black/isort設定）
+
+```toml
+[tool.black]
+line-length = 100
+target-version = ['py39']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # 除外するディレクトリ
+  \.git
+  | \.venv
+  | venv
+  | __pycache__
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 100
+```
+
+## 🎯 静的解析エラーの対処
+
+### エラーが多すぎる場合
+
+```python
+# 特定の行だけ無視
+def my_function():  # pylint: disable=invalid-name
+    pass
+
+# 複数のエラーを無視
+def func():  # pylint: disable=invalid-name,missing-docstring
+    pass
+
+# Flake8で無視
+def long_function():  # noqa: E501
+    pass
+
+# mypy（型チェック）で無視
+import requests  # type: ignore
+
+# ファイル全体で無視（ファイルの先頭）
+# pylint: skip-file
+```
+
+### import の順序エラー
+
+```python
+# ❌ 間違った順序
+import sys
+import requests
+import os
+
+# ✅ 正しい順序（PEP8準拠）
+# 1. 標準ライブラリ
+import os
+import sys
+
+# 2. サードパーティ
+import requests
+
+# 3. 自作モジュール
+from my_module import my_function
+
+# 自動整理
+isort your_file.py
+```
+
+## 🔧 パッケージ名とインポート名の違い
+
+```python
+# よくある罠
+pip install pillow          → import PIL
+pip install beautifulsoup4  → import bs4
+pip install scikit-learn    → import sklearn
+pip install python-dotenv   → import dotenv
+pip install opencv-python   → import cv2
+pip install PyYAML          → import yaml
+
+# 確認方法
+pip show パッケージ名
+# または公式ドキュメントで確認
+```
+
+## 📦 依存関係の競合
+
+```bash
+# エラー: ERROR: pip's dependency resolver does not currently take into account...
+
+# 原因: 複数のパッケージが異なるバージョンを要求
+
+# 解決1: 競合を確認
+pip check
+
+# 解決2: 依存関係を無視してインストール（非推奨）
+pip install --no-deps パッケージ名
+
+# 解決3: バージョンを調整
+# requirements.txt
+package-a>=1.0,<2.0
+package-b>=2.0,<3.0
+
+# 解決4: 仮想環境を作り直す
+deactivate
+rm -rf venv
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+## 🌐 SSL証明書エラー
+
+```bash
+# エラー: Could not fetch URL... There was a problem confirming the ssl certificate
+
+# 解決1: --trusted-host を使う
+pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org requests
+
+# 解決2: 証明書を更新
+pip install --upgrade certifi
+
+# 解決3: 環境変数で設定（永続的）
+# Windows（コマンドプロンプト）
+setx PIP_TRUSTED_HOST "pypi.org files.pythonhosted.org"
+
+# Mac/Linux（~/.bashrc または ~/.zshrc）
+export PIP_TRUSTED_HOST="pypi.org files.pythonhosted.org"
+```
+
+## 💡 デバッグテクニック
+
+### 1. モジュール検索パスを確認
+
+```python
+import sys
+print("Pythonがモジュールを探す場所:")
+for path in sys.path:
+    print(f"  - {path}")
+```
+
+### 2. パッケージの場所を確認
+
+```bash
+# パッケージがどこにインストールされているか
+pip show requests
+
+# Location: /path/to/venv/lib/python3.9/site-packages
+```
+
+### 3. インポートをテスト
+
+```python
+# インポートできるか確認
+try:
+    import requests
+    print("✅ requests: OK")
+    print(f"   Version: {requests.__version__}")
+    print(f"   Location: {requests.__file__}")
+except ImportError as e:
+    print(f"❌ requests: {e}")
+```
+
+### 4. 環境診断スクリプト
+
+```python
+import sys
+import subprocess
+
+def diagnose():
+    print("=== Python環境診断 ===")
+    print(f"Python: {sys.version}")
+    print(f"実行パス: {sys.executable}")
+    
+    # 仮想環境チェック
+    in_venv = hasattr(sys, 'real_prefix') or (
+        hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix
+    )
+    print(f"仮想環境: {'有効' if in_venv else '無効'}")
+    
+    # pip確認
+    try:
+        result = subprocess.run([sys.executable, '-m', 'pip', '--version'],
+                              capture_output=True, text=True)
+        print(f"pip: {result.stdout.strip()}")
+    except:
+        print("pip: エラー")
+    
+    # パッケージ数
+    try:
+        result = subprocess.run([sys.executable, '-m', 'pip', 'list'],
+                              capture_output=True, text=True)
+        count = len(result.stdout.strip().split('\n')) - 2
+        print(f"インストール済み: {count}個")
+    except:
+        print("パッケージ情報を取得できません")
+
+diagnose()
+```
+
+## ✅ チェックリスト
+
+```
+モジュールが見つからない時：
+□ pip list で確認した？
+□ 仮想環境を有効化した？
+□ パッケージ名は正しい？
+□ インポート名は正しい？
+□ VSCodeのインタープリタは正しい？
+
+pipが動かない時：
+□ python -m pip を試した？
+□ Pythonのパスが通っている？
+□ 仮想環境内で実行している？
+
+静的解析が動かない時：
+□ pylint/flake8をインストールした？
+□ VSCodeの設定は正しい？
+□ 正しいインタープリタを選択した？
+□ 設定ファイル（.pylintrc等）がある？
+```
+
+## 🎓 まとめ：5つの鉄則
+
+```
+1. python -m pip を使う
+   → pip ではなく python -m pip
+
+2. 仮想環境を必ず使う
+   → プロジェクトごとに独立
+
+3. requirements.txt を管理
+   → pip freeze > requirements.txt
+
+4. パッケージ名とインポート名を確認
+   → pip install XXX ≠ import XXX
+
+5. VSCodeのインタープリタを確認
+   → Ctrl+Shift+P → Select Interpreter
+```
+
+これでモジュール・pip・静的解析のトラブルは完全解決！困ったら`python -m pip`を使えば大抵解決します 🎉
+
+
+ーーーー
