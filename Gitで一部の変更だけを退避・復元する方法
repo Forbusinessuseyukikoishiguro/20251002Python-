@@ -1,0 +1,455 @@
+# Gitで一部の変更だけを退避・復元する方法
+
+特定のファイルや変更の一部だけを一時的に退避したい、そんなときに使えるテクニックを解説します。
+
+---
+
+## 📋 目次
+1. [基本的なstashの使い方](#基本的なstashの使い方)
+2. [特定のファイルだけを退避](#特定のファイルだけを退避)
+3. [対話的に選択して退避](#対話的に選択して退避)
+4. [退避した内容を確認・復元](#退避した内容を確認復元)
+5. [実践的な使用例](#実践的な使用例)
+
+---
+
+## 基本的なstashの使い方
+
+### 全ての変更を退避
+
+```bash
+# 全ての変更を退避
+git stash
+
+# メッセージ付きで退避（後で分かりやすい）
+git stash save "ログイン機能の途中作業"
+
+# 新規ファイル（untracked files）も含めて退避
+git stash -u
+```
+
+### 退避した内容を復元
+
+```bash
+# 最新の退避内容を復元（退避リストから削除される）
+git stash pop
+
+# 最新の退避内容を復元（退避リストに残す）
+git stash apply
+
+# 特定の退避内容を復元
+git stash pop stash@{2}
+```
+
+### 退避リストを確認
+
+```bash
+# 退避リストを表示
+git stash list
+
+# 出力例：
+# stash@{0}: WIP on main: 3a2b1c4 ログイン機能を追加
+# stash@{1}: On feature/search: 検索機能の途中作業
+# stash@{2}: WIP on main: 9f8e7d6 バグ修正
+```
+
+---
+
+## 特定のファイルだけを退避
+
+### 方法1：特定のファイルだけを退避
+
+```bash
+# 特定のファイルだけを退避
+git stash push -m "config.jsだけ退避" config.js
+
+# 複数のファイルを指定
+git stash push -m "設定ファイルを退避" config.js settings.json
+
+# パターンで指定
+git stash push -m "全てのCSSファイルを退避" "*.css"
+```
+
+### 実際の使用例
+
+**シナリオ：3つのファイルを編集中だが、うち1つだけ退避したい**
+
+```bash
+# 現在の状態を確認
+git status
+
+# 出力例：
+# Changes not staged for commit:
+#   modified:   login.html
+#   modified:   style.css
+#   modified:   config.js
+
+# config.jsだけを退避
+git stash push -m "設定ファイルは後で" config.js
+
+# 再度確認
+git status
+
+# 出力例：
+# Changes not staged for commit:
+#   modified:   login.html
+#   modified:   style.css
+# （config.jsだけが退避された）
+```
+
+---
+
+## 対話的に選択して退避
+
+### git stash -p（patch mode）
+
+変更を**ブロック単位で**選択して退避できます。
+
+```bash
+# 対話的モードで退避
+git stash -p
+```
+
+### 対話的モードの使い方
+
+コマンドを実行すると、変更ブロックごとに聞かれます：
+
+```bash
+diff --git a/app.js b/app.js
+index 1234567..abcdefg 100644
+--- a/app.js
++++ b/app.js
+@@ -10,7 +10,7 @@ function login() {
+-  console.log('old code');
++  console.log('new code');
+ }
+
+Stash this hunk [y,n,q,a,d,s,e,?]?
+```
+
+**選択肢の意味：**
+
+| キー | 意味 | 説明 |
+|-----|------|------|
+| `y` | Yes | この変更を退避する |
+| `n` | No | この変更を退避しない（残す） |
+| `q` | Quit | 終了する |
+| `a` | All | これ以降の全ての変更を退避 |
+| `d` | Don't | これ以降の全ての変更を退避しない |
+| `s` | Split | この変更をさらに細かく分割 |
+| `e` | Edit | 手動で編集 |
+| `?` | Help | ヘルプを表示 |
+
+### 実践例
+
+```bash
+# 対話的モードを開始
+git stash -p
+
+# 最初のブロック
+Stash this hunk [y,n,q,a,d,s,e,?]? y  ← これは退避する
+
+# 次のブロック
+Stash this hunk [y,n,q,a,d,s,e,?]? n  ← これは残す
+
+# 次のブロック
+Stash this hunk [y,n,q,a,d,s,e,?]? y  ← これは退避する
+```
+
+---
+
+## 退避した内容を確認・復元
+
+### 退避内容の詳細を確認
+
+```bash
+# 最新の退避内容を確認
+git stash show
+
+# より詳しく確認
+git stash show -p
+
+# 特定の退避内容を確認
+git stash show stash@{1}
+git stash show -p stash@{1}
+```
+
+### 退避内容を部分的に復元
+
+```bash
+# 特定のファイルだけを復元
+git checkout stash@{0} -- config.js
+
+# 複数のファイルを復元
+git checkout stash@{0} -- config.js settings.json
+```
+
+**重要：** この方法では退避リストから削除されません。
+
+### 対話的に復元
+
+```bash
+# 退避内容を対話的に復元
+git stash apply --patch
+# または
+git stash pop --patch
+
+# 各ブロックごとに選択
+Apply this hunk [y,n,q,a,d,e,?]? y  ← これは復元する
+Apply this hunk [y,n,q,a,d,e,?]? n  ← これは復元しない
+```
+
+### 退避を削除
+
+```bash
+# 最新の退避を削除
+git stash drop
+
+# 特定の退避を削除
+git stash drop stash@{1}
+
+# 全ての退避を削除（注意！）
+git stash clear
+```
+
+---
+
+## 実践的な使用例
+
+### ケース1：デバッグ用のコードを一時的に退避
+
+**状況：**
+- 本番用のコードとデバッグ用のconsole.logが混在
+- デバッグコードだけ退避したい
+
+```bash
+# 対話的モードで退避
+git stash -p
+
+# console.log部分だけ「y」を選択
+# 本番コードは「n」を選択
+
+# コミット
+git add .
+git commit -m "本番用コード実装"
+
+# デバッグコードを戻す
+git stash pop
+```
+
+### ケース2：緊急の修正が入った
+
+**状況：**
+- 新機能を実装中
+- 急にバグ修正を頼まれた
+
+```bash
+# 現在の作業を全て退避
+git stash save "新機能の途中作業"
+
+# mainブランチに切り替え
+git checkout main
+
+# バグ修正ブランチ作成
+git checkout -b fix/urgent-bug
+
+# バグ修正作業
+# ...
+
+# バグ修正をコミット・プッシュ
+git add .
+git commit -m "緊急バグ修正"
+git push origin fix/urgent-bug
+
+# 元のブランチに戻る
+git checkout feature/new-function
+
+# 退避した作業を復元
+git stash pop
+```
+
+### ケース3：設定ファイルだけローカル用に変更
+
+**状況：**
+- config.jsをローカル環境用に変更
+- でもこの変更はコミットしたくない
+
+```bash
+# config.jsを編集（ローカル用の設定に変更）
+
+# config.jsだけを退避
+git stash push -m "ローカル設定" config.js
+
+# 他の変更をコミット
+git add .
+git commit -m "機能追加"
+
+# ローカル設定を戻す
+git stash pop
+
+# 以降、config.jsは退避と復元を繰り返す
+```
+
+### ケース4：実験的な変更を試したい
+
+**状況：**
+- 2つのアプローチを試したい
+- どちらが良いか比較したい
+
+```bash
+# アプローチ1を実装
+# ...
+
+# アプローチ1を退避
+git stash save "アプローチ1: ループを使う方法"
+
+# アプローチ2を実装
+# ...
+
+# アプローチ2を退避
+git stash save "アプローチ2: 再帰を使う方法"
+
+# アプローチ1を復元して試す
+git stash apply stash@{1}
+
+# 元に戻す
+git reset --hard HEAD
+
+# アプローチ2を復元して試す
+git stash apply stash@{0}
+
+# 良い方を採用してコミット
+git add .
+git commit -m "アプローチ2を採用"
+
+# 退避を削除
+git stash clear
+```
+
+### ケース5：ファイルの一部だけコミットしたい
+
+**状況：**
+- 1つのファイルに複数の修正
+- 関連する修正ごとに分けてコミットしたい
+
+```bash
+# app.jsに「機能A」と「機能B」の変更が混在
+
+# 機能B部分を退避（対話的に選択）
+git stash -p
+# 機能Bの部分だけ「y」を選択
+
+# 機能Aだけをコミット
+git add app.js
+git commit -m "機能Aを追加"
+
+# 機能Bを復元
+git stash pop
+
+# 機能Bをコミット
+git add app.js
+git commit -m "機能Bを追加"
+```
+
+---
+
+## 💡 よくあるトラブルと対処法
+
+### トラブル1：stash popでコンフリクト
+
+**症状：**
+```bash
+git stash pop
+# CONFLICT (content): Merge conflict in app.js
+```
+
+**対処法：**
+```bash
+# コンフリクトを手動で解決
+# （VSCodeなどで <<<<<<<、=======、>>>>>>> 部分を編集）
+
+# 解決後、マークを削除
+git restore --staged app.js
+
+# stashを削除（手動で解決したため）
+git stash drop
+```
+
+### トラブル2：間違って全部stashしてしまった
+
+**対処法：**
+```bash
+# すぐに復元
+git stash pop
+
+# 必要な部分だけを退避し直す
+git stash -p
+```
+
+### トラブル3：stashした内容を間違って削除
+
+**対処法：**
+```bash
+# 削除してもすぐなら復元できる可能性がある
+git fsck --lost-found
+
+# dangling commitを探す
+git show <commit-hash>
+
+# 内容が正しければ復元
+git stash apply <commit-hash>
+```
+
+---
+
+## 📊 コマンド早見表
+
+| やりたいこと | コマンド |
+|------------|---------|
+| 全て退避 | `git stash` |
+| メッセージ付きで退避 | `git stash save "メッセージ"` |
+| 特定ファイルを退避 | `git stash push -m "メッセージ" ファイル名` |
+| 対話的に退避 | `git stash -p` |
+| 退避リスト確認 | `git stash list` |
+| 退避内容確認 | `git stash show -p` |
+| 最新を復元（削除） | `git stash pop` |
+| 最新を復元（保持） | `git stash apply` |
+| 特定の退避を復元 | `git stash pop stash@{1}` |
+| 特定ファイルだけ復元 | `git checkout stash@{0} -- ファイル名` |
+| 対話的に復元 | `git stash pop -p` |
+| 退避を削除 | `git stash drop` |
+| 全ての退避を削除 | `git stash clear` |
+
+---
+
+## 🎯 まとめ
+
+### 使い分けのポイント
+
+**全て退避：** `git stash`
+- 一時的に全ての作業を中断するとき
+
+**特定ファイルだけ退避：** `git stash push ファイル名`
+- 設定ファイルなど、特定のファイルだけを避けたいとき
+
+**対話的に退避：** `git stash -p`
+- 1つのファイルの中で、退避する部分としない部分を分けたいとき
+- 細かくコミットを分けたいとき
+
+### 注意点
+
+1. **stashは一時的な保管場所**
+   - 長期間保存するものではない
+   - 重要な変更は必ずコミット
+
+2. **stash は複数保存できる**
+   - メッセージを付けて管理しやすく
+
+3. **コンフリクトに注意**
+   - 退避後にファイルを大きく変更すると、復元時にコンフリクトの可能性
+
+4. **チーム共有されない**
+   - stashはローカルのみ
+   - 他の人には見えない
+
+stashを上手に使うと、作業の切り替えがスムーズになります！
