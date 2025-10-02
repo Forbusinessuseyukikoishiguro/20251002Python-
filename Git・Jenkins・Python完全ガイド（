@@ -1,0 +1,734 @@
+
+# ==========================================================
+# Git・Jenkins・Python完全ガイド（基本・応用・トラブル）
+# ==========================================================
+
+"""
+【本ガイドの内容】
+
+■ Part 1: Git基本操作
+  - リポジトリの作成・クローン
+  - コミット・プッシュ
+  - ブランチ操作
+  - マージ・リベース
+  - Gitトラブルシューティング
+
+■ Part 2: Jenkins基礎
+  - Jenkinsとは
+  - パイプラインの作成
+  - PythonプロジェクトのCI/CD
+  - Jenkinsトラブルシューティング
+
+■ Part 3: Python基本・応用操作
+  - ファイル操作
+  - データ処理
+  - API連携
+  - 実践的なスクリプト
+"""
+
+print("=" * 70)
+print("Git・Jenkins・Python完全ガイド")
+print("=" * 70)
+
+# ==========================================================
+# 【Part 1】Git基本操作
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【Part 1】Git基本操作")
+print("=" * 70)
+
+git_basics = """
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                   Git基本コマンド                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+■ 初期設定
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ユーザー情報の設定（最初の1回だけ）
+git config --global user.name "あなたの名前"
+git config --global user.email "your.email@example.com"
+
+# 設定確認
+git config --list
+
+# エディタの設定
+git config --global core.editor "code --wait"  # VSCode
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ リポジトリの作成
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 新規リポジトリの作成
+mkdir my-project
+cd my-project
+git init
+
+# 既存リポジトリのクローン
+git clone https://github.com/username/repository.git
+git clone https://github.com/username/repository.git my-folder
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 基本的なワークフロー
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 1. 変更の確認
+git status              # 変更されたファイルを確認
+
+# 2. ステージングに追加
+git add file.py         # 特定のファイルを追加
+git add .               # 全ての変更を追加
+git add *.py            # パターンマッチ
+
+# 3. コミット
+git commit -m "メッセージ"
+git commit -am "メッセージ"  # add + commit（新規ファイル除く）
+
+# 4. リモートへプッシュ
+git push origin main
+git push origin feature-branch
+
+# 5. リモートから取得
+git pull origin main    # fetch + merge
+git fetch origin        # リモートの情報だけ取得
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ ブランチ操作
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ブランチ一覧
+git branch              # ローカルブランチ
+git branch -a           # 全ブランチ（リモート含む）
+git branch -r           # リモートブランチ
+
+# ブランチの作成
+git branch feature-login
+git checkout -b feature-login  # 作成して切り替え（旧）
+git switch -c feature-login    # 作成して切り替え（新）
+
+# ブランチの切り替え
+git checkout main       # 旧
+git switch main         # 新（推奨）
+
+# ブランチの削除
+git branch -d feature-login     # マージ済みのみ削除
+git branch -D feature-login     # 強制削除
+
+# リモートブランチの削除
+git push origin --delete feature-login
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ マージとリベース
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# マージ（mainブランチにfeatureブランチを統合）
+git switch main
+git merge feature-login
+
+# リベース（履歴を整理）
+git switch feature-login
+git rebase main
+
+# コンフリクトが発生した場合
+# 1. ファイルを手動で編集
+# 2. git add <解決したファイル>
+# 3. git rebase --continue  # または git merge --continue
+# 4. 中断したい場合: git rebase --abort
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 履歴の確認
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+git log                 # コミット履歴
+git log --oneline       # 1行で表示
+git log --graph         # グラフ表示
+git log --all --graph --oneline  # 全ブランチをグラフで
+
+git diff                # 変更内容を確認
+git diff --staged       # ステージングされた変更
+git diff main feature   # ブランチ間の差分
+
+git show <commit-hash>  # 特定のコミット詳細
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ 変更の取り消し
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 作業ディレクトリの変更を破棄
+git restore file.py     # 新（推奨）
+git checkout -- file.py # 旧
+
+# ステージングを取り消し（変更は保持）
+git restore --staged file.py  # 新
+git reset HEAD file.py        # 旧
+
+# コミットを取り消し
+git reset --soft HEAD~1   # コミットだけ取り消し
+git reset --mixed HEAD~1  # コミット+ステージング取り消し
+git reset --hard HEAD~1   # 全て取り消し（危険）
+
+# 特定のコミットに戻る
+git reset --hard <commit-hash>
+
+# コミットを打ち消す（履歴を残す）
+git revert <commit-hash>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+print(git_basics)
+
+# ==========================================================
+# 【Part 2】Gitトラブルシューティング
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【Part 2】Gitトラブルシューティング")
+print("=" * 70)
+
+git_troubleshooting = """
+■ トラブル1: コンフリクト（競合）が発生
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+エラー:
+  CONFLICT (content): Merge conflict in file.py
+
+原因: 同じファイルの同じ箇所を複数人が変更
+
+解決手順:
+1. コンフリクトしているファイルを開く
+   
+   <<<<<<< HEAD
+   あなたの変更
+   =======
+   他の人の変更
+   >>>>>>> feature-branch
+
+2. 手動で修正（マーカーを削除）
+3. git add file.py
+4. git commit（マージの場合）
+   git rebase --continue（リベースの場合）
+
+# 中断したい場合
+git merge --abort
+git rebase --abort
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ トラブル2: 間違ってコミットしてしまった
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# ケース1: まだプッシュしていない
+git reset --soft HEAD~1     # コミット取り消し（変更は保持）
+# ファイルを修正
+git add .
+git commit -m "正しいメッセージ"
+
+# ケース2: すでにプッシュしてしまった
+git revert <commit-hash>    # 打ち消しコミットを作成
+git push
+
+# ケース3: コミットメッセージだけ間違えた
+git commit --amend -m "正しいメッセージ"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ トラブル3: プッシュできない
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+エラー:
+  ! [rejected] main -> main (fetch first)
+
+原因: リモートに新しいコミットがある
+
+解決:
+# 方法1: マージ（推奨）
+git pull origin main
+# コンフリクトがあれば解決
+git push origin main
+
+# 方法2: リベース
+git pull --rebase origin main
+git push origin main
+
+# 強制プッシュ（非推奨、チーム開発では危険）
+git push --force origin main
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ トラブル4: 誤って削除したファイルを復元
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# まだコミットしていない場合
+git restore file.py
+
+# コミット済みの場合
+git log -- file.py          # ファイルの履歴を確認
+git checkout <commit-hash> -- file.py
+
+# 削除されたブランチを復元
+git reflog                  # 操作履歴を確認
+git checkout -b recovered-branch <commit-hash>
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ トラブル5: .gitignoreが効かない
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+原因: すでにGitで追跡されているファイルは無視されない
+
+解決:
+# キャッシュから削除（ファイル自体は残る）
+git rm --cached file.py
+git rm -r --cached __pycache__/
+
+# .gitignoreに追加
+echo "__pycache__/" >> .gitignore
+echo "*.pyc" >> .gitignore
+
+# コミット
+git add .gitignore
+git commit -m "Update .gitignore"
+git push
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ トラブル6: 認証エラー
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+エラー:
+  remote: Support for password authentication was removed
+
+原因: GitHubはパスワード認証を廃止
+
+解決:
+# 方法1: Personal Access Token (PAT) を使う
+1. GitHub → Settings → Developer settings → Personal access tokens
+2. Generate new token
+3. トークンをコピー
+4. git push時にパスワードの代わりにトークンを入力
+
+# 方法2: SSH鍵を使う
+ssh-keygen -t ed25519 -C "your_email@example.com"
+cat ~/.ssh/id_ed25519.pub
+# GitHubにSSH鍵を登録
+# リモートURLをSSHに変更
+git remote set-url origin git@github.com:username/repo.git
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+print(git_troubleshooting)
+
+# ==========================================================
+# 【Part 3】Jenkins基礎
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【Part 3】Jenkins基礎とCI/CD")
+print("=" * 70)
+
+jenkins_basics = """
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                   Jenkins基礎                          ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+■ Jenkinsとは？
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+継続的インテグレーション（CI）/ 継続的デリバリー（CD）ツール
+
+主な機能:
+  - 自動ビルド
+  - 自動テスト
+  - 自動デプロイ
+  - スケジュール実行
+  - 通知機能
+
+メリット:
+  ✅ コードの品質向上
+  ✅ バグの早期発見
+  ✅ デプロイの自動化
+  ✅ チーム開発の効率化
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ Jenkinsのインストール（Docker使用）
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# Jenkinsコンテナを起動
+docker run -d -p 8080:8080 -p 50000:50000 \\
+  --name jenkins \\
+  -v jenkins_home:/var/jenkins_home \\
+  jenkins/jenkins:lts
+
+# 初期パスワードを確認
+docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword
+
+# ブラウザでアクセス
+http://localhost:8080
+
+# 初期設定
+1. 初期パスワードを入力
+2. 推奨プラグインをインストール
+3. 管理者ユーザーを作成
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ Jenkinsパイプライン基本構造
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Jenkinsfile (Declarative Pipeline):
+
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/username/repo.git'
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh 'pytest tests/'
+            }
+        }
+        
+        stage('Deploy') {
+            steps {
+                sh './deploy.sh'
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'パイプライン成功！'
+        }
+        failure {
+            echo 'パイプライン失敗'
+        }
+    }
+}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ PythonプロジェクトのJenkinsfile例
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+pipeline {
+    agent any
+    
+    environment {
+        PYTHON_VERSION = '3.9'
+        VENV_DIR = 'venv'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Setup') {
+            steps {
+                sh '''
+                    python3 -m venv ${VENV_DIR}
+                    . ${VENV_DIR}/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
+            }
+        }
+        
+        stage('Lint') {
+            steps {
+                sh '''
+                    . ${VENV_DIR}/bin/activate
+                    flake8 src/ --max-line-length=100
+                    pylint src/ || true
+                '''
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh '''
+                    . ${VENV_DIR}/bin/activate
+                    pytest tests/ --junitxml=test-results.xml \\
+                           --cov=src --cov-report=xml
+                '''
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh '''
+                    . ${VENV_DIR}/bin/activate
+                    python setup.py sdist bdist_wheel
+                '''
+            }
+        }
+        
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh '''
+                    . ${VENV_DIR}/bin/activate
+                    # デプロイスクリプト実行
+                    python deploy.py
+                '''
+            }
+        }
+    }
+    
+    post {
+        always {
+            junit 'test-results.xml'
+            publishHTML([
+                reportDir: 'htmlcov',
+                reportFiles: 'index.html',
+                reportName: 'Coverage Report'
+            ])
+        }
+        success {
+            echo 'ビルド成功！'
+            // Slack通知などを追加可能
+        }
+        failure {
+            echo 'ビルド失敗'
+            // メール通知などを追加可能
+        }
+        cleanup {
+            cleanWs()
+        }
+    }
+}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+print(jenkins_basics)
+
+# ==========================================================
+# 【Part 4】Python基本・応用操作
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【Part 4】Python基本・応用操作")
+print("=" * 70)
+
+# ===== ファイル操作 =====
+print("\n■ ファイル操作")
+
+def file_operations_demo():
+    """ファイル操作のデモ"""
+    
+    # ファイルの読み込み
+    try:
+        with open('data.txt', 'r', encoding='utf-8') as f:
+            content = f.read()
+            print(f"ファイル内容: {content}")
+    except FileNotFoundError:
+        print("ファイルが見つかりません")
+    
+    # ファイルへの書き込み
+    with open('output.txt', 'w', encoding='utf-8') as f:
+        f.write("Hello, World!\n")
+        f.write("Python ファイル操作")
+    
+    # 行ごとに読み込み
+    with open('output.txt', 'r', encoding='utf-8') as f:
+        for line in f:
+            print(line.strip())
+    
+    # JSONファイルの操作
+    import json
+    
+    data = {
+        "name": "田中",
+        "age": 30,
+        "skills": ["Python", "Git", "Jenkins"]
+    }
+    
+    # JSON書き込み
+    with open('data.json', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+    
+    # JSON読み込み
+    with open('data.json', 'r', encoding='utf-8') as f:
+        loaded_data = json.load(f)
+        print(f"JSON data: {loaded_data}")
+
+# ===== Git操作（Python）=====
+print("\n■ PythonからGit操作")
+
+git_python_example = """
+# GitPythonライブラリを使用
+# pip install GitPython
+
+from git import Repo
+import os
+
+# リポジトリのクローン
+def clone_repository(url, path):
+    '''リポジトリをクローンする'''
+    Repo.clone_from(url, path)
+    print(f"クローン完了: {path}")
+
+# コミットとプッシュ
+def commit_and_push(repo_path, files, message):
+    '''ファイルをコミットしてプッシュ'''
+    repo = Repo(repo_path)
+    
+    # ファイルを追加
+    repo.index.add(files)
+    
+    # コミット
+    repo.index.commit(message)
+    
+    # プッシュ
+    origin = repo.remote('origin')
+    origin.push()
+    
+    print(f"コミット＆プッシュ完了: {message}")
+
+# ブランチの作成と切り替え
+def create_and_switch_branch(repo_path, branch_name):
+    '''新しいブランチを作成して切り替え'''
+    repo = Repo(repo_path)
+    
+    # ブランチ作成
+    new_branch = repo.create_head(branch_name)
+    
+    # ブランチ切り替え
+    new_branch.checkout()
+    
+    print(f"ブランチ作成＆切り替え: {branch_name}")
+
+# 使用例
+# clone_repository('https://github.com/user/repo.git', './my-repo')
+# commit_and_push('./my-repo', ['file.py'], 'Update file.py')
+# create_and_switch_branch('./my-repo', 'feature-new')
+"""
+
+print(git_python_example)
+
+# ===== Jenkins API操作 =====
+print("\n■ PythonからJenkins操作")
+
+jenkins_python_example = """
+# python-jenkinsライブラリを使用
+# pip install python-jenkins
+
+import jenkins
+
+# Jenkinsサーバーに接続
+server = jenkins.Jenkins(
+    'http://localhost:8080',
+    username='admin',
+    password='admin_password'
+)
+
+# ジョブの一覧取得
+def list_jobs():
+    '''全ジョブを一覧表示'''
+    jobs = server.get_jobs()
+    for job in jobs:
+        print(f"Job: {job['name']}")
+
+# ジョブのビルド実行
+def trigger_build(job_name):
+    '''ジョブをビルド'''
+    server.build_job(job_name)
+    print(f"ビルド開始: {job_name}")
+
+# ビルド状態の確認
+def get_build_status(job_name, build_number):
+    '''ビルド状態を確認'''
+    build_info = server.get_build_info(job_name, build_number)
+    return build_info['result']
+
+# ジョブの作成
+def create_job(job_name, config_xml):
+    '''新しいジョブを作成'''
+    server.create_job(job_name, config_xml)
+    print(f"ジョブ作成: {job_name}")
+
+# 使用例
+# list_jobs()
+# trigger_build('my-python-project')
+# status = get_build_status('my-python-project', 1)
+# print(f"ビルド状態: {status}")
+"""
+
+print(jenkins_python_example)
+
+# ==========================================================
+# 【Part 5】実践的なスクリプト例
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【Part 5】実践的なスクリプト例")
+print("=" * 70)
+
+# ===== 自動デプロイスクリプト =====
+print("\n■ 自動デプロイスクリプト")
+
+deploy_script = """
+#!/usr/bin/env python3
+'''自動デプロイスクリプト'''
+
+import subprocess
+import sys
+import os
+from datetime import datetime
+
+def run_command(cmd, error_msg="コマンド実行エラー"):
+    '''コマンドを実行して結果を返す'''
+    try:
+        result = subprocess.run(
+            cmd,
+            shell=True,
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"❌ {error_msg}")
+        print(f"エラー: {e.stderr}")
+        sys.exit(1)
+
+def deploy():
+    '''デプロイメイン処理'''
+    print("=" * 50)
+    print(f"デプロイ開始: {datetime.now()}")
+    print("=" * 50)
+    
+    # 1. Gitから最新コードを取得
+    print("\\n[1/5] コードを取得中...")
+    run_command("git pull origin main", "Git pull失敗")
+    
+    # 2. 依存パッケージをインストール
+    print("\\n[2/5] 依存パッケージをインストール中...")
+    run_command("pip install -r requirements.txt", "パッケージインストール失敗")
+    
+    # 3. テスト実行
+    print("\\n[3/5] テスト実行中...")
+    run_command("pytest tests/", "テスト失敗")
+    
+    # 4. 静的解析
+    print("\\n[4/5] 静的解析実行中...")
+    run_command("flake8 src/", "静的解析エラー")
+    
+    # 5. アプリケーション再起動
+    print("\\n[5/5] アプリケーション再起動中...")
+    run_command("systemctl restart myapp", "再起動失敗")
+    
+    print("\\n" + "=" * 50)
+    print("✅ デプロイ完了！")
+    print("=" * 50)
+
+if __name__ == "__main__":
+    deploy()
+"""
+
+print(deploy_script)
+
+# ==========================================================
+# 【Part 6】チートシート
+# ==========================================================
+
+print("\n" + "=" * 70)
+print("【チートシート】総まとめ")
+print("=" * 70)
+
+cheatsheet = """
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃          Git・Jenkins・Python総合チートシート         ┃
+┗━━━━━━━━━
