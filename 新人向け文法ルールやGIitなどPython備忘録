@@ -1,0 +1,2781 @@
+# 新人エンジニア向け研修：PEP 8とPythonコーディングルール
+
+## PEP 8とは？
+
+**PEP 8**（Python Enhancement Proposal 8）は、Pythonの公式コーディング規約です。Pythonコミュニティ全体で推奨されているスタイルガイドで、読みやすく一貫性のあるコードを書くための標準ルールです。
+
+## PEP 8の主要ルール
+
+### 1. インデント
+
+**4スペースを使用**（タブは使わない）
+
+```python
+# Good
+def calculate_price(quantity, unit_price):
+    total = quantity * unit_price
+    tax = total * 0.1
+    return total + tax
+
+# Bad（タブや2スペースは使わない）
+def calculate_price(quantity, unit_price):
+  total = quantity * unit_price
+  return total
+```
+
+### 2. 1行の最大文字数
+
+**79文字以内**を推奨（コメントやdocstringは72文字）
+
+```python
+# Good - 長い行は適切に改行
+result = some_function(
+    argument1, argument2,
+    argument3, argument4
+)
+
+# Bad - 長すぎる
+result = some_function(argument1, argument2, argument3, argument4, argument5, argument6)
+```
+
+### 3. 空行の使い方
+
+**トップレベルの関数・クラス定義の前後に2行**
+
+```python
+import os
+
+
+def first_function():
+    pass
+
+
+def second_function():
+    pass
+
+
+class MyClass:
+    pass
+```
+
+**メソッド定義の間に1行**
+
+```python
+class DaifukuShop:
+    def __init__(self):
+        self.inventory = {}
+    
+    def add_stock(self, flavor, quantity):
+        self.inventory[flavor] = quantity
+    
+    def get_stock(self, flavor):
+        return self.inventory.get(flavor, 0)
+```
+
+### 4. import文
+
+**順序：標準ライブラリ → サードパーティ → 自作モジュール**
+
+```python
+# Good
+import os
+import sys
+from datetime import datetime
+
+import numpy as np
+import pandas as pd
+
+from my_project.models import Order
+from my_project.utils import calculate_tax
+```
+
+**1行に1つのimport**
+
+```python
+# Good
+import os
+import sys
+
+# Bad
+import os, sys
+```
+
+### 5. 空白の使い方
+
+**演算子の前後にスペース**
+
+```python
+# Good
+x = 1
+y = 2
+total = x + y
+
+# Bad
+x=1
+y=2
+total=x+y
+```
+
+**カンマの後にスペース**
+
+```python
+# Good
+my_list = [1, 2, 3, 4]
+def function(a, b, c):
+    pass
+
+# Bad
+my_list = [1,2,3,4]
+def function(a,b,c):
+    pass
+```
+
+**括弧の内側にスペースを入れない**
+
+```python
+# Good
+result = function(arg1, arg2)
+my_list = [1, 2, 3]
+
+# Bad
+result = function( arg1, arg2 )
+my_list = [ 1, 2, 3 ]
+```
+
+### 6. 命名規則
+
+| 対象 | スタイル | 例 |
+|------|----------|-----|
+| 変数・関数 | snake_case | `customer_name`, `calculate_total()` |
+| クラス | PascalCase | `DaifukuOrder`, `CustomerData` |
+| 定数 | UPPER_CASE | `MAX_QUANTITY`, `TAX_RATE` |
+| プライベート変数 | _leading_underscore | `_internal_value` |
+| モジュール | lowercase | `utils.py`, `models.py` |
+
+```python
+# Good
+class OrderProcessor:
+    MAX_ITEMS = 100
+    
+    def __init__(self):
+        self._cache = {}
+    
+    def process_order(self, order_id):
+        return self._validate_order(order_id)
+    
+    def _validate_order(self, order_id):
+        # プライベートメソッド
+        pass
+```
+
+### 7. 比較演算
+
+**None、True、Falseの比較にはisを使う**
+
+```python
+# Good
+if value is None:
+    pass
+
+if flag is True:
+    pass
+
+# Bad
+if value == None:
+    pass
+```
+
+**真偽値の直接評価**
+
+```python
+# Good
+if my_list:
+    pass
+
+if not my_string:
+    pass
+
+# Bad
+if len(my_list) > 0:
+    pass
+
+if my_string == "":
+    pass
+```
+
+### 8. 文字列
+
+**一貫したクォート使用**
+
+```python
+# Good - シングルかダブルどちらかに統一
+message = 'Hello, World!'
+name = 'ふわふわ大福店'
+
+# または
+message = "Hello, World!"
+name = "ふわふわ大福店"
+
+# docstringはダブルクォート3つ
+def example():
+    """
+    これはdocstringです
+    """
+    pass
+```
+
+### 9. コメント
+
+**コードと同じレベルにインデント**
+
+```python
+# Good
+def calculate_total(items):
+    # 消費税を計算
+    subtotal = sum(items)
+    tax = subtotal * 0.1
+    return subtotal + tax
+
+# Bad
+def calculate_total(items):
+# 消費税を計算
+    subtotal = sum(items)
+    tax = subtotal * 0.1
+    return subtotal + tax
+```
+
+## PEP 8チェックツール
+
+### flake8
+
+コマンドラインでPEP 8違反をチェック
+
+```bash
+# インストール
+pip install flake8
+
+# チェック実行
+flake8 my_script.py
+```
+
+### black
+
+自動フォーマッター（PEP 8準拠に自動整形）
+
+```bash
+# インストール
+pip install black
+
+# フォーマット実行
+black my_script.py
+```
+
+### pylint
+
+より詳細なコード品質チェック
+
+```bash
+# インストール
+pip install pylint
+
+# チェック実行
+pylint my_script.py
+```
+
+## よくある間違い例
+
+```python
+# Bad - 複数の問題
+def calculateTotal(x,y):
+  result=x+y
+  return result
+
+# Good - PEP 8準拠
+def calculate_total(x, y):
+    result = x + y
+    return result
+
+
+# Bad - スペースの使い方
+my_list = [ 1 , 2 , 3 ]
+result = function (arg)
+
+# Good
+my_list = [1, 2, 3]
+result = function(arg)
+```
+
+## まとめ
+
+PEP 8を守ることで：
+
+✅ チーム全体でコードの見た目が統一される  
+✅ 他の人がコードを読みやすくなる  
+✅ バグを見つけやすくなる  
+✅ Pythonコミュニティの標準に従える  
+
+最初は覚えることが多く感じるかもしれませんが、エディタの設定やツールを使えば自動的にチェック・修正できます。慣れてくれば自然と書けるようになりますよ！
+
+**参考リンク：** https://peps.python.org/pep-0008/
+
+# 新人エンジニア向け研修：Pythonモジュールのルールとベストプラクティス
+
+## モジュールとは？
+
+**モジュール**は、Pythonコードをまとめた`.py`ファイルのことです。関連する関数やクラスをモジュールにまとめることで、コードの再利用性と保守性が向上します。
+
+## モジュールの命名規則
+
+### 基本ルール
+
+**小文字のsnake_case**を使用（PEP 8準拠）
+
+```
+# Good
+customer_manager.py
+order_processor.py
+daifuku_inventory.py
+utils.py
+config.py
+
+# Bad
+CustomerManager.py
+Order-Processor.py
+daifukuInventory.py
+UTILS.py
+```
+
+**短く、分かりやすい名前**
+
+```
+# Good
+models.py
+validators.py
+db_connector.py
+
+# Bad
+all_database_models_and_schemas.py
+stuff.py
+tmp.py
+module1.py
+```
+
+**数字で始めない、予約語を避ける**
+
+```
+# Bad
+class.py        # 予約語
+import.py       # 予約語
+123_utils.py    # 数字始まり
+
+# Good
+class_manager.py
+import_utils.py
+utils_v2.py
+```
+
+## プロジェクト構成例
+
+### 小規模プロジェクト
+
+```
+daifuku_shop/
+├── __init__.py
+├── models.py           # データモデル
+├── views.py            # ビュー処理
+├── controllers.py      # ビジネスロジック
+├── utils.py            # ユーティリティ関数
+└── config.py           # 設定情報
+```
+
+### 中規模プロジェクト
+
+```
+daifuku_shop/
+├── __init__.py
+├── models/
+│   ├── __init__.py
+│   ├── order.py
+│   ├── customer.py
+│   └── product.py
+├── services/
+│   ├── __init__.py
+│   ├── order_service.py
+│   └── inventory_service.py
+├── utils/
+│   ├── __init__.py
+│   ├── validators.py
+│   └── formatters.py
+├── config.py
+└── constants.py
+```
+
+## モジュールの書き方
+
+### 1. モジュールdocstring
+
+**ファイルの先頭に説明を書く**
+
+```python
+# order_processor.py
+"""
+注文処理モジュール
+
+このモジュールは大福の注文に関する処理を提供します。
+- 注文の作成
+- 注文の検証
+- 在庫チェック
+"""
+
+import os
+from datetime import datetime
+
+# 以下、コード...
+```
+
+### 2. モジュール内の構成順序
+
+**PEP 8推奨の順序**
+
+```python
+# customer_manager.py
+"""モジュールdocstring"""
+
+# 1. 標準ライブラリ
+import os
+import sys
+from datetime import datetime
+
+# 2. サードパーティライブラリ
+import requests
+from flask import Flask
+
+# 3. 自作モジュール
+from daifuku_shop.models import Customer
+from daifuku_shop.utils import validate_email
+
+# 4. 定数定義
+MAX_CUSTOMERS = 1000
+DEFAULT_COUNTRY = "Japan"
+
+# 5. 例外クラス
+class CustomerNotFoundError(Exception):
+    """顧客が見つからない場合の例外"""
+    pass
+
+# 6. クラス定義
+class CustomerManager:
+    """顧客管理クラス"""
+    pass
+
+# 7. 関数定義
+def create_customer(name, email):
+    """顧客を作成する"""
+    pass
+
+# 8. メイン処理（必要な場合）
+if __name__ == "__main__":
+    # テストコードなど
+    pass
+```
+
+### 3. __init__.pyの使い方
+
+**パッケージを定義する**
+
+```python
+# daifuku_shop/__init__.py
+"""
+ふわふわ大福店管理システム
+
+大福の注文、在庫、顧客管理を行うパッケージ
+"""
+
+__version__ = "1.0.0"
+__author__ = "ふわふわ大福店開発チーム"
+
+# パッケージレベルでインポートを公開
+from daifuku_shop.models.order import Order
+from daifuku_shop.models.customer import Customer
+from daifuku_shop.services.order_service import OrderService
+
+# __all__で公開するものを明示
+__all__ = [
+    "Order",
+    "Customer",
+    "OrderService",
+]
+```
+
+**これにより、使う側はシンプルに書ける**
+
+```python
+# Good - __init__.pyで定義済み
+from daifuku_shop import Order, Customer
+
+# Bad - 深い階層を指定
+from daifuku_shop.models.order import Order
+from daifuku_shop.models.customer import Customer
+```
+
+### 4. プライベート変数・関数
+
+**アンダースコアで始める**
+
+```python
+# utils.py
+
+# 公開関数
+def calculate_total(items):
+    """合計金額を計算（公開API）"""
+    return _apply_tax(_sum_items(items))
+
+# プライベート関数（モジュール内部用）
+def _sum_items(items):
+    """アイテムの合計（内部使用）"""
+    return sum(item.price for item in items)
+
+def _apply_tax(amount):
+    """税金適用（内部使用）"""
+    return amount * 1.1
+
+# __all__で公開関数を明示
+__all__ = ["calculate_total"]
+```
+
+### 5. 循環インポートを避ける
+
+**Bad - 循環参照が発生**
+
+```python
+# order.py
+from customer import Customer
+
+class Order:
+    def __init__(self, customer):
+        self.customer = customer
+
+# customer.py
+from order import Order  # ← 循環参照！
+
+class Customer:
+    def __init__(self):
+        self.orders = []
+```
+
+**Good - 構造を見直す**
+
+```python
+# models/order.py
+class Order:
+    def __init__(self, customer_id):
+        self.customer_id = customer_id
+
+# models/customer.py
+class Customer:
+    def __init__(self):
+        self.id = None
+        self.orders = []
+
+# services/order_service.py
+from models.order import Order
+from models.customer import Customer
+
+def create_order(customer, items):
+    # ここで両方使う
+    order = Order(customer.id)
+    return order
+```
+
+## インポートのベストプラクティス
+
+### 1. 絶対インポート vs 相対インポート
+
+**絶対インポート（推奨）**
+
+```python
+# daifuku_shop/services/order_service.py
+
+# Good - 絶対インポート
+from daifuku_shop.models.order import Order
+from daifuku_shop.utils.validators import validate_order
+```
+
+**相対インポート（パッケージ内のみ）**
+
+```python
+# daifuku_shop/services/order_service.py
+
+# OK - 相対インポート（同じパッケージ内）
+from ..models.order import Order
+from ..utils.validators import validate_order
+from .inventory_service import check_stock
+```
+
+### 2. インポートの粒度
+
+```python
+# Good - 必要なものだけインポート
+from datetime import datetime, timedelta
+from collections import defaultdict
+
+# Bad - 全部インポート（名前空間が汚れる）
+from datetime import *
+from collections import *
+
+# Good - モジュール全体をインポート（多く使う場合）
+import numpy as np
+import pandas as pd
+```
+
+### 3. エイリアスの使用
+
+```python
+# Good - 長い名前に短いエイリアス
+import daifuku_shop.services.order_processor as op
+from daifuku_shop.models import order as order_model
+
+# 慣習的なエイリアス
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+```
+
+## モジュール設計の原則
+
+### 1. 単一責任の原則
+
+**1つのモジュールは1つの責務**
+
+```python
+# Good - 明確な責務
+# email_sender.py - メール送信のみ
+# order_validator.py - 注文検証のみ
+# inventory_manager.py - 在庫管理のみ
+
+# Bad - 複数の責務
+# utils.py - メール送信、注文検証、在庫管理、その他なんでも
+```
+
+### 2. 疎結合
+
+**モジュール間の依存を最小限に**
+
+```python
+# Good - インターフェースを通じた疎結合
+class OrderService:
+    def __init__(self, inventory_checker):
+        self.inventory_checker = inventory_checker
+    
+    def create_order(self, items):
+        if self.inventory_checker.has_stock(items):
+            # 処理
+            pass
+
+# Bad - 直接的な結合
+class OrderService:
+    def create_order(self, items):
+        from inventory_manager import InventoryManager
+        inv = InventoryManager()
+        # 処理...
+```
+
+### 3. 適切な粒度
+
+```
+# Too fine-grained（細かすぎ）
+calculate_tax.py          # 1関数だけ
+format_date.py           # 1関数だけ
+validate_email.py        # 1関数だけ
+
+# Good（適切な粒度）
+tax_calculator.py        # 税金関連の複数関数
+formatters.py            # フォーマット関連の複数関数
+validators.py            # バリデーション関連の複数関数
+
+# Too coarse-grained（大きすぎ）
+utils.py                 # あらゆる機能が入っている
+helpers.py               # 関係ない機能の寄せ集め
+```
+
+## チェックリスト
+
+モジュールを作成する前に確認：
+
+- [ ] モジュール名は小文字のsnake_caseですか？
+- [ ] モジュールdocstringを書きましたか？
+- [ ] インポート順序は正しいですか？（標準→サード→自作）
+- [ ] 循環インポートはありませんか？
+- [ ] 1つのモジュールは1つの責務ですか？
+- [ ] __init__.pyで公開APIを定義しましたか？
+- [ ] プライベート関数は`_`で始まっていますか？
+
+## まとめ
+
+良いモジュール設計は：
+
+✅ **再利用性**が高い - 他のプロジェクトでも使える  
+✅ **保守性**が高い - 修正や拡張が容易  
+✅ **可読性**が高い - 何をするモジュールか明確  
+✅ **テスト**しやすい - 独立してテストできる  
+
+最初は完璧でなくても大丈夫です。コードレビューを通じて、チームで改善していきましょう！
+
+# 新人エンジニア向け研修：PEP（Python Enhancement Proposal）とは？
+
+## PEPって何？
+
+**PEP**（ペップ）= **Python Enhancement Proposal**（Python拡張提案）
+
+Pythonの改善提案書のことで、Pythonの新機能、プロセス、ガイドラインなどを文書化したものです。
+
+簡単に言うと：
+- **Pythonの「公式ルールブック」や「設計書」**
+- Python開発者が「こういう機能を追加したい」「こういうルールにしよう」と提案して議論するためのドキュメント
+
+## 主要なPEP一覧
+
+### 🌟 超重要PEP
+
+#### **PEP 8 - Style Guide for Python Code**
+コーディング規約（一番有名！）
+
+```python
+# PEP 8に従った書き方
+def calculate_total_price(quantity, unit_price):
+    """合計金額を計算する"""
+    total = quantity * unit_price
+    tax = total * 0.1
+    return total + tax
+```
+
+#### **PEP 20 - The Zen of Python**
+Pythonの哲学・設計思想
+
+```python
+>>> import this
+The Zen of Python, by Tim Peters
+
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+...
+```
+
+日本語訳：
+- 醜いより美しい方がいい
+- 暗黙より明示的な方がいい
+- 複雑より単純な方がいい
+- など全19項目
+
+#### **PEP 257 - Docstring Conventions**
+docstring（ドキュメント文字列）の書き方
+
+```python
+def add_customer(name, email, phone=None):
+    """
+    新規顧客を追加する
+    
+    Args:
+        name (str): 顧客名
+        email (str): メールアドレス
+        phone (str, optional): 電話番号
+    
+    Returns:
+        Customer: 作成された顧客オブジェクト
+    
+    Raises:
+        ValueError: メールアドレスが不正な場合
+    """
+    # 処理...
+```
+
+### 📚 機能に関する重要PEP
+
+#### **PEP 484 - Type Hints**
+型ヒント（Python 3.5+）
+
+```python
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+
+def calculate_total(prices: list[float]) -> float:
+    return sum(prices)
+
+# 変数の型ヒント
+customer_name: str = "田中太郎"
+order_count: int = 5
+```
+
+#### **PEP 498 - f-strings**
+f文字列（Python 3.6+）
+
+```python
+# 従来の方法
+name = "太郎"
+age = 25
+message = "私の名前は{}で、{}歳です".format(name, age)
+
+# f-string（PEP 498）
+message = f"私の名前は{name}で、{age}歳です"
+
+# 式も使える
+price = 1000
+print(f"税込価格: {price * 1.1}円")
+```
+
+#### **PEP 572 - Assignment Expressions（セイウチ演算子）**
+代入式（Python 3.8+）
+
+```python
+# 従来
+data = get_data()
+if data:
+    process(data)
+
+# セイウチ演算子 :=
+if (data := get_data()):
+    process(data)
+
+# リスト内包表記でも便利
+results = [y for x in data if (y := process(x)) is not None]
+```
+
+#### **PEP 636 - Structural Pattern Matching**
+パターンマッチング（Python 3.10+）
+
+```python
+def process_order(order):
+    match order.status:
+        case "pending":
+            print("注文を処理中")
+        case "completed":
+            print("注文完了")
+        case "cancelled":
+            print("注文キャンセル")
+        case _:
+            print("不明なステータス")
+
+# より複雑なパターン
+match point:
+    case (0, 0):
+        print("原点")
+    case (0, y):
+        print(f"Y軸上: y={y}")
+    case (x, 0):
+        print(f"X軸上: x={x}")
+    case (x, y):
+        print(f"座標: ({x}, {y})")
+```
+
+### 🔧 プロセス・情報系PEP
+
+#### **PEP 1 - PEP Purpose and Guidelines**
+PEP自体の目的とガイドライン
+
+#### **PEP 404 - Python 2.8 Un-release Schedule**
+Python 2.8は永遠にリリースされない（Python 3への移行促進）
+
+#### **PEP 3000 - Python 3000**
+Python 3の設計哲学（Python 2→3の大きな変更）
+
+## PEPの分類
+
+### Type（種類）
+
+1. **Standards Track PEP**
+   - 新機能や実装の提案
+   - 例：PEP 484（型ヒント）、PEP 498（f-strings）
+
+2. **Informational PEP**
+   - ガイドラインや情報提供
+   - 例：PEP 8（コーディング規約）
+
+3. **Process PEP**
+   - Pythonの開発プロセスについて
+   - 例：PEP 1（PEPのガイドライン）
+
+### Status（状態）
+
+- **Draft**: 草案
+- **Accepted**: 承認済み
+- **Final**: 確定
+- **Rejected**: 却下
+- **Withdrawn**: 取り下げ
+
+## よく使うPEP早見表
+
+| PEP番号 | タイトル | 内容 | 重要度 |
+|---------|----------|------|--------|
+| PEP 8 | Style Guide | コーディング規約 | ⭐⭐⭐⭐⭐ |
+| PEP 20 | Zen of Python | Python哲学 | ⭐⭐⭐⭐⭐ |
+| PEP 257 | Docstring | docstring規約 | ⭐⭐⭐⭐ |
+| PEP 484 | Type Hints | 型ヒント | ⭐⭐⭐⭐ |
+| PEP 498 | f-strings | f文字列 | ⭐⭐⭐⭐ |
+| PEP 3107 | Function Annotations | 関数アノテーション | ⭐⭐⭐ |
+| PEP 526 | Variable Annotations | 変数アノテーション | ⭐⭐⭐ |
+| PEP 572 | Walrus Operator | セイウチ演算子 | ⭐⭐⭐ |
+| PEP 636 | Pattern Matching | パターンマッチ | ⭐⭐⭐ |
+
+## PEPの読み方
+
+### 公式サイトで読む
+
+```
+https://peps.python.org/pep-XXXX/
+
+例：
+https://peps.python.org/pep-0008/  # PEP 8
+https://peps.python.org/pep-0020/  # PEP 20
+```
+
+### Pythonインタプリタで読む（PEP 20のみ）
+
+```python
+>>> import this
+The Zen of Python, by Tim Peters
+...
+```
+
+## 実務でよく参照するPEP
+
+### 新人エンジニアが最初に読むべき
+
+1. **PEP 8** - コーディング規約（必読！）
+2. **PEP 20** - Pythonの哲学を理解
+3. **PEP 257** - docstringの書き方
+
+### モダンなPythonコードを書くために
+
+4. **PEP 484** - 型ヒントの使い方
+5. **PEP 498** - f-stringsの使い方
+6. **PEP 3107/526** - アノテーションの理解
+
+## PEPを活用した開発例
+
+```python
+"""
+顧客管理モジュール
+
+PEP 8: モジュール名はsnake_case
+PEP 257: モジュールdocstringを記述
+"""
+
+from typing import Optional  # PEP 484
+from dataclasses import dataclass  # PEP 557
+
+
+@dataclass  # PEP 557 - Data Classes
+class Customer:
+    """
+    顧客データクラス
+    
+    PEP 257に従ったdocstring
+    """
+    name: str  # PEP 484 - Type Hints
+    email: str
+    phone: Optional[str] = None  # PEP 484
+
+
+def create_customer(
+    name: str, 
+    email: str, 
+    phone: Optional[str] = None
+) -> Customer:  # PEP 484 - Return type hint
+    """
+    新規顧客を作成
+    
+    Args:
+        name: 顧客名
+        email: メールアドレス
+        phone: 電話番号（オプション）
+    
+    Returns:
+        作成された顧客オブジェクト
+    """
+    # PEP 8: 関数名はsnake_case、4スペースインデント
+    customer = Customer(name, email, phone)
+    
+    # PEP 498: f-string使用
+    print(f"顧客作成: {customer.name}")
+    
+    return customer
+
+
+if __name__ == "__main__":
+    # PEP 8: メイン処理の書き方
+    customer = create_customer(
+        name="田中太郎",
+        email="tanaka@example.com"
+    )
+```
+
+## まとめ
+
+**PEPは：**
+
+✅ Pythonの公式提案・ガイドライン文書  
+✅ 番号で管理されている（PEP 8、PEP 20など）  
+✅ 新機能、スタイルガイド、プロセスなどを定義  
+✅ 特に**PEP 8**は必読！  
+
+**新人エンジニアがまず覚えること：**
+
+1. **PEP 8** = コーディング規約（最重要！）
+2. **PEP** = Python Enhancement Proposal の略
+3. 公式サイト https://peps.python.org/ で読める
+
+PEPを理解することで、より良いPythonコードが書けるようになります！
+
+# 新人エンジニア向け研修：Python静的解析ツール完全ガイド
+
+## 静的解析とは？
+
+**静的解析**（Static Analysis）= プログラムを**実行せずに**コードを分析すること
+
+- コードの**バグ**を見つける
+- **コーディング規約違反**をチェック
+- **型の不整合**を検出
+- **潜在的な問題**を早期発見
+
+**動的解析**との違い：
+- **静的解析**: コードを読んで分析（実行しない）
+- **動的解析**: プログラムを実行して分析（テストなど）
+
+## 主要な静的解析ツール
+
+### 1. **Flake8** ⭐⭐⭐⭐⭐
+**PEP 8準拠チェック + 基本的なエラー検出**
+
+#### インストール
+```bash
+pip install flake8
+```
+
+#### 使い方
+```bash
+# 単一ファイルをチェック
+flake8 app.py
+
+# ディレクトリ全体をチェック
+flake8 daifuku_shop/
+
+# 結果の例
+app.py:5:1: E302 expected 2 blank lines, found 1
+app.py:10:80: E501 line too long (85 > 79 characters)
+app.py:15:1: F401 'os' imported but unused
+```
+
+#### 設定ファイル（.flake8 または setup.cfg）
+```ini
+[flake8]
+max-line-length = 88
+exclude = 
+    .git,
+    __pycache__,
+    venv,
+    migrations
+ignore = 
+    E203,  # whitespace before ':'
+    W503   # line break before binary operator
+```
+
+#### よくあるエラーコード
+```python
+# E302: 関数定義の前に2行空けていない
+def first_function():
+    pass
+def second_function():  # ← エラー！
+    pass
+
+# E501: 行が長すぎる（79文字超）
+very_long_variable_name = some_function(arg1, arg2, arg3, arg4, arg5)  # ← エラー！
+
+# F401: インポートしたが未使用
+import os  # ← 使っていないのでエラー！
+
+# F841: 変数を定義したが未使用
+def process():
+    result = calculate()  # ← 使っていないのでエラー！
+    return 42
+```
+
+### 2. **Pylint** ⭐⭐⭐⭐⭐
+**最も厳格で詳細なチェッカー**
+
+#### インストール
+```bash
+pip install pylint
+```
+
+#### 使い方
+```bash
+# チェック実行
+pylint app.py
+
+# スコア付きで表示
+pylint daifuku_shop/
+
+# 結果の例
+************* Module app
+app.py:1:0: C0114: Missing module docstring (missing-module-docstring)
+app.py:5:0: C0116: Missing function or method docstring (missing-function-docstring)
+app.py:10:4: W0612: Unused variable 'result' (unused-variable)
+
+-----------------------------------
+Your code has been rated at 7.50/10
+```
+
+#### 設定ファイル（.pylintrc）
+```ini
+[MASTER]
+ignore=migrations,tests
+
+[FORMAT]
+max-line-length=88
+
+[MESSAGES CONTROL]
+disable=
+    missing-docstring,
+    too-few-public-methods,
+    invalid-name
+
+[DESIGN]
+max-args=7
+max-locals=15
+```
+
+#### Pylintの評価
+```python
+# 良いコード例（高スコア）
+"""顧客管理モジュール"""
+
+
+class CustomerManager:
+    """顧客管理クラス"""
+    
+    def __init__(self):
+        """初期化"""
+        self.customers = []
+    
+    def add_customer(self, name: str, email: str) -> None:
+        """
+        顧客を追加
+        
+        Args:
+            name: 顧客名
+            email: メールアドレス
+        """
+        self.customers.append({"name": name, "email": email})
+
+
+# 悪いコード例（低スコア）
+class cm:  # 短すぎる名前
+    def __init__(self):
+        self.c = []  # 意味不明な変数名
+    
+    def add(self, n, e):  # 引数名が短すぎ、docstringなし
+        self.c.append({"name": n, "email": e})
+```
+
+### 3. **Mypy** ⭐⭐⭐⭐⭐
+**型チェック専門ツール**
+
+#### インストール
+```bash
+pip install mypy
+```
+
+#### 使い方
+```bash
+# 型チェック実行
+mypy app.py
+
+# 結果の例
+app.py:5: error: Argument 1 to "calculate" has incompatible type "str"; expected "int"
+app.py:10: error: Incompatible return value type (got "None", expected "str")
+```
+
+#### 型チェックの例
+```python
+# 型ヒント付きコード
+def calculate_total(price: int, quantity: int) -> int:
+    """合計金額を計算"""
+    return price * quantity
+
+
+def get_customer_name(customer_id: int) -> str:
+    """顧客名を取得"""
+    # データベースから取得する想定
+    return "田中太郎"
+
+
+# エラー例
+result = calculate_total("1000", 5)  # エラー！strをintに渡している
+# error: Argument 1 has incompatible type "str"; expected "int"
+
+name: int = get_customer_name(123)  # エラー！戻り値はstr
+# error: Incompatible types in assignment (expression has type "str", variable has type "int")
+
+
+# 正しい例
+result = calculate_total(1000, 5)  # OK
+name: str = get_customer_name(123)  # OK
+```
+
+#### 設定ファイル（mypy.ini または pyproject.toml）
+```ini
+[mypy]
+python_version = 3.10
+warn_return_any = True
+warn_unused_configs = True
+disallow_untyped_defs = True
+
+[mypy-tests.*]
+ignore_errors = True
+```
+
+### 4. **Black** ⭐⭐⭐⭐⭐
+**自動フォーマッター（opinionated）**
+
+#### インストール
+```bash
+pip install black
+```
+
+#### 使い方
+```bash
+# ファイルを自動整形
+black app.py
+
+# ディレクトリ全体を整形
+black daifuku_shop/
+
+# チェックのみ（変更しない）
+black --check app.py
+
+# 差分表示
+black --diff app.py
+```
+
+#### Blackの効果
+```python
+# 整形前
+def calculate_total(price,quantity,tax_rate=0.1):
+    total=price*quantity
+    return total*(1+tax_rate)
+
+# 整形後（Blackが自動変換）
+def calculate_total(price, quantity, tax_rate=0.1):
+    total = price * quantity
+    return total * (1 + tax_rate)
+```
+
+#### 設定ファイル（pyproject.toml）
+```toml
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | migrations
+)/
+'''
+```
+
+### 5. **isort** ⭐⭐⭐⭐
+**import文の自動整理**
+
+#### インストール
+```bash
+pip install isort
+```
+
+#### 使い方
+```bash
+# import文を整理
+isort app.py
+
+# チェックのみ
+isort --check-only app.py
+```
+
+#### isortの効果
+```python
+# 整理前（バラバラ）
+from flask import Flask
+import os
+from datetime import datetime
+import sys
+from my_app.models import Order
+import json
+
+# 整理後（PEP 8準拠）
+import json
+import os
+import sys
+from datetime import datetime
+
+from flask import Flask
+
+from my_app.models import Order
+```
+
+#### 設定ファイル（pyproject.toml）
+```toml
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+```
+
+### 6. **Bandit** ⭐⭐⭐⭐
+**セキュリティ脆弱性チェック**
+
+#### インストール
+```bash
+pip install bandit
+```
+
+#### 使い方
+```bash
+# セキュリティチェック
+bandit -r daifuku_shop/
+
+# 結果の例
+[B105:hardcoded_password_string] Possible hardcoded password: 'admin123'
+[B201:flask_debug_true] A Flask app appears to be run with debug=True
+```
+
+#### 検出される問題例
+```python
+# Bad - セキュリティ問題あり
+password = "admin123"  # ハードコードされたパスワード
+app.run(debug=True)  # 本番環境でdebug=True
+
+import pickle
+data = pickle.loads(user_input)  # 危険な入力
+
+# Good - 改善版
+import os
+password = os.environ.get("DB_PASSWORD")  # 環境変数から取得
+app.run(debug=False)
+
+import json
+data = json.loads(user_input)  # より安全
+```
+
+### 7. **Ruff** ⭐⭐⭐⭐⭐
+**超高速な新世代リンター（FlakeとPylintの代替）**
+
+#### インストール
+```bash
+pip install ruff
+```
+
+#### 使い方
+```bash
+# チェック実行
+ruff check .
+
+# 自動修正
+ruff check --fix .
+
+# 結果の例
+app.py:5:1: F401 [*] `os` imported but unused
+app.py:10:80: E501 Line too long (85 > 79)
+```
+
+#### 設定ファイル（pyproject.toml）
+```toml
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+ignore = ["E203", "E501"]
+```
+
+## ツールの組み合わせ例
+
+### パターン1: 基本セット（初心者向け）
+```bash
+pip install flake8 black isort
+```
+
+```bash
+# 実行順序
+isort .          # import整理
+black .          # コード整形
+flake8 .         # PEP 8チェック
+```
+
+### パターン2: 厳格セット（本格開発）
+```bash
+pip install ruff black isort mypy bandit
+```
+
+```bash
+# 実行順序
+isort .          # import整理
+black .          # コード整形
+ruff check .     # 高速リント
+mypy .           # 型チェック
+bandit -r .      # セキュリティチェック
+```
+
+### パターン3: モダンセット（最新）
+```bash
+pip install ruff mypy
+```
+
+```bash
+# Ruffだけで多くをカバー
+ruff check --fix .
+ruff format .
+mypy .
+```
+
+## pre-commitで自動化
+
+### pre-commitとは
+**Gitコミット前に自動でチェック**を実行するツール
+
+#### インストール
+```bash
+pip install pre-commit
+```
+
+#### 設定ファイル（.pre-commit-config.yaml）
+```yaml
+repos:
+  - repo: https://github.com/psf/black
+    rev: 23.10.0
+    hooks:
+      - id: black
+        language_version: python3.10
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.6.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-requests]
+```
+
+#### 有効化
+```bash
+# pre-commit設定
+pre-commit install
+
+# 手動実行
+pre-commit run --all-files
+```
+
+#### 動作イメージ
+```bash
+$ git commit -m "新機能追加"
+
+black....................................................................Passed
+isort....................................................................Passed
+flake8...................................................................Failed
+- hook id: flake8
+- exit code: 1
+
+app.py:10:80: E501 line too long (85 > 79 characters)
+
+# コミット失敗！修正してから再度コミット
+```
+
+## VS Code統合
+
+### settings.json
+```json
+{
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Enabled": true,
+  "python.linting.mypyEnabled": true,
+  
+  "python.formatting.provider": "black",
+  
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
+  
+  "python.sortImports.args": [
+    "--profile", "black"
+  ]
+}
+```
+
+## ツール比較表
+
+| ツール | 目的 | 速度 | 厳格さ | 自動修正 |
+|--------|------|------|--------|----------|
+| **Flake8** | PEP 8チェック | 速い | 中 | ❌ |
+| **Pylint** | 総合チェック | 遅い | 高 | ❌ |
+| **Mypy** | 型チェック | 中 | 高 | ❌ |
+| **Black** | コード整形 | 速い | - | ✅ |
+| **isort** | import整理 | 速い | - | ✅ |
+| **Bandit** | セキュリティ | 速い | 中 | ❌ |
+| **Ruff** | 総合リント | 超速 | 中〜高 | ✅ |
+
+## 実践例
+
+### プロジェクト構成
+```
+daifuku_shop/
+├── .flake8
+├── .pylintrc
+├── mypy.ini
+├── pyproject.toml
+├── .pre-commit-config.yaml
+├── daifuku_shop/
+│   ├── __init__.py
+│   ├── models.py
+│   └── services.py
+└── tests/
+    └── test_models.py
+```
+
+### pyproject.toml（統合設定）
+```toml
+[tool.black]
+line-length = 88
+target-version = ['py310']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.ruff]
+line-length = 88
+select = ["E", "F", "I", "N", "W", "B"]
+```
+
+### Makefile（便利コマンド集）
+```makefile
+.PHONY: format lint type-check security check
+
+format:
+	isort .
+	black .
+
+lint:
+	ruff check .
+
+type-check:
+	mypy .
+
+security:
+	bandit -r daifuku_shop/
+
+check: format lint type-check security
+	@echo "All checks passed!"
+```
+
+### 実行
+```bash
+# すべてのチェックを一度に実行
+make check
+```
+
+## まとめ
+
+### 新人エンジニアが最初に導入すべきツール
+
+1. **Black** - コード整形（自動）
+2. **isort** - import整理（自動）
+3. **Flake8 / Ruff** - PEP 8チェック
+4. **Mypy** - 型チェック（型ヒント使用時）
+
+### ベストプラクティス
+
+✅ **早い段階から導入** - 後から直すのは大変  
+✅ **CI/CDに組み込む** - 自動チェック  
+✅ **pre-commitで自動化** - コミット前チェック  
+✅ **チーム全体で統一** - 設定ファイルを共有  
+✅ **段階的に厳しく** - 最初は緩め、徐々に厳格化  
+
+静的解析ツールを使うことで、バグを事前に防ぎ、コード品質を保てます！
+
+# 新人エンジニア向け研修：Pythonオブジェクト指向プログラミング完全ガイド
+
+## 目次
+1. クラスとインスタンス
+2. メソッドの種類
+3. public/private
+4. 継承（親子関係）
+5. オーバーライド
+6. ポリモーフィズム
+7. オーバーロード
+8. docstring
+9. 仮想環境
+
+---
+
+## 1. クラスとインスタンス
+
+### クラスとは？
+**設計図（型紙）**のようなもの
+
+### インスタンスとは？
+**設計図から作った実体（実物）**
+
+```python
+# クラス定義（設計図）
+class Daifuku:
+    """大福クラス"""
+    
+    def __init__(self, flavor, price):
+        """
+        コンストラクタ（初期化メソッド）
+        
+        Args:
+            flavor (str): 味
+            price (int): 価格
+        """
+        self.flavor = flavor  # インスタンス変数
+        self.price = price
+    
+    def describe(self):
+        """大福の説明を表示"""
+        return f"{self.flavor}大福（{self.price}円）"
+
+
+# インスタンス作成（実物を作る）
+ichigo_daifuku = Daifuku("いちご", 200)  # インスタンス1
+matcha_daifuku = Daifuku("抹茶", 180)    # インスタンス2
+
+# 使用
+print(ichigo_daifuku.describe())  # いちご大福（200円）
+print(matcha_daifuku.describe())  # 抹茶大福（180円）
+```
+
+### インスタンス変数 vs クラス変数
+
+```python
+class DaifukuShop:
+    # クラス変数（全インスタンスで共有）
+    shop_name = "ふわふわ大福店"
+    total_sales = 0
+    
+    def __init__(self, location):
+        # インスタンス変数（各インスタンス固有）
+        self.location = location
+        self.daily_sales = 0
+    
+    def sell(self, amount):
+        """売上を記録"""
+        self.daily_sales += amount
+        DaifukuShop.total_sales += amount  # クラス変数を更新
+
+
+# 使用例
+shop1 = DaifukuShop("東京店")
+shop2 = DaifukuShop("大阪店")
+
+shop1.sell(1000)
+shop2.sell(2000)
+
+print(shop1.daily_sales)        # 1000（インスタンス固有）
+print(shop2.daily_sales)        # 2000（インスタンス固有）
+print(DaifukuShop.total_sales)  # 3000（全店舗の合計）
+```
+
+---
+
+## 2. メソッドの種類
+
+### インスタンスメソッド
+**インスタンスに対して動作**（第1引数は`self`）
+
+### クラスメソッド
+**クラスに対して動作**（第1引数は`cls`）
+
+### 静的メソッド
+**クラスにもインスタンスにも依存しない**（引数制限なし）
+
+```python
+class Daifuku:
+    tax_rate = 0.1  # クラス変数
+    
+    def __init__(self, flavor, price):
+        self.flavor = flavor
+        self.price = price
+    
+    # インスタンスメソッド
+    def get_total_price(self):
+        """税込価格を取得（インスタンスのデータを使う）"""
+        return self.price * (1 + Daifuku.tax_rate)
+    
+    # クラスメソッド
+    @classmethod
+    def change_tax_rate(cls, new_rate):
+        """消費税率を変更（クラス全体に影響）"""
+        cls.tax_rate = new_rate
+    
+    # 静的メソッド
+    @staticmethod
+    def is_valid_price(price):
+        """価格が妥当かチェック（独立した処理）"""
+        return 0 < price < 10000
+
+
+# 使用例
+daifuku = Daifuku("いちご", 200)
+
+# インスタンスメソッド
+print(daifuku.get_total_price())  # 220
+
+# クラスメソッド（インスタンス不要）
+Daifuku.change_tax_rate(0.08)
+print(daifuku.get_total_price())  # 216
+
+# 静的メソッド（インスタンス不要）
+print(Daifuku.is_valid_price(200))   # True
+print(Daifuku.is_valid_price(-100))  # False
+```
+
+---
+
+## 3. public / private
+
+Pythonには**厳密なアクセス制御はない**が、**慣習**がある
+
+### 命名規則
+
+```python
+class Customer:
+    def __init__(self, name, email):
+        # public（公開）- 外部からアクセス可能
+        self.name = name
+        
+        # protected（保護）- サブクラスからアクセス想定
+        self._email = email
+        
+        # private（非公開）- クラス内部のみ
+        self.__password = "secret123"
+    
+    # public メソッド
+    def get_name(self):
+        return self.name
+    
+    # protected メソッド
+    def _validate_email(self):
+        return "@" in self._email
+    
+    # private メソッド
+    def __encrypt_password(self):
+        return f"encrypted_{self.__password}"
+    
+    # public メソッドからprivateメソッドを使う
+    def get_encrypted_password(self):
+        return self.__encrypt_password()
+
+
+# 使用例
+customer = Customer("田中太郎", "tanaka@example.com")
+
+# public - OK
+print(customer.name)  # 田中太郎
+
+# protected - アクセス可能だが、やるべきでない
+print(customer._email)  # tanaka@example.com（警告）
+
+# private - 直接アクセス不可
+# print(customer.__password)  # AttributeError
+
+# publicメソッド経由でアクセス
+print(customer.get_encrypted_password())  # encrypted_secret123
+```
+
+### Name Mangling（名前修飾）
+
+```python
+class Example:
+    def __init__(self):
+        self.__private = "秘密"
+    
+    def show(self):
+        print(self.__private)
+
+
+obj = Example()
+obj.show()  # 秘密
+
+# 直接アクセスは不可
+# print(obj.__private)  # AttributeError
+
+# 実は内部的にはアクセス可能（でもやるべきでない）
+print(obj._Example__private)  # 秘密（名前が変換されている）
+```
+
+### プロパティ（getter/setter）
+
+```python
+class Product:
+    def __init__(self, name, price):
+        self._name = name
+        self._price = price
+    
+    # getter
+    @property
+    def price(self):
+        """価格を取得"""
+        return self._price
+    
+    # setter
+    @price.setter
+    def price(self, value):
+        """価格を設定（バリデーション付き）"""
+        if value < 0:
+            raise ValueError("価格は0以上である必要があります")
+        self._price = value
+    
+    # getter（読み取り専用）
+    @property
+    def name(self):
+        """商品名を取得（読み取り専用）"""
+        return self._name
+
+
+# 使用例
+product = Product("大福", 200)
+
+# getterを使用（メソッドのように見えない）
+print(product.price)  # 200
+print(product.name)   # 大福
+
+# setterを使用
+product.price = 250   # OK
+print(product.price)  # 250
+
+# バリデーション
+# product.price = -100  # ValueError
+
+# 読み取り専用なので変更不可
+# product.name = "新商品"  # AttributeError
+```
+
+---
+
+## 4. 継承（親子関係）
+
+### 基本的な継承
+
+```python
+# 親クラス（基底クラス、スーパークラス）
+class Product:
+    """商品の基底クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def describe(self):
+        """商品説明"""
+        return f"{self.name}: {self.price}円"
+    
+    def calculate_total(self, quantity):
+        """合計金額を計算"""
+        return self.price * quantity
+
+
+# 子クラス（派生クラス、サブクラス）
+class Daifuku(Product):
+    """大福クラス（Productを継承）"""
+    
+    def __init__(self, name, price, flavor):
+        # 親クラスの初期化を呼び出す
+        super().__init__(name, price)
+        # 子クラス独自の属性
+        self.flavor = flavor
+    
+    def describe(self):
+        """商品説明（オーバーライド）"""
+        return f"{self.flavor}{self.name}: {self.price}円"
+
+
+# 使用例
+product = Product("一般商品", 100)
+daifuku = Daifuku("大福", 200, "いちご")
+
+print(product.describe())  # 一般商品: 100円
+print(daifuku.describe())  # いちご大福: 200円
+
+# 継承したメソッドも使える
+print(daifuku.calculate_total(3))  # 600
+```
+
+### 多重継承
+
+```python
+class Discountable:
+    """割引可能な機能"""
+    
+    def apply_discount(self, discount_rate):
+        """割引を適用"""
+        self.price = int(self.price * (1 - discount_rate))
+
+
+class Perishable:
+    """賞味期限がある機能"""
+    
+    def __init__(self, expiry_days):
+        self.expiry_days = expiry_days
+    
+    def is_expired(self, days_passed):
+        """賞味期限切れかチェック"""
+        return days_passed > self.expiry_days
+
+
+# 多重継承
+class FreshDaifuku(Product, Discountable, Perishable):
+    """生大福（割引可能 + 賞味期限あり）"""
+    
+    def __init__(self, name, price, expiry_days):
+        Product.__init__(self, name, price)
+        Perishable.__init__(self, expiry_days)
+
+
+# 使用例
+fresh = FreshDaifuku("生いちご大福", 300, 3)
+
+print(fresh.describe())  # 生いちご大福: 300円
+
+# 割引適用
+fresh.apply_discount(0.2)  # 20%オフ
+print(fresh.price)  # 240
+
+# 賞味期限チェック
+print(fresh.is_expired(2))  # False
+print(fresh.is_expired(5))  # True
+```
+
+### super()の使い方
+
+```python
+class Animal:
+    def __init__(self, name):
+        self.name = name
+        print(f"Animal初期化: {name}")
+    
+    def speak(self):
+        return "何か音を出す"
+
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)  # 親クラスの__init__を呼ぶ
+        self.breed = breed
+        print(f"Dog初期化: {breed}")
+    
+    def speak(self):
+        # 親クラスのメソッドを拡張
+        parent_result = super().speak()
+        return f"{parent_result} → ワンワン！"
+
+
+# 使用例
+dog = Dog("ポチ", "柴犬")
+# 出力:
+# Animal初期化: ポチ
+# Dog初期化: 柴犬
+
+print(dog.speak())  # 何か音を出す → ワンワン！
+```
+
+---
+
+## 5. オーバーライド
+
+**親クラスのメソッドを子クラスで上書き**
+
+```python
+class Employee:
+    """従業員の基底クラス"""
+    
+    def __init__(self, name, base_salary):
+        self.name = name
+        self.base_salary = base_salary
+    
+    def calculate_salary(self):
+        """給与計算"""
+        return self.base_salary
+    
+    def introduce(self):
+        """自己紹介"""
+        return f"私は{self.name}です"
+
+
+class Manager(Employee):
+    """マネージャークラス"""
+    
+    def __init__(self, name, base_salary, bonus):
+        super().__init__(name, base_salary)
+        self.bonus = bonus
+    
+    # オーバーライド
+    def calculate_salary(self):
+        """給与計算（ボーナス込み）"""
+        return self.base_salary + self.bonus
+    
+    # オーバーライド
+    def introduce(self):
+        """自己紹介（肩書き付き）"""
+        base_intro = super().introduce()  # 親のメソッドも使う
+        return f"{base_intro}。マネージャーです。"
+
+
+class Intern(Employee):
+    """インターンクラス"""
+    
+    def __init__(self, name, hourly_rate, hours):
+        # base_salaryは使わない
+        super().__init__(name, 0)
+        self.hourly_rate = hourly_rate
+        self.hours = hours
+    
+    # オーバーライド
+    def calculate_salary(self):
+        """給与計算（時給制）"""
+        return self.hourly_rate * self.hours
+
+
+# 使用例
+employee = Employee("田中", 300000)
+manager = Manager("佐藤", 400000, 100000)
+intern = Intern("鈴木", 1500, 80)
+
+print(employee.calculate_salary())  # 300000
+print(manager.calculate_salary())   # 500000
+print(intern.calculate_salary())    # 120000
+
+print(employee.introduce())  # 私は田中です
+print(manager.introduce())   # 私は佐藤です。マネージャーです。
+```
+
+---
+
+## 6. ポリモーフィズム（多態性）
+
+**同じインターフェースで異なる動作**
+
+```python
+class Animal:
+    """動物の基底クラス"""
+    
+    def speak(self):
+        """鳴き声（サブクラスで実装）"""
+        raise NotImplementedError("サブクラスで実装してください")
+
+
+class Dog(Animal):
+    def speak(self):
+        return "ワンワン！"
+
+
+class Cat(Animal):
+    def speak(self):
+        return "ニャー！"
+
+
+class Cow(Animal):
+    def speak(self):
+        return "モー！"
+
+
+# ポリモーフィズムの威力
+def animal_concert(animals):
+    """
+    動物たちに鳴いてもらう
+    
+    各動物の型を気にせず、同じインターフェース（speak）で扱える
+    """
+    for animal in animals:
+        print(animal.speak())
+
+
+# 使用例
+animals = [
+    Dog(),
+    Cat(),
+    Cow(),
+    Dog(),
+    Cat()
+]
+
+animal_concert(animals)
+# 出力:
+# ワンワン！
+# ニャー！
+# モー！
+# ワンワン！
+# ニャー！
+```
+
+### 実践例：決済システム
+
+```python
+class PaymentMethod:
+    """決済方法の基底クラス"""
+    
+    def pay(self, amount):
+        """支払い処理（サブクラスで実装）"""
+        raise NotImplementedError
+
+
+class CreditCard(PaymentMethod):
+    def __init__(self, card_number):
+        self.card_number = card_number
+    
+    def pay(self, amount):
+        return f"クレジットカード（****{self.card_number[-4:]}）で{amount}円支払いました"
+
+
+class PayPay(PaymentMethod):
+    def __init__(self, phone_number):
+        self.phone_number = phone_number
+    
+    def pay(self, amount):
+        return f"PayPay（{self.phone_number}）で{amount}円支払いました"
+
+
+class Cash(PaymentMethod):
+    def pay(self, amount):
+        return f"現金で{amount}円支払いました"
+
+
+# 決済処理（ポリモーフィズム活用）
+def process_payment(payment_method: PaymentMethod, amount: int):
+    """
+    決済を処理する
+    
+    どの決済方法でも同じインターフェース（pay）で処理できる
+    """
+    result = payment_method.pay(amount)
+    print(result)
+    print("決済完了！")
+
+
+# 使用例
+credit = CreditCard("1234567890123456")
+paypay = PayPay("090-1234-5678")
+cash = Cash()
+
+process_payment(credit, 5000)  # クレジットカードで支払い
+process_payment(paypay, 3000)  # PayPayで支払い
+process_payment(cash, 1000)    # 現金で支払い
+```
+
+---
+
+## 7. オーバーロード
+
+⚠️ **Pythonは従来のオーバーロードをサポートしていない**
+
+他の言語（Java、C++など）のような「同名メソッドで引数違い」はできない
+
+```python
+# これは動かない（最後の定義で上書きされる）
+class Calculator:
+    def add(self, a):
+        return a
+    
+    def add(self, a, b):  # 上の定義を上書き
+        return a + b
+    
+    def add(self, a, b, c):  # さらに上書き
+        return a + b + c
+
+
+calc = Calculator()
+# calc.add(5)  # TypeError（3つ引数が必要）
+```
+
+### 代替手段1: デフォルト引数
+
+```python
+class Calculator:
+    def add(self, a, b=0, c=0):
+        """
+        数値を加算
+        
+        Args:
+            a: 第1引数（必須）
+            b: 第2引数（省略可、デフォルト0）
+            c: 第3引数（省略可、デフォルト0）
+        """
+        return a + b + c
+
+
+calc = Calculator()
+print(calc.add(5))         # 5
+print(calc.add(5, 3))      # 8
+print(calc.add(5, 3, 2))   # 10
+```
+
+### 代替手段2: 可変長引数
+
+```python
+class Calculator:
+    def add(self, *args):
+        """任意個の数値を加算"""
+        return sum(args)
+
+
+calc = Calculator()
+print(calc.add(5))              # 5
+print(calc.add(5, 3))           # 8
+print(calc.add(5, 3, 2))        # 10
+print(calc.add(1, 2, 3, 4, 5))  # 15
+```
+
+### 代替手段3: 型チェック（functools.singledispatchmethod）
+
+```python
+from functools import singledispatchmethod
+
+class Formatter:
+    @singledispatchmethod
+    def format(self, arg):
+        """デフォルト実装"""
+        return str(arg)
+    
+    @format.register
+    def _(self, arg: int):
+        """int用の実装"""
+        return f"整数: {arg}"
+    
+    @format.register
+    def _(self, arg: str):
+        """str用の実装"""
+        return f"文字列: {arg}"
+    
+    @format.register
+    def _(self, arg: list):
+        """list用の実装"""
+        return f"リスト（{len(arg)}要素）: {arg}"
+
+
+formatter = Formatter()
+print(formatter.format(42))          # 整数: 42
+print(formatter.format("Hello"))     # 文字列: Hello
+print(formatter.format([1, 2, 3]))   # リスト（3要素）: [1, 2, 3]
+```
+
+---
+
+## 8. docstring（ドキュメント文字列）
+
+### 基本ルール（PEP 257）
+
+```python
+class Customer:
+    """
+    顧客管理クラス
+    
+    顧客情報の作成、更新、取得を行います。
+    """
+    
+    def __init__(self, name: str, email: str):
+        """
+        顧客を初期化
+        
+        Args:
+            name (str): 顧客名
+            email (str): メールアドレス
+        
+        Raises:
+            ValueError: メールアドレスが無効な場合
+        """
+        if "@" not in email:
+            raise ValueError("無効なメールアドレス")
+        
+        self.name = name
+        self.email = email
+    
+    def send_email(self, subject: str, body: str) -> bool:
+        """
+        顧客にメールを送信
+        
+        Args:
+            subject (str): メールの件名
+            body (str): メール本文
+        
+        Returns:
+            bool: 送信成功したらTrue、失敗したらFalse
+        
+        Examples:
+            >>> customer = Customer("田中", "tanaka@example.com")
+            >>> customer.send_email("ご案内", "新商品のお知らせです")
+            True
+        """
+        # メール送信処理...
+        return True
+
+
+# docstringにアクセス
+print(Customer.__doc__)
+print(Customer.send_email.__doc__)
+
+# help関数で確認
+help(Customer)
+```
+
+### Google Style
+
+```python
+def calculate_discount(price, discount_rate, member_rank="bronze"):
+    """
+    割引後の価格を計算する
+    
+    会員ランクに応じた追加割引を適用します。
+    
+    Args:
+        price (float): 元の価格
+        discount_rate (float): 割引率（0.0～1.0）
+        member_rank (str, optional): 会員ランク。
+            "bronze", "silver", "gold"のいずれか。デフォルトは"bronze"。
+    
+    Returns:
+        float: 割引後の価格
+    
+    Raises:
+        ValueError: discount_rateが0～1の範囲外の場合
+        ValueError: member_rankが不正な値の場合
+    
+    Examples:
+        >>> calculate_discount(1000, 0.1)
+        900.0
+        >>> calculate_discount(1000, 0.1, "gold")
+        850.0
+    
+    Note:
+        会員ランク別の追加割引:
+        - bronze: 追加割引なし
+        - silver: さらに3%オフ
+        - gold: さらに5%オフ
+    """
+    if not 0 <= discount_rate <= 1:
+        raise ValueError("discount_rateは0～1の範囲で指定してください")
+    
+    rank_discount = {
+        "bronze": 0,
+        "silver": 0.03,
+        "gold": 0.05
+    }
+    
+    if member_rank not in rank_discount:
+        raise ValueError(f"不正な会員ランク: {member_rank}")
+    
+    discounted = price * (1 - discount_rate)
+    final_price = discounted * (1 - rank_discount[member_rank])
+    
+    return final_price
+```
+
+### NumPy Style
+
+```python
+def process_order(order_id, items, shipping_address=None):
+    """
+    注文を処理する
+    
+    Parameters
+    ----------
+    order_id : int
+        注文ID
+    items : list of dict
+        注文アイテムのリスト。各アイテムは以下のキーを含む辞書:
+        - 'product_id' (int): 商品ID
+        - 'quantity' (int): 数量
+        - 'price' (float): 単価
+    shipping_address : str, optional
+        配送先住所。Noneの場合は登録住所を使用。
+    
+    Returns
+    -------
+    dict
+        処理結果を含む辞書:
+        - 'success' (bool): 処理成功フラグ
+        - 'total_price' (float): 合計金額
+        - 'estimated_delivery' (str): 配送予定日
+    
+    Raises
+    ------
+    ValueError
+        order_idが無効な場合
+    RuntimeError
+        在庫不足の場合
+    
+    See Also
+    --------
+    cancel_order : 注文をキャンセルする
+    update_order : 注文内容を更新する
+    
+    Examples
+    --------
+    >>> items = [
+    ...     {'product_id': 1, 'quantity': 2, 'price': 500},
+    ...     {'product_id': 2, 'quantity': 1, 'price': 1000}
+    ... ]
+    >>> result = process_order(12345, items)
+    >>> print(result['total_price'])
+    2000
+    """
+    # 処理...
+    pass
+```
+
+---
+
+## 9. 仮想環境
+
+### 仮想環境とは？
+
+**プロジェクトごとに独立したPython環境**を作る仕組み
+
+#### なぜ必要？
+
+```
+プロジェクトA: Django 3.2が必要
+プロジェクトB: Django 4.2が必要
+
+→ 仮想環境がないと競合してしまう！
+```
+
+### venv（標準ライブラリ）
+
+#### 作成
+
+```bash
+# 仮想環境を作成
+python -m venv venv
+
+# または特定の名前で
+python -m venv myenv
+```
+
+#### 有効化
+
+```bash
+# Windows
+venv\Scripts\activate
+
+# macOS / Linux
+source venv/bin/activate
+
+# 有効化されると...
+(venv) $  # プロンプトに(venv)が表示される
+```
+
+#### 使用
+
+```bash
+# 仮想環境内でパッケージをインストール
+(venv) $ pip install flask
+(venv) $ pip install requests pandas
+
+# インストール済みパッケージ確認
+(venv) $ pip list
+
+# requirements.txt作成
+(venv) $ pip freeze > requirements.txt
+```
+
+#### 無効化
+
+```bash
+(venv) $ deactivate
+```
+
+#### requirements.txtから復元
+
+```bash
+# 別の環境で同じパッケージをインストール
+pip install -r requirements.txt
+```
+
+### プロジェクト構成例
+
+```
+daifuku_shop/
+├── venv/                    # 仮想環境（Gitには含めない）
+├── daifuku_shop/            # ソースコード
+│   ├── __init__.py
+│   ├── models.py
+│   └── services.py
+├── tests/
+│   └── test_models.py
+├── requirements.txt         # 依存パッケージリスト
+├── .gitignore              # venv/を除外
+└── README.md
+```
+
+### .gitignore
+
+```
+# 仮想環境は共有しない
+venv/
+env/
+.venv/
+
+# Python関連
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# IDE
+.vscode/
+.idea/
+```
+
+### requirements.txt例
+
+```
+# requirements.txt
+Flask==3.0.0
+requests==2.31.0
+pandas==2.1.0
+pytest==7.4.0
+black==23.10.0
+flake8==6.1.0
+mypy==1.6.0
+```
+
+### pyenv（複数のPythonバージョン管理）
+
+```bash
+# pyenvインストール後...
+
+# 利用可能なPythonバージョン一覧
+pyenv install --list
+
+# Python 3.10.5をインストール
+pyenv install 3.10.5
+
+# グローバルバージョン設定
+pyenv global 3.10.5
+
+# プロジェクトごとのバージョン設定
+cd my_project
+pyenv local 3.10.5
+```
+
+### pipenv（パッケージ管理 + 仮想環境）
+
+```bash
+# pipenvインストール
+pip install pipenv
+
+# プロジェクト初期化
+cd my_project
+pipenv --python 3.10
+
+# パッケージインストール
+pipenv install flask
+pipenv install --dev pytest  # 開発用
+
+# 仮想環境に入る
+pipenv shell
+
+# スクリプト実行
+pipenv run python app.py
+```
+
+### Poetry（モダンな依存管理）
+
+```bash
+# Poetryインストール
+curl -sSL https://install.python-poetry.org | python3 -
+
+# プロジェクト初期化
+poetry new my-project
+cd my-project
+
+# パッケージインストール
+poetry add flask
+poetry add --group dev pytest
+
+# 仮想環境に入る
+poetry shell
+
+# スクリプト実行
+poetry run python app.py
+```
+
+---
+
+## 総合実践例
+
+```python
+"""
+大福店管理システム
+
+このモジュールは大福店の商品と注文を管理します。
+"""
+
+from abc import ABC, abstractmethod
+from typing import List, Optional
+from datetime import datetime
+
+
+class Product(ABC):
+    """
+    商品の抽象基底クラス
+    
+    すべての商品はこのクラスを継承する必要があります。
+    """
+    
+    def __init__(self, name: str, price: int):
+        """
+        商品を初期化
+        
+        Args:
+            name (str): 商品名
+            price (int): 価格
+        
+        Raises:
+            ValueError: 価格が0以下の場合
+        """
+        if price <= 0:
+            raise ValueError("価格は正の値である必要があります")
+        
+        self._name = name
+        self._price = price
+    
+    @property
+    def name(self) -> str:
+        """商品名を取得"""
+        return self._name
+    
+    @property
+    def price(self) -> int:
+        """価格を取得"""
+        return self._price
+    
+    @abstractmethod
+    def describe(self) -> str:
+        """
+        商品説明を取得（サブクラスで実装）
+        
+        Returns:
+
+VSCodeでのGit操作について日本語で説明します。
+
+## 基本設定
+
+まずGitをインストールしてから、VSCodeで：
+- 統合ターミナルを開く（Ctrl + `）
+- ユーザー情報を設定：
+```bash
+git config --global user.name "あなたの名前"
+git config --global user.email "あなたのメール"
+```
+
+## よく使う操作
+
+**リポジトリの初期化**
+- フォルダを開いた後、左側のソース管理アイコンをクリック（またはCtrl+Shift+G）
+- 「リポジトリを初期化」ボタンをクリック
+
+**変更の確認**
+- ソース管理パネルに変更されたファイルが表示されます
+- ファイルをクリックすると差分が確認できます
+- ファイルの横の文字は状態を示します：U(未追跡)、M(変更)、D(削除)
+
+**ファイルのステージング**
+- ファイルの横の + をクリックして個別にステージング
+- 「変更」の横の + をクリックして全てステージング
+- またはファイルを右クリックして「変更をステージ」を選択
+
+**変更のコミット**
+- 上部のメッセージボックスにコミットメッセージを入力
+- ✓ コミットボタンをクリック（またはCtrl+Enter）
+
+**ブランチ操作**
+- 左下に現在のブランチ名が表示されます
+- ブランチ名をクリックすると、切り替えや作成ができます
+- またはコマンドパレット（Ctrl+Shift+P）で「Git: ブランチの作成」を入力
+
+**プッシュ/プル**
+- 左下の同期ボタン（循環矢印）をクリック
+- または上部メニューの ... から「プッシュ」または「プル」を選択
+
+**履歴の表示**
+- 「Git Graph」や「GitLens」拡張機能をインストールすると、より強力な機能が使えます
+- コミット履歴やブランチの可視化が可能です
+
+何か具体的な操作について知りたいことはありますか？
+
+VSCodeでのGit操作について日本語で説明します。
+
+## 基本設定
+
+まずGitをインストールしてから、VSCodeで：
+- 統合ターミナルを開く（Ctrl + `）
+- ユーザー情報を設定：
+```bash
+git config --global user.name "あなたの名前"
+git config --global user.email "あなたのメール"
+```
+
+## よく使う操作
+
+**リポジトリの初期化**
+- フォルダを開いた後、左側のソース管理アイコンをクリック（またはCtrl+Shift+G）
+- 「リポジトリを初期化」ボタンをクリック
+
+**変更の確認**
+- ソース管理パネルに変更されたファイルが表示されます
+- ファイルをクリックすると差分が確認できます
+- ファイルの横の文字は状態を示します：U(未追跡)、M(変更)、D(削除)
+
+**ファイルのステージング**
+- ファイルの横の + をクリックして個別にステージング
+- 「変更」の横の + をクリックして全てステージング
+- またはファイルを右クリックして「変更をステージ」を選択
+
+**変更のコミット**
+- 上部のメッセージボックスにコミットメッセージを入力
+- ✓ コミットボタンをクリック（またはCtrl+Enter）
+
+**ブランチ操作**
+- 左下に現在のブランチ名が表示されます
+- ブランチ名をクリックすると、切り替えや作成ができます
+- またはコマンドパレット（Ctrl+Shift+P）で「Git: ブランチの作成」を入力
+
+**プッシュ/プル**
+- 左下の同期ボタン（循環矢印）をクリック
+- または上部メニューの ... から「プッシュ」または「プル」を選択
+
+**履歴の表示**
+- 「Git Graph」や「GitLens」拡張機能をインストールすると、より強力な機能が使えます
+- コミット履歴やブランチの可視化が可能です
+
+何か具体的な操作について知りたいことはありますか？
