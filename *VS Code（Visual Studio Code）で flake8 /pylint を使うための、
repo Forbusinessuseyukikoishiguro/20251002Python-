@@ -1,0 +1,268 @@
+いいですね — 新人エンジニア向けに **VS Code（Visual Studio Code）で flake8 / pylint を使うための、ターミナル（macOS/Linux）・PowerShell・コマンドプロンプト（Windows）でのインストール手順と、よくあるトラブルの対処法** を **丁寧にステップバイステップ** でまとめます。最後に参照URL（公式ドキュメント）を付けます。
+
+> 前提：Python がインストール済みであること（確認コマンド `python --version` または Windows なら `py -3 --version`）。仮に入っていなければ公式インストーラを使ってインストールしてください。
+
+---
+
+# 目次（読む順番）
+
+1. 準備チェック（Python / VS Code 拡張）
+2. 仮想環境の作成と有効化（macOS/Linux / Windows PowerShell / Windows cmd）
+3. linters（flake8, pylint）のインストール（推奨：仮想環境内）
+4. VS Code 側の設定（インタプリタ選択 + リンター有効化 + パス指定）
+5. 動作確認コマンド（端末と VS Code）
+6. よくある問題と対処（コマンド例つき）
+7. まとめチェックリスト & 参照（公式リンク）
+
+---
+
+# 1) 準備チェック（最初に確認すること）
+
+ターミナル（macOS/Linux）または PowerShell / コマンドプロンプト（Windows）で下のコマンドを実行して確認します。
+
+```bash
+# Python があるか確認
+python --version        # 例: Python 3.11.4 のように出ればOK
+# Windowsで複数版がある場合
+py -3 --version
+```
+
+* VS Code はインストール済みか、かつ **Python 拡張（ms-python.python）** を入れておくと便利。VS Code の Python 拡張は Linting/IntelliSense/デバッガーを提供します。([Visual Studio Code][1])
+
+---
+
+# 2) 仮想環境の作成と有効化（**必ずプロジェクトごとに作ることを推奨**）
+
+Python の `venv` を使うのが標準的です（公式）。([Python documentation][2])
+
+### macOS / Linux（ターミナル）
+
+```bash
+# プロジェクトフォルダに移動してから
+python -m venv .venv        # .venv というフォルダに仮想環境を作る
+source .venv/bin/activate   # 仮想環境を有効化（プロンプトに (.venv) が付く）
+```
+
+* 解説：`python -m venv .venv` はその Python で仮想環境を作る公式のやり方です。([Python documentation][2])
+
+### Windows — PowerShell
+
+```powershell
+python -m venv .venv          # 仮想環境を作る
+.\.venv\Scripts\Activate.ps1  # PowerShell で有効化
+```
+
+* もし `Activate.ps1` 実行で「スクリプトの実行が無効です」等のエラーが出たら、PowerShell の実行ポリシーが原因です（次の章で対処）。公式は CurrentUser スコープで `RemoteSigned` を推奨例として示しています。([Python documentation][2])
+
+### Windows — コマンドプロンプト（cmd.exe）
+
+```cmd
+python -m venv .venv
+.\.venv\Scripts\activate.bat
+```
+
+* コマンドプロンプトでは `activate.bat` を実行します。
+
+---
+
+# 3) linters のインストール（仮想環境内で）
+
+まず仮想環境を有効にした状態で、`pip` をアップグレードしてからインストールするのがおすすめです（`python -m pip` を使うと PATH の混乱を避けられます）。([pip.pypa.io][3])
+
+```bash
+# 仮想環境を有効化した状態で実行（どのシェルでも）
+python -m pip install --upgrade pip setuptools
+python -m pip install flake8 pylint
+```
+
+* 解説：`python -m pip install ...` を使うことで「どの Python に入れているか」を明確にできます（システムの pip と混同しない）。pip の基本使い方は公式ドキュメント参照。([pip.pypa.io][3])
+
+---
+
+# 4) VS Code 側の設定（GUI or settings.json）
+
+VS Code で正しい環境を使わせる・リンターを有効にする手順を順に示します。公式の「Linting」ページに手順があります。([Visual Studio Code][4])
+
+### (A) Python インタプリタを選ぶ（重要）
+
+1. VS Code を開く。
+2. Ctrl+Shift+P → 「Python: Select Interpreter」を選択。
+3. プロジェクトの `.venv`（例: `.venv/bin/python` か `.venv\Scripts\python.exe`）を選ぶ。
+
+* 解説：VS Code がプロジェクトの仮想環境を使ってこそ、その仮想環境に入れた flake8 / pylint を認識します。([Visual Studio Code][5])
+
+### (B) リンターを有効にする（UI）
+
+1. Ctrl+Shift+P → `Python: Enable Linting` → `Enable` を選ぶ。
+2. Ctrl+Shift+P → `Python: Select Linter` → `flake8` または `pylint` を選択。
+
+* これで VS Code の Problems パネルに結果が出るはずです。([Visual Studio Code][4])
+
+### (C) settings.json に直接書く例（プロジェクト用 `.vscode/settings.json` に入れる）
+
+macOS / Linux の例：
+
+```json
+{
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.pylintEnabled": false,
+  "python.linting.flake8Path": ".venv/bin/flake8",
+  "python.linting.pylintPath": ".venv/bin/pylint"
+}
+```
+
+Windows の例（パスは環境に合わせて調整）：
+
+```json
+{
+  "python.linting.enabled": true,
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Path": ".venv\\Scripts\\flake8.exe",
+  "python.linting.pylintPath": ".venv\\Scripts\\pylint.exe"
+}
+```
+
+* 解説：VS Code が「どの flake8 を実行するか」を明示的に指定すると確実です（とくに複数 Python を使う環境で有効）。([Stack Overflow][6])
+
+---
+
+# 5) 動作確認コマンド（端末と VS Code）
+
+* ターミナル（仮想環境有効）で直接実行して問題を確認できます。
+
+```bash
+# flake8 でプロジェクト全体をチェック
+python -m flake8 .
+
+# pylint を特定ファイルに対して（モジュール名やファイルパス）
+python -m pylint path/to/your_module.py
+```
+
+* あるいは `flake8 --version` / `pylint --version` でインストール確認もできます：
+
+```bash
+python -m flake8 --version
+python -m pylint --version
+```
+
+---
+
+# 6) よくある問題と具体的な対処（原因 → 解決コマンド）
+
+以下は新人さんが必ず遭遇するトラブルと解決法です。順番に試してください。
+
+### 問題A：`pip` / `flake8` が「コマンドが見つかりません」になる
+
+**原因**：グローバル pip と混同、または PATH に入っていない／VS Code が別の Python を使っている。
+
+**対処**
+
+* まず仮想環境を有効にして、`python -m pip show flake8` で確認：
+
+  ```bash
+  python -m pip show flake8
+  ```
+
+  出なければ仮想環境にインストールされていない。
+
+* インストールは常に `python -m pip install flake8` を使う（どの Python に入るか明確）。([pip.pypa.io][3])
+
+* Windows で `python` が認識しない場合は `py -3 -m pip install ...` も試す。([Python documentation][7])
+
+### 問題B：VS Code が linters を見つけない / Problems に何も出ない
+
+**原因**：VS Code のインタプリタがプロジェクトの仮想環境を使っていない／`python.linting.enabled` が false。
+
+**対処**
+
+1. Ctrl+Shift+P → `Python: Select Interpreter` で `.venv` を選ぶ（最重要）。([Visual Studio Code][5])
+2. 設定で `Python: Linting` を有効化。
+3. 必要なら `python.linting.flake8Path` に仮想環境内の flake8 実体パスを明示。
+
+### 問題C：PowerShell で `Activate.ps1` が実行できない（エラー：スクリプトの実行が無効）
+
+**原因**：PowerShell の実行ポリシーが制限されている。
+
+**対処**
+
+* 管理者権限は不要で、CurrentUser スコープに `RemoteSigned` を設定する例（注意：社内ポリシー等がある場合はIT管理者に確認）：
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+# 変更後、再度 .\.venv\Scripts\Activate.ps1 を実行
+```
+
+* 詳細と注意点は Microsoft のドキュメント参照。([Microsoft Learn][8])
+
+### 問題D：pylint がやたら厳しく大量のメッセージ
+
+**対処**
+
+* まず `pylint` の推奨設定ファイル（`.pylintrc`）をプロジェクトに置いて不要なチェックを無効化できます。
+* VS Code の設定で引数を渡すことも可能：
+
+```json
+"python.linting.pylintArgs": ["--disable=C0114,C0116"]
+```
+
+* ルールの番号は pylint の出力で確認して無効化します。([pylint.readthedocs.io][9])
+
+### 問題E：flake8 のルールをプロジェクト単位で変えたい
+
+**対処**
+
+* flake8 は `.flake8` / `setup.cfg` / `tox.ini` に設定を書けます（推奨）。例：`.flake8` に `ignore = E203,W503` のように。([flake8.pycqa.org][10])
+
+---
+
+# 7) まとめチェックリスト（手順をひと通り短く復習）
+
+1. `python --version` を確認。
+2. プロジェクトで `python -m venv .venv` を作る。([Python documentation][2])
+3. 仮想環境を有効化（mac: `source .venv/bin/activate` / WinPS: `.\.venv\Scripts\Activate.ps1` / cmd: `.\.venv\Scripts\activate.bat`）。([Python documentation][11])
+4. `python -m pip install --upgrade pip` → `python -m pip install flake8 pylint`（仮想環境内）。([pip.pypa.io][3])
+5. VS Code で **Python インタプリタを `.venv` に切り替え** → リンターを有効化（Select Linter）。([Visual Studio Code][5])
+6. ターミナルで `python -m flake8 .` / `python -m pylint your_file.py` で確認。
+7. 問題があれば上のトラブルシューティングを順に試す（`python -m pip show flake8` / 実行ポリシーなど）。
+
+---
+
+# 参考（公式ドキュメント・推奨リンク）
+
+下記は手順で参照した公式ドキュメントです。具体的なエラー文や詳細設定はここを参照してください。
+
+1. Visual Studio Code — Linting (Python) — 公式（設定手順）
+   [https://code.visualstudio.com/docs/python/linting](https://code.visualstudio.com/docs/python/linting)  ([Visual Studio Code][4])
+2. Visual Studio Code — Python (environments) — 公式（インタプリタ選択）
+   [https://code.visualstudio.com/docs/python/environments](https://code.visualstudio.com/docs/python/environments)  ([Visual Studio Code][5])
+3. flake8 — 公式ドキュメント（使用法・設定）
+   [https://flake8.pycqa.org/](https://flake8.pycqa.org/)  ([flake8.pycqa.org][12])
+4. pylint — 公式ドキュメント（インストール／設定）
+   [https://pylint.readthedocs.io/](https://pylint.readthedocs.io/)  ([pylint.readthedocs.io][9])
+5. Python — venv ドキュメント（仮想環境の作成/Activate.ps1 注意）
+   [https://docs.python.org/3/library/venv.html](https://docs.python.org/3/library/venv.html)  ([Python documentation][2])
+6. pip — 公式（pip の使い方）
+   [https://pip.pypa.io/](https://pip.pypa.io/)  ([pip.pypa.io][3])
+7. Microsoft — PowerShell Set-ExecutionPolicy（PowerShell 実行ポリシー）
+   [https://learn.microsoft.com/powershell/module/microsoft.powershell.security/set-executionpolicy](https://learn.microsoft.com/powershell/module/microsoft.powershell.security/set-executionpolicy)  ([Microsoft Learn][8])
+
+---
+
+もしよければ、あなたの環境（OS：Windows/macOS/Linux、使いたいツール：flake8/pylint、VS Code での画面のスクリーンショットなど）を教えてください。
+その情報があれば、**あなたの環境に合わせたコピペで使えるコマンドと VS Code 設定ファイル（`.vscode/settings.json`）をその場で作って差し上げます**。
+
+やってみますか？😊
+
+[1]: https://code.visualstudio.com/docs/languages/python?utm_source=chatgpt.com "Python in Visual Studio Code"
+[2]: https://docs.python.org/3/library/venv.html?utm_source=chatgpt.com "venv — Creation of virtual environments"
+[3]: https://pip.pypa.io/en/latest/?utm_source=chatgpt.com "pip documentation v25.3.dev0"
+[4]: https://code.visualstudio.com/docs/python/linting?utm_source=chatgpt.com "Linting Python in Visual Studio Code"
+[5]: https://code.visualstudio.com/docs/python/environments?utm_source=chatgpt.com "Python environments in VS Code"
+[6]: https://stackoverflow.com/questions/54160207/how-to-use-flake8-in-vscode?utm_source=chatgpt.com "How to use Flake8 in VSCode? - python"
+[7]: https://docs.python.org/3/using/windows.html?utm_source=chatgpt.com "4. Using Python on Windows"
+[8]: https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-7.5&utm_source=chatgpt.com "Set-ExecutionPolicy (Microsoft.PowerShell.Security)"
+[9]: https://pylint.readthedocs.io/en/stable/user_guide/installation/index.html?utm_source=chatgpt.com "Installation - Pylint 3.3.8 documentation"
+[10]: https://flake8.pycqa.org/en/latest/user/configuration.html?utm_source=chatgpt.com "Configuring Flake8 — flake8 7.3.0 documentation"
+[11]: https://docs.python.org/3/tutorial/venv.html?utm_source=chatgpt.com "12. Virtual Environments and Packages"
+[12]: https://flake8.pycqa.org/?utm_source=chatgpt.com "Flake8: Your Tool For Style Guide Enforcement — flake8 7.3.0 ..."
