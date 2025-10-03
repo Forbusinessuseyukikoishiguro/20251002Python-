@@ -1,0 +1,633 @@
+了解しました！
+Qiitaにそのまま貼れるように、**見出し・コードブロック・表** を整えた記事形式にしました。
+わかりやすくストーリー仕立てにしているので、**新人エンジニア研修資料**にも使えます。
+
+---
+
+# 🚀 Git × VSCode 徹底チートシート【基礎から応用まで】
+
+> ✅ 新人エンジニア向けに、VSCode で Git を操作する方法を基礎から応用までまとめました。
+> ✅ コピペで使えるコマンド付き。記事をブックマークすれば「困ったときの虎の巻」になります。
+
+---
+
+## 🎯 この記事で学べること
+
+* Git の **基本コマンド**
+* VSCode での **Git 操作方法**
+* **チーム開発フロー**
+* 便利な **応用コマンド & 拡張機能**
+* 競合解決や事故対応の **トラブルシューティング**
+
+---
+
+## 1. Git 初期設定（最初に必ずやる）
+
+まずは環境設定から。これをやらないと「誰がコミットしたかわからない状態」になります。
+
+```bash
+git config --global user.name "あなたの名前"
+git config --global user.email "あなたのメール"
+git config --global core.editor "code --wait"   # VSCodeをデフォルトエディタに
+```
+
+---
+
+## 2. 基本のリポジトリ操作
+
+### 🔹 新しいリポジトリを作成
+
+```bash
+git init
+```
+
+### 🔹 既存リポジトリを取得
+
+```bash
+git clone <リポジトリURL>
+```
+
+---
+
+## 3. VSCode での基本操作
+
+VSCode には Git が統合されています。
+左側の **ソース管理アイコン（枝のマーク）** がメイン操作パネルです。
+
+| 操作     | VSCode でのやり方    | Git コマンド              |
+| ------ | --------------- | --------------------- |
+| 変更を確認  | Git パネルで差分をクリック | `git status`          |
+| ステージング | `+` ボタンをクリック    | `git add <file>`      |
+| コミット   | メッセージ入力 → `✔`   | `git commit -m "msg"` |
+| プッシュ   | 「…」→ Push       | `git push`            |
+| プル     | 「…」→ Pull       | `git pull`            |
+
+---
+
+## 4. よく使う Git コマンド
+
+```bash
+git status            # 状態を確認
+git add .             # 全ファイルをステージ
+git commit -m "msg"   # コミット
+git push origin main  # プッシュ
+git pull origin main  # プル
+```
+
+---
+
+## 5. ブランチ運用
+
+ブランチを使うと「本番コードを壊さずに開発」ができます。
+
+```bash
+git branch                   # ブランチ一覧
+git switch -c feature_x      # 新ブランチ作成
+git switch main              # mainに戻る
+git merge feature_x          # マージ
+```
+
+---
+
+## 6. チーム開発の流れ（鉄板パターン）
+
+チーム開発では以下の流れを覚えましょう。
+
+```bash
+git pull origin main          # 最新を取得
+git switch -c feature_x       # 新ブランチを作成
+# コード修正
+git add .
+git commit -m "機能Xを追加"
+git push origin feature_x     # リモートに送信
+```
+
+➡ GitHub/GitLab で **Pull Request** を作成 → レビュー → マージ
+
+---
+
+## 7. トラブル対応（新人がハマりやすいポイント）
+
+| 状況                  | 解決コマンド                                            |
+| ------------------- | ------------------------------------------------- |
+| コミットをやり直したい         | `git commit --amend`                              |
+| 直前のコミットを取り消す        | `git reset --soft HEAD~1`                         |
+| ファイル削除を戻す           | `git checkout -- <file>`                          |
+| 競合が発生した             | VSCode が差分を表示 → **Accept Current / Incoming** を選択 |
+| ローカルを強制的にリモートに合わせたい | `git fetch --all && git reset --hard origin/main` |
+
+---
+
+## 8. 応用テクニック
+
+```bash
+git log --oneline --graph --all   # 履歴を見やすく表示
+git stash                         # 変更を一時退避
+git stash pop                     # 復元
+git cherry-pick <commitID>        # 特定のコミットだけ取り込み
+git rebase -i HEAD~3              # 過去3コミットをまとめて編集
+```
+
+---
+
+## 9. VSCodeで便利な拡張機能
+
+* **GitLens**: コードの履歴や blame を表示
+* **Git Graph**: ブランチ構造をグラフ表示
+* **Project Manager**: 複数リポジトリを整理
+
+---
+
+## ✅ まとめ
+
+* **基礎** → `ステージ → コミット → プッシュ` の流れを覚える
+* **中級** → ブランチ運用と PR を使いこなす
+* **上級** → rebase / stash / cherry-pick で履歴を自在に操る
+* **VSCode拡張** を入れると生産性が爆上がり
+
+👉 この記事をブックマークしておけば、明日から **Git の操作に迷わない新人エンジニア** になれます！
+
+---
+
+質問ですが、
+この記事は **「完全初心者向け」** にさらに図解やスクショ付きにしますか？
+それとも **「新人研修用スライド」** に落とし込みたいですか？
+
+
+
+了解です！
+Git を「**できること一覧（MECE）**」と「**間違いやすいポイント**」で整理して、**チートシート形式**にまとめます。
+新人が「これ何だっけ？」となりやすい部分を重点的に入れました。
+
+---
+
+# 🐙 Git チートシート【できること一覧 & 間違いやすいポイント】
+
+---
+
+## 1️⃣ Gitでできること一覧（MECEで整理）
+
+### 🔹 A. コードの状態管理
+
+* `git init` : リポジトリ作成
+* `git clone` : リポジトリ取得
+* `git status` : 変更の確認
+* `git diff` : 差分の確認
+
+---
+
+### 🔹 B. 変更の記録
+
+* `git add` : ステージング
+* `git commit` : 永続的に履歴を残す
+* `git reset` : コミットやステージを取り消す
+* `git checkout -- <file>` : 変更を破棄
+
+---
+
+### 🔹 C. 履歴の確認
+
+* `git log` : 履歴を見る
+* `git log --oneline --graph --all` : 見やすくツリー表示
+* `git show <commitID>` : コミット詳細を確認
+
+---
+
+### 🔹 D. ブランチ操作
+
+* `git branch` : ブランチ一覧
+* `git switch -c feature` : 新ブランチ作成
+* `git switch main` : ブランチ移動
+* `git merge feature` : マージ
+* `git rebase` : 履歴を整理
+
+---
+
+### 🔹 E. リモート操作
+
+* `git remote -v` : リモート一覧
+* `git fetch` : 更新を取得（マージしない）
+* `git pull` : 更新を取得 & マージ
+* `git push` : リモートへ送信
+
+---
+
+### 🔹 F. 応用操作
+
+* `git stash` : 作業の一時退避
+* `git cherry-pick <commitID>` : 特定のコミットを適用
+* `git revert <commitID>` : コミットを打ち消す
+* `git tag` : バージョン管理
+
+---
+
+## 2️⃣ 間違いやすいポイント（新人がよくハマる）
+
+### 🔹 A. add と commit の違い
+
+* `git add` = 一時的に「コミット候補」にする
+* `git commit` = 候補を正式に履歴に残す
+  👉 **add だけでは履歴に残らない！**
+
+---
+
+### 🔹 B. pull と fetch の違い
+
+* `git fetch` = 変更を取得するだけ（ローカルには適用されない）
+* `git pull` = 取得 + ローカルに適用（マージ or リベース）
+  👉 **fetch → 確認 → merge** が安全
+
+---
+
+### 🔹 C. reset と revert の違い
+
+* `git reset` = 履歴を書き換える（危険！）
+* `git revert` = 新しいコミットで取り消す（安全！）
+  👉 チーム開発では **revert 推奨**
+
+---
+
+### 🔹 D. checkout と switch の違い
+
+* `git checkout` = ブランチ移動 + ファイル復元（古い書き方）
+* `git switch` = ブランチ移動専用（新しい書き方）
+  👉 **switch** を覚えると迷わない
+
+---
+
+### 🔹 E. stash と commit の違い
+
+* `git stash` = 一時的に隠すだけ（履歴には残らない）
+* `git commit` = 永続的に保存（履歴に残る）
+  👉 **中断するなら stash、残すなら commit**
+
+---
+
+### 🔹 F. fast-forward と merge commit の違い
+
+* **fast-forward** = 直線的に履歴を伸ばす（余計なコミットなし）
+* **merge commit** = 分岐がある場合に「統合コミット」ができる
+  👉 どちらを使うかはチームルール次第
+
+---
+
+## 3️⃣ Git チーム開発での「事故あるある」
+
+| ありがちミス             | 原因                     | 解決法                         |
+| ------------------ | ---------------------- | --------------------------- |
+| `git push` したら怒られた | main に直接 push した       | feature ブランチを切って PR する      |
+| コミットが消えた           | `git reset --hard` を誤用 | `git reflog` で復元できることもある    |
+| 競合解決で混乱            | 同じファイルを複数人が編集          | VSCode の conflict 解決ツールを使う  |
+| pull したらコードが壊れた    | `git pull` で強制マージされた   | `git fetch` → 確認 → merge 推奨 |
+| stash したのを忘れる      | stash のまま放置            | `git stash list` で確認        |
+
+---
+
+## 4️⃣ Git の学び方（優先度付き）
+
+1. **必須**: add / commit / push / pull
+2. **実務で必須**: branch / merge / conflict 解決
+3. **応用で便利**: stash / cherry-pick / rebase
+4. **上級者向け**: reset / reflog / interactive rebase
+
+---
+
+## ✅ まとめ
+
+* Git は「**コードのタイムマシン**」
+* 基本操作は **状態確認 → add → commit → push**
+* **間違いやすいペア**（add/commit, pull/fetch, reset/revert）は要注意
+* **チーム開発では安全第一**（revert・fetchを優先）
+
+---
+
+👉 これを **「Git虎の巻」ポスター** にして壁に貼るのもアリです。
+
+---
+
+質問です！
+この続きを **「Git事故対応マニュアル（ケース別解決策）」** に発展させますか？
+それとも **ポスター型（A4 1枚チートシート）** にまとめ直しましょうか？
+
+
+めちゃくちゃ良い展開です！🔥
+それでは **「Git事故対応マニュアル（ケース別解決策）」** を記事風にまとめて、実務で新人が必ずぶつかるトラブル → 解決策 をケースごとに整理しますね。
+
+---
+
+# 🛠 Git事故対応マニュアル【ケース別解決策】
+
+> ✅ 「あっ、やってしまった…」
+> ✅ Git でよくある事故をケース別に整理し、即対応できるようにしました。
+> ✅ チーム開発で「焦らない新人」になるための虎の巻。
+
+---
+
+## 1️⃣ コミットを間違えた
+
+### ケース1: コミットメッセージを間違えた
+
+```bash
+git commit --amend -m "正しいメッセージ"
+```
+
+👉 直前のコミットを修正できます。
+※ 既に push 済みなら **rebase** や **force push** が絡むので注意（要相談）。
+
+---
+
+### ケース2: 間違ったファイルをコミットした
+
+```bash
+git reset --soft HEAD~1   # 直前のコミットを取り消してステージに戻す
+git reset HEAD <file>     # 特定のファイルだけステージ解除
+```
+
+👉 コミットを取り消してやり直せます。
+
+---
+
+## 2️⃣ ファイルを消してしまった
+
+### ケース1: まだ commit していない場合
+
+```bash
+git checkout -- <file>
+```
+
+👉 最新のコミット時点に戻せます。
+
+### ケース2: commit した後に消してしまった
+
+```bash
+git checkout <commitID> -- <file>
+```
+
+👉 過去のコミットからファイルを復元できます。
+
+---
+
+## 3️⃣ push したら怒られた
+
+### ケース1: main に直接 push してしまった
+
+* 原因: **チームルールは PR 前提**
+* 対応策:
+
+  ```bash
+  git checkout -b hotfix_x   # 新しいブランチを作成
+  git push origin hotfix_x   # PR を作る
+  ```
+
+👉 main 直 push は即やめて、PR ベースに切り替える。
+
+---
+
+### ケース2: force push して履歴を壊した
+
+* まずは **reflog で履歴を探す**
+
+```bash
+git reflog
+git checkout <復元したいcommitID>
+```
+
+👉 消えたと思っても **reflog には残っている** 可能性が高い！
+
+---
+
+## 4️⃣ pull したら競合が出た
+
+### 解決方法（VSCode推奨）
+
+* ファイルを開くと **`<<<<<<< HEAD` 〜 `>>>>>>>`** の区切りが表示
+* VSCode のボタンで解決:
+
+  * **Accept Current Change** = 自分の変更を採用
+  * **Accept Incoming Change** = 相手の変更を採用
+  * **Accept Both Changes** = 両方残す
+
+👉 終わったら
+
+```bash
+git add .
+git commit
+```
+
+---
+
+## 5️⃣ ローカルとリモートがぐちゃぐちゃになった
+
+### ケース1: ローカルを完全にリモートに合わせたい
+
+```bash
+git fetch --all
+git reset --hard origin/main
+```
+
+👉 **ローカルの変更は全消し** → リモートに完全一致。
+
+---
+
+### ケース2: ローカル変更を残しつつリモートを取り込みたい
+
+```bash
+git stash
+git pull origin main
+git stash pop
+```
+
+👉 変更を一時退避してから pull すると安全。
+
+---
+
+## 6️⃣ コミットを取り消したい
+
+### ケース1: 履歴を壊さずに取り消したい（安全）
+
+```bash
+git revert <commitID>
+```
+
+👉 新しい「取り消しコミット」を作る。チーム開発で推奨。
+
+### ケース2: ローカルだけなら戻したい（危険）
+
+```bash
+git reset --hard HEAD~1
+```
+
+👉 完全に消す。**push 前限定**で使う。
+
+---
+
+## 7️⃣ stash を忘れて放置した
+
+### stash を確認する
+
+```bash
+git stash list
+```
+
+### stash の内容を見る
+
+```bash
+git stash show -p stash@{0}
+```
+
+### stash を復元
+
+```bash
+git stash pop stash@{0}
+```
+
+👉 「変更が消えた！」と思っても stash に残っていることが多い。
+
+---
+
+## ✅ まとめ：Git事故 → 対応フローチャート
+
+1. **push前なら reset で戻す**
+2. **push後なら revert で対応**
+3. **消えたと思ったら reflog を探す**
+4. **競合は VSCode で解決する**
+5. **困ったら stash で避難**
+
+---
+
+👉 この「事故対応マニュアル」を **壁に貼る / Confluence に載せる** と、チーム全員が安心できます。
+
+
+なるほど！✨
+ここでは **「チーム開発に特化した Git チートシート」** を作ります。
+特に **stash / branch 運用 / conflict 解決 / PR 作成** といった実務で必須の流れを中心に整理しました。
+
+---
+
+# 👥 チーム開発 Git チートシート
+
+---
+
+## 1️⃣ チーム開発の基本ルール
+
+* **main**（= 本番コード）は直接触らない
+* 作業は **featureブランチ** を切って進める
+* 修正後は **Pull Request（PR）** を出す
+* 競合は **VSCode で解決**
+* 事故ったら **revert / stash / reflog** で復旧
+
+---
+
+## 2️⃣ チームでの典型フロー
+
+```bash
+# 最新を取得
+git pull origin main
+
+# 新しい作業ブランチを作成
+git switch -c feature/login
+
+# 作業してコミット
+git add .
+git commit -m "ログイン機能追加"
+
+# リモートに送信
+git push origin feature/login
+
+# GitHub/GitLabでPRを作成してレビュー依頼
+```
+
+---
+
+## 3️⃣ 競合（conflict）の解決
+
+競合が出たら VSCode が差分を表示します。
+
+* **Accept Current Change** → 自分の変更を残す
+* **Accept Incoming Change** → 相手の変更を残す
+* **Accept Both Changes** → 両方残す
+
+解決後は：
+
+```bash
+git add .
+git commit
+```
+
+---
+
+## 4️⃣ stash の活用（中断・避難用）
+
+「途中だけど main を pull したい！」という時に便利。
+
+```bash
+git stash               # 変更を一時退避
+git stash list          # stash 一覧を確認
+git stash show -p       # stash の内容を見る
+git stash pop           # 退避を復元（削除もされる）
+git stash apply         # 退避を復元（stash は残す）
+```
+
+👉 **pull 前に stash** → pull 後に pop するのが定石。
+
+---
+
+## 5️⃣ reset / revert の使い分け
+
+| コマンド               | 用途               | チーム開発での推奨度     |
+| ------------------ | ---------------- | -------------- |
+| `git reset --hard` | ローカルだけで履歴を戻す     | ⚠ 危険（push前のみ）  |
+| `git revert`       | 新しい「取り消しコミット」を作る | ✅ 安全（push後は必須） |
+
+---
+
+## 6️⃣ rebase / merge の違い
+
+* **merge** = マージコミットが残る（履歴は複雑になる）
+* **rebase** = 履歴を直線化（きれいになるが衝突リスクあり）
+
+👉 チームルールに従う。初心者は基本 **merge 推奨**。
+
+---
+
+## 7️⃣ チームでの「事故あるある」対策
+
+| 事故             | 原因           | 解決策                                 |
+| -------------- | ------------ | ----------------------------------- |
+| main に直接 push  | PR を作らず push | `git checkout -b hotfix_x` して PR 作成 |
+| コミットが消えた       | reset を誤用    | `git reflog` で探す                    |
+| pull で競合祭り     | みんな同じファイル編集  | VSCode で conflict 解決                |
+| stash 忘れて作業消えた | stash したまま放置 | `git stash list` で確認                |
+| 強制 push で履歴崩壊  | `--force` 乱用 | `git reflog` で復旧可能                  |
+
+---
+
+## 8️⃣ チーム開発で必須の Git コマンドまとめ
+
+```bash
+git pull origin main                # 最新取得
+git switch -c feature_x             # 新ブランチ作成
+git push origin feature_x           # リモートに送信
+git stash / git stash pop           # 一時退避と復元
+git revert <commitID>               # 安全に取り消し
+git merge feature_x                 # マージ
+git rebase main                     # リベース（上級者）
+git reflog                          # 消えた履歴を探す
+```
+
+---
+
+## ✅ まとめ
+
+* **stash = 作業の一時避難所**（pull や rebase の前に活躍）
+* **reset はローカル用 / revert はチーム用**
+* **main に直 push しない**（必ず PR）
+* **競合は恐れず VSCode で解決**
+* **困ったら reflog**
+
+---
+
+👉 これを **A4ポスター風まとめ** にしておくとチーム全員が安心できます。
+
+
+
