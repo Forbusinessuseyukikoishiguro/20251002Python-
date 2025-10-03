@@ -1,0 +1,155 @@
+# 🐰 Pythonメソッドと継承の注意点 完全ガイド
+
+**ふわふわ大福店のうさうさ店長で学ぶ、実践的でわかりやすい解説**
+
+---
+
+## 📚 目次
+
+1. [メソッドの種類](#1-メソッドの種類)
+2. [アクセス制御（public/private）](#2-アクセス制御publicprivate)
+3. [継承での注意点](#3-継承での注意点)
+4. [メソッドのオーバーライド](#4-メソッドのオーバーライド)
+5. [super()の正しい使い方](#5-superの正しい使い方)
+6. [多重継承の落とし穴](#6-多重継承の落とし穴)
+7. [ベストプラクティス](#7-ベストプラクティス)
+
+---
+
+## 1. メソッドの種類
+
+### 📖 3つのメソッドタイプ
+
+Pythonには3種類のメソッドがあります：
+
+| 種類 | 第一引数 | 呼び出し方 | 用途 |
+|------|---------|-----------|------|
+| **インスタンスメソッド** | `self` | `obj.method()` | 個別の処理 |
+| **クラスメソッド** | `cls` | `Class.method()` | クラス全体の処理 |
+| **スタティックメソッド** | なし | `Class.method()` | 補助関数 |
+
+### 💻 実際のコード
+
+```python
+class DaifukuShop:
+    """大福店クラス"""
+    
+    # クラス変数
+    total_shops = 0
+    tax_rate = 0.10
+    
+    def __init__(self, owner_name, stock):
+        """コンストラクタ"""
+        self.owner_name = owner_name
+        self.stock = stock
+        DaifukuShop.total_shops += 1
+    
+    # ========================================
+    # 1. インスタンスメソッド（最も一般的）
+    # ========================================
+    def sell(self, quantity):
+        """
+        個別の店舗で販売処理
+        
+        特徴:
+        - 第一引数は self（自分自身）
+        - インスタンス変数にアクセスできる
+        - クラス変数にもアクセスできる
+        """
+        if quantity > self.stock:
+            print(f"❌ 在庫不足！")
+            return False
+        
+        self.stock -= quantity  # インスタンス変数を変更
+        total = int(quantity * 150 * (1 + DaifukuShop.tax_rate))
+        print(f"💰 {self.owner_name}店長: {quantity}個販売（¥{total}）")
+        return True
+    
+    # ========================================
+    # 2. クラスメソッド
+    # ========================================
+    @classmethod
+    def get_total_shops(cls):
+        """
+        クラス全体の情報を取得
+        
+        特徴:
+        - @classmethod デコレーター必須
+        - 第一引数は cls（クラス自身）
+        - クラス変数にアクセスできる
+        - インスタンスを作らずに呼べる
+        """
+        return f"現在の総店舗数: {cls.total_shops}店"
+    
+    @classmethod
+    def from_dict(cls, data):
+        """
+        辞書からインスタンスを生成（ファクトリーメソッド）
+        
+        特徴:
+        - 別の方法でインスタンスを作成
+        - 代替コンストラクタとして使用
+        """
+        return cls(
+            owner_name=data["owner"],
+            stock=data["stock"]
+        )
+    
+    @classmethod
+    def change_tax_rate(cls, new_rate):
+        """
+        税率を変更（全店舗に影響）
+        
+        特徴:
+        - クラス変数を変更
+        - 全インスタンスに影響する
+        """
+        cls.tax_rate = new_rate
+        print(f"📢 税率を{new_rate*100}%に変更しました")
+    
+    # ========================================
+    # 3. スタティックメソッド
+    # ========================================
+    @staticmethod
+    def calculate_total(quantity, price=150):
+        """
+        合計金額を計算（補助関数）
+        
+        特徴:
+        - @staticmethod デコレーター必須
+        - self も cls も不要
+        - インスタンスやクラスのデータにアクセスしない
+        - ただの関数だが、クラスに属する
+        """
+        return quantity * price
+    
+    @staticmethod
+    def validate_stock(stock):
+        """
+        在庫数のバリデーション
+        
+        特徴:
+        - 検証ロジックなど、独立した処理
+        - クラスに関連するが、データは使わない
+        """
+        return isinstance(stock, int) and stock >= 0
+
+
+# ========================================
+# 使用例
+# ========================================
+
+# インスタンスメソッド
+shop = DaifukuShop("うさうさ", 20)
+shop.sell(5)  # インスタンスから呼ぶ
+
+# クラスメソッド（インスタンス不要）
+print(DaifukuShop.get_total_shops())  # クラスから直接呼べる
+
+# ファクトリーメソッド
+data = {"owner": "もちもち", "stock": 15}
+shop2 = DaifukuShop.from_dict(data)
+
+# スタティックメソッド（インスタンス不要）
+total = DaifukuShop.calculate_total(10, 150)
+print(f"合計:
