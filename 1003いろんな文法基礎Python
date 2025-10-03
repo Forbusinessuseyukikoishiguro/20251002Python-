@@ -1,0 +1,7698 @@
+
+# 🐰 ふわふわ大福店のうさうさ店長と学ぶPython！
+
+こんにちは！Python初心者さん向けに、ふわふわ大福店を例にして、データの扱い方を説明しますね！
+
+## 📝 リスト（List）- 大福の在庫管理
+
+```python
+# リストの作成 - 大福の種類を管理
+daifuku_list = ["いちご大福", "抹茶大福", "あんこ大福"]
+
+# データの追加 - 新商品が入荷！
+daifuku_list.append("チョコ大福")  # リストの最後に追加
+print("在庫一覧:", daifuku_list)
+# 出力: ['いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福']
+
+# 特定の位置に追加
+daifuku_list.insert(1, "みかん大福")  # 1番目の位置（2番目）に挿入
+print("更新後:", daifuku_list)
+# 出力: ['いちご大福', 'みかん大福', '抹茶大福', 'あんこ大福', 'チョコ大福']
+
+# 一覧表示 - 全商品を見る
+for i, daifuku in enumerate(daifuku_list):  # enumerate()で番号付きで取得
+    print(f"{i+1}番目: {daifuku}")  # f-stringで見やすく表示
+```
+
+### 🟢 リストのメリット
+- 順番が保持される（入荷順を覚えている）
+- 同じ商品を複数登録できる
+- 途中に挿入したり、削除が簡単
+
+### 🔴 リストのデメリット
+- 大量データの検索が遅い
+- 商品名で直接アクセスできない
+
+---
+
+## 📚 辞書（Dictionary）- 大福の価格表
+
+```python
+# 辞書の作成 - 商品名と価格のペア
+daifuku_dict = {
+    "いちご大福": 250,  # キー: 値のペア
+    "抹茶大福": 230,    # カンマで区切る
+    "あんこ大福": 200
+}
+
+# データの追加 - 新商品の価格設定
+daifuku_dict["チョコ大福"] = 280  # キーを指定して追加
+print("価格表:", daifuku_dict)
+
+# 一覧表示 - 全商品と価格
+for name, price in daifuku_dict.items():  # items()でキーと値を両方取得
+    print(f"{name}: {price}円")  # 商品名と価格を表示
+
+# 特定の商品の価格を調べる
+print("いちご大福の価格:", daifuku_dict["いちご大福"], "円")
+# 出力: いちご大福の価格: 250 円
+```
+
+### 🟢 辞書のメリット
+- 商品名で瞬時に価格がわかる（検索が超高速）
+- データの関係性が明確（名前→価格）
+- 実用的で使いやすい
+
+### 🔴 辞書のデメリット
+- 順番が保証されない場合がある（Python 3.7以降は保持）
+- 同じキー（商品名）は1つだけ
+
+---
+
+## 🎯 実践例：うさうさ店長の販売記録
+
+```python
+# 今日の販売記録を管理
+sales_records = []  # 空のリストを作成
+
+# 販売データを追加（辞書のリスト）
+sale1 = {  # 1件目の販売
+    "商品": "いちご大福",  # キー: 値
+    "個数": 3,              # 販売個数
+    "価格": 250             # 単価
+}
+sales_records.append(sale1)  # リストに辞書を追加
+
+# 2件目も追加
+sales_records.append({  # 直接辞書を作成して追加
+    "商品": "抹茶大福",
+    "個数": 2,
+    "価格": 230
+})
+
+# 販売一覧を表示
+print("📊 本日の販売記録")
+for i, sale in enumerate(sales_records, 1):  # 1から番号を開始
+    total = sale["個数"] * sale["価格"]  # 合計金額を計算
+    print(f"{i}件目: {sale['商品']} × {sale['個数']}個 = {total}円")
+    # 出力例: 1件目: いちご大福 × 3個 = 750円
+
+# 売上合計を計算
+total_sales = sum(sale["個数"] * sale["価格"] for sale in sales_records)
+print(f"\n💰 本日の売上合計: {total_sales}円")
+```
+
+---
+
+## 📊 比較表
+
+| 種類 | 使いどころ | 追加方法 | アクセス方法 |
+|------|-----------|---------|------------|
+| **リスト** | 順番が大事な時<br>（入荷順、ランキング） | `append()`, `insert()` | `list[0]`（番号） |
+| **辞書** | 名前で探したい時<br>（価格表、在庫数） | `dict["キー"] = 値` | `dict["名前"]` |
+
+---
+
+## 🌟 うさうさ店長からのアドバイス
+
+**リスト**を使う場面：
+- 待ち行列（お客さんの順番）
+- 売上ランキング
+- 作業手順
+
+**辞書**を使う場面：
+- 商品の価格
+- 在庫数の管理
+- お客さん情報（名前→電話番号）
+
+何か試してみたいことや、わからないことがあれば教えてくださいね！🐰✨
+ーーーー
+
+# 🐰 Pythonの全データ型を学ぼう！ふわふわ大福店完全版
+
+## 1️⃣ 基本データ型（Primitive Types）
+
+### 📌 整数（int）- 数を数える
+
+```python
+# 整数型 - 大福の個数
+stock = 50  # 在庫数を整数で保存
+print("在庫:", stock, "個")  # 50個と表示
+print("型:", type(stock))  # <class 'int'>と表示
+
+# 計算も可能
+sold = 15  # 売れた数
+remaining = stock - sold  # 引き算
+print("残り:", remaining, "個")  # 35個
+```
+
+**メリット**: 計算が正確、メモリ効率が良い  
+**デメリット**: 小数が扱えない
+
+---
+
+### 💰 浮動小数点数（float）- 小数を扱う
+
+```python
+# float型 - 大福の重さや割引率
+weight = 45.5  # グラム数（小数点）
+print("重さ:", weight, "g")  # 45.5gと表示
+
+discount_rate = 0.15  # 15%割引
+price = 250  # 元の価格
+discounted_price = price * (1 - discount_rate)  # 割引計算
+print("割引後:", discounted_price, "円")  # 212.5円
+```
+
+**メリット**: 小数の計算ができる、科学計算に便利  
+**デメリット**: 完全に正確ではない（誤差が出る場合あり）
+
+---
+
+### 📝 文字列（str）- 文字を扱う
+
+```python
+# 文字列型 - 商品名やメッセージ
+product_name = "いちご大福"  # ダブルクォートで囲む
+greeting = 'いらっしゃいませ！'  # シングルクォートでもOK
+print(product_name)  # いちご大福
+
+# 文字列の結合
+message = greeting + " " + product_name + "はいかがですか？"
+print(message)  # いらっしゃいませ！ いちご大福はいかがですか？
+
+# 文字列の繰り返し
+stars = "★" * 5  # ★を5回繰り返す
+print(stars)  # ★★★★★
+
+# 長さを取得
+length = len(product_name)  # 文字数を数える
+print("文字数:", length)  # 5文字
+```
+
+**メリット**: テキスト処理に必須、多機能  
+**デメリット**: 変更不可（immutable）、大量のテキストはメモリを使う
+
+---
+
+### ✅ ブール（bool）- 真偽値
+
+```python
+# bool型 - はい/いいえ、真/偽
+is_open = True  # 開店中
+is_sold_out = False  # 売り切れていない
+
+if is_open:  # Trueなら実行
+    print("営業中です！")  # これが表示される
+
+# 比較演算の結果もbool型
+has_stock = stock > 0  # 在庫が0より多いか？
+print("在庫あり?", has_stock)  # True
+
+# 複数条件
+can_sell = is_open and has_stock  # 両方Trueなら販売可能
+print("販売可能?", can_sell)  # True
+```
+
+**メリット**: 条件分岐に必須、わかりやすい  
+**デメリット**: True/Falseの2つだけ
+
+---
+
+### 🚫 None型 - 何もない
+
+```python
+# None型 - データがない状態を表す
+next_delivery = None  # まだ配達予定が決まっていない
+print("次回配達:", next_delivery)  # None
+
+# Noneのチェック
+if next_delivery is None:  # Noneかどうか確認
+    print("配達予定は未定です")  # これが表示される
+else:
+    print("配達予定:", next_delivery)
+```
+
+**メリット**: 「データなし」を明示的に表現できる  
+**デメリット**: 初心者が混乱しやすい
+
+---
+
+## 2️⃣ コレクション型（Collection Types）
+
+### 📋 リスト（list）- 順番付きコレクション
+
+```python
+# リスト - 変更可能な順番付きデータ
+menu = ["いちご大福", "抹茶大福", "あんこ大福"]  # 角括弧で作成
+
+# 追加
+menu.append("チョコ大福")  # 最後に追加
+menu.insert(0, "季節限定大福")  # 0番目に挿入
+
+# アクセス
+first_item = menu[0]  # 最初の要素
+last_item = menu[-1]  # 最後の要素（-1で最後から）
+print("1番目:", first_item)  # 季節限定大福
+
+# スライス（範囲取得）
+top_three = menu[0:3]  # 0番目から2番目まで
+print("トップ3:", top_three)  # 最初の3つ
+
+# 変更
+menu[1] = "みかん大福"  # 1番目を変更
+print(menu)  # 変更が反映される
+
+# 削除
+menu.remove("あんこ大福")  # 値で削除
+deleted = menu.pop()  # 最後を削除して取得
+print("削除:", deleted)  # チョコ大福
+```
+
+**メリット**: 柔軟、変更自由、順番保持  
+**デメリット**: 検索が遅い、メモリ使用量多め
+
+---
+
+### 🎯 タプル（tuple）- 変更不可リスト
+
+```python
+# タプル - 変更できない順番付きデータ
+store_info = ("ふわふわ大福店", "東京都", 2020)  # 丸括弧で作成
+print("店名:", store_info[0])  # ふわふわ大福店
+print("開店年:", store_info[2])  # 2020
+
+# 変更しようとするとエラー
+# store_info[0] = "新店名"  # TypeError: 変更できません！
+
+# アンパック（展開）
+name, location, year = store_info  # 各変数に代入
+print(f"{name}は{year}年に{location}で開店")
+
+# 1つの要素のタプル（カンマが必要）
+single = (100,)  # カンマを付けないとただの数値になる
+print(type(single))  # <class 'tuple'>
+```
+
+**メリット**: 安全（変更されない）、リストより高速、メモリ効率良い  
+**デメリット**: 変更不可、追加・削除もできない
+
+---
+
+### 🗂️ 辞書（dict）- キーと値のペア
+
+```python
+# 辞書 - キーで値を管理
+prices = {  # 波括弧で作成
+    "いちご大福": 250,  # キー: 値
+    "抹茶大福": 230,
+    "あんこ大福": 200
+}
+
+# アクセス
+print("いちご大福:", prices["いちご大福"], "円")  # 250円
+
+# 安全なアクセス（キーがない場合）
+choco_price = prices.get("チョコ大福", 0)  # なければ0を返す
+print("チョコ大福:", choco_price, "円")  # 0円
+
+# 追加・更新
+prices["チョコ大福"] = 280  # 新規追加
+prices["いちご大福"] = 260  # 値を更新
+
+# 削除
+del prices["あんこ大福"]  # キーで削除
+
+# すべてのキーを取得
+all_names = prices.keys()  # キーの一覧
+print("商品名:", list(all_names))
+
+# すべての値を取得
+all_prices = prices.values()  # 値の一覧
+print("価格:", list(all_prices))
+
+# キーと値を同時に取得
+for name, price in prices.items():  # ペアで取得
+    print(f"{name}: {price}円")
+```
+
+**メリット**: 超高速検索、実用的、わかりやすい  
+**デメリット**: メモリ使用量多い、キーの重複不可
+
+---
+
+### 🎨 セット（set）- 重複なし集合
+
+```python
+# セット - 重複しないデータの集合
+ingredients = {"小豆", "砂糖", "餅"}  # 波括弧（値のみ）
+print(ingredients)  # 順番はバラバラ
+
+# 追加
+ingredients.add("いちご")  # 要素を追加
+ingredients.add("小豆")  # 既にあるので追加されない
+print(ingredients)  # 小豆は1つだけ
+
+# 重複を削除
+orders = [1, 1, 2, 3, 2, 4, 1, 5]  # 重複あり
+unique_orders = set(orders)  # セットに変換
+print("ユニーク:", unique_orders)  # {1, 2, 3, 4, 5}
+
+# 集合演算
+set_a = {"いちご", "抹茶", "あんこ"}  # A店の商品
+set_b = {"抹茶", "チョコ", "きなこ"}  # B店の商品
+
+# 共通商品（積集合）
+common = set_a & set_b  # または set_a.intersection(set_b)
+print("共通:", common)  # {'抹茶'}
+
+# すべての商品（和集合）
+all_products = set_a | set_b  # または set_a.union(set_b)
+print("全商品:", all_products)
+
+# A店だけの商品（差集合）
+only_a = set_a - set_b  # または set_a.difference(set_b)
+print("A店限定:", only_a)  # {'いちご', 'あんこ'}
+```
+
+**メリット**: 重複排除、集合演算、高速な存在チェック  
+**デメリット**: 順番なし、インデックスでアクセス不可
+
+---
+
+## 3️⃣ 特殊なコレクション型
+
+### 🔄 範囲（range）- 数列生成
+
+```python
+# range - 連続した数字を生成（メモリ効率的）
+numbers = range(5)  # 0から4まで
+print(list(numbers))  # [0, 1, 2, 3, 4]
+
+# 開始と終了を指定
+prices_range = range(200, 301, 50)  # 200から300まで50刻み
+print(list(prices_range))  # [200, 250, 300]
+
+# ループで使用
+for i in range(3):  # 0, 1, 2
+    print(f"{i+1}番目のお客様")
+```
+
+**メリット**: メモリ効率抜群、ループに便利  
+**デメリット**: 整数のみ、リストのような操作不可
+
+---
+
+### 📦 frozenset - 変更不可セット
+
+```python
+# frozenset - 変更できないセット
+fixed_menu = frozenset(["いちご大福", "抹茶大福"])  # 固定メニュー
+print(fixed_menu)
+
+# 変更しようとするとエラー
+# fixed_menu.add("あんこ大福")  # AttributeError
+
+# 辞書のキーにできる（普通のsetはできない）
+menu_status = {
+    fixed_menu: "定番商品"  # frozensetはキーにできる
+}
+print(menu_status)
+```
+
+**メリット**: 辞書のキーに使える、変更されない安全性  
+**デメリット**: 変更不可、使用頻度低い
+
+---
+
+## 4️⃣ バイナリ型
+
+### 🔢 bytes - 変更不可バイト列
+
+```python
+# bytes - バイナリデータ（画像、ファイルなど）
+data = b"Hello"  # bプレフィックスでbytes作成
+print(data)  # b'Hello'
+print(type(data))  # <class 'bytes'>
+
+# 文字列からbytesに変換
+text = "大福"
+byte_data = text.encode("utf-8")  # 文字列をbytesに
+print(byte_data)  # b'\xe5\xa4\xa7\xe7\xa6\x8f'
+
+# bytesから文字列に変換
+decoded = byte_data.decode("utf-8")  # bytesを文字列に
+print(decoded)  # 大福
+```
+
+**メリット**: ファイル操作、ネットワーク通信に必須  
+**デメリット**: 初心者には難しい、変更不可
+
+---
+
+### 🔧 bytearray - 変更可能バイト列
+
+```python
+# bytearray - 変更できるbytes
+mutable_data = bytearray(b"ABC")  # 変更可能なバイト列
+print(mutable_data)  # bytearray(b'ABC')
+
+# 変更可能
+mutable_data[0] = 68  # 'D'のASCIIコード
+print(mutable_data)  # bytearray(b'DBC')
+
+# 追加
+mutable_data.append(69)  # 'E'を追加
+print(mutable_data)  # bytearray(b'DBCE')
+```
+
+**メリット**: 変更可能、バイナリデータ処理  
+**デメリット**: 使用頻度低い、特殊用途
+
+---
+
+## 5️⃣ その他の重要な型
+
+### 🎭 複素数（complex）- 数学用
+
+```python
+# complex - 複素数（数学や科学計算）
+z = 3 + 4j  # 実部3、虚部4
+print(z)  # (3+4j)
+print("実部:", z.real)  # 3.0
+print("虚部:", z.imag)  # 4.0
+
+# 計算
+z2 = 1 + 2j
+result = z + z2  # 複素数の足し算
+print("合計:", result)  # (4+6j)
+```
+
+**メリット**: 科学計算、信号処理  
+**デメリット**: 日常的には使わない
+
+---
+
+## 📊 完全比較表
+
+| データ型 | 変更可能 | 順番 | 重複 | 用途 |
+|---------|---------|------|------|------|
+| **int** | - | - | - | 整数の計算 |
+| **float** | - | - | - | 小数の計算 |
+| **str** | ❌ | ✅ | ✅ | 文字・文章 |
+| **bool** | - | - | - | 真偽判定 |
+| **list** | ✅ | ✅ | ✅ | 汎用コレクション |
+| **tuple** | ❌ | ✅ | ✅ | 固定データ |
+| **dict** | ✅ | ✅(3.7+) | キー❌ | キー値ペア |
+| **set** | ✅ | ❌ | ❌ | 重複排除 |
+| **frozenset** | ❌ | ❌ | ❌ | 固定集合 |
+| **range** | ❌ | ✅ | ❌ | 数列生成 |
+| **bytes** | ❌ | ✅ | ✅ | バイナリデータ |
+| **bytearray** | ✅ | ✅ | ✅ | 可変バイナリ |
+
+---
+
+## 🌟 うさうさ店長の実践アドバイス
+
+### 📌 初心者が最初に覚えるべき5つ
+1. **int** - 個数を数える
+2. **str** - 商品名やメッセージ
+3. **list** - 複数のデータをまとめる
+4. **dict** - 名前と値のペア
+5. **bool** - 条件判定
+
+### 🎯 実務でよく使う型
+- **list** と **dict** が90%
+- **str** と **int** は必須
+- **tuple** は関数の戻り値で使う
+- **set** は重複削除で便利
+
+何か質問があれば教えてくださいね！🐰✨
+
+ーーーー
+# 🐰 Pythonデータ型チートシート完全版
+
+## 📋 クイックリファレンス一覧表
+
+| データ型 | 英語名 | 作成例 | 変更 | 順序 | 重複 | 主な用途 |
+|---------|--------|--------|------|------|------|---------|
+| `int` | Integer | `x = 10` | - | - | - | 整数 |
+| `float` | Float | `x = 10.5` | - | - | - | 小数 |
+| `complex` | Complex | `x = 3+4j` | - | - | - | 複素数 |
+| `str` | String | `x = "abc"` | ❌ | ✅ | ✅ | 文字列 |
+| `bool` | Boolean | `x = True` | - | - | - | 真偽値 |
+| `NoneType` | None | `x = None` | - | - | - | 空値 |
+| `list` | List | `x = [1,2,3]` | ✅ | ✅ | ✅ | リスト |
+| `tuple` | Tuple | `x = (1,2,3)` | ❌ | ✅ | ✅ | 固定リスト |
+| `dict` | Dictionary | `x = {"a":1}` | ✅ | ✅* | キー❌ | 辞書 |
+| `set` | Set | `x = {1,2,3}` | ✅ | ❌ | ❌ | 集合 |
+| `frozenset` | Frozen Set | `x = frozenset([1,2])` | ❌ | ❌ | ❌ | 固定集合 |
+| `range` | Range | `x = range(5)` | ❌ | ✅ | ❌ | 数列 |
+| `bytes` | Bytes | `x = b"abc"` | ❌ | ✅ | ✅ | バイト列 |
+| `bytearray` | Byte Array | `x = bytearray(b"a")` | ✅ | ✅ | ✅ | 可変バイト列 |
+
+*Python 3.7以降は順序が保証されます
+
+---
+
+## 🔍 型確認チートシート
+
+### 1️⃣ 基本的な型確認
+
+```python
+# type()関数 - データ型を確認
+x = 10
+print(type(x))  # <class 'int'>
+
+# isinstance()関数 - 特定の型かチェック
+is_int = isinstance(x, int)  # Trueか確認
+print(is_int)  # True
+
+# 複数の型をチェック
+value = 10.5
+is_number = isinstance(value, (int, float))  # intかfloatか
+print(is_number)  # True
+```
+
+---
+
+### 2️⃣ 全データ型の確認コード
+
+```python
+# すべてのデータ型を一度に確認
+data_examples = {
+    "int": 10,
+    "float": 10.5,
+    "complex": 3+4j,
+    "str": "hello",
+    "bool": True,
+    "NoneType": None,
+    "list": [1, 2, 3],
+    "tuple": (1, 2, 3),
+    "dict": {"a": 1, "b": 2},
+    "set": {1, 2, 3},
+    "frozenset": frozenset([1, 2, 3]),
+    "range": range(5),
+    "bytes": b"hello",
+    "bytearray": bytearray(b"hello")
+}
+
+# 型名と実際の型を表示
+for name, value in data_examples.items():  # 各データを確認
+    print(f"{name:12} -> {type(value)}")  # 型名を表示
+```
+
+**出力例：**
+```
+int          -> <class 'int'>
+float        -> <class 'float'>
+complex      -> <class 'complex'>
+str          -> <class 'str'>
+bool         -> <class 'bool'>
+NoneType     -> <class 'NoneType'>
+list         -> <class 'list'>
+tuple        -> <class 'tuple'>
+dict         -> <class 'dict'>
+set          -> <class 'set'>
+frozenset    -> <class 'frozenset'>
+range        -> <class 'range'>
+bytes        -> <class 'bytes'>
+bytearray    -> <class 'bytearray'>
+```
+
+---
+
+## 📊 データ型別クイックガイド
+
+### 🔢 数値型（Numeric Types）
+
+```python
+# --- int（整数） ---
+a = 10  # 整数
+print(type(a))  # <class 'int'>
+print(isinstance(a, int))  # True
+
+# --- float（浮動小数点数） ---
+b = 10.5  # 小数
+print(type(b))  # <class 'float'>
+print(isinstance(b, float))  # True
+
+# --- complex（複素数） ---
+c = 3 + 4j  # 複素数
+print(type(c))  # <class 'complex'>
+print(isinstance(c, complex))  # True
+
+# すべて数値型か確認
+import numbers  # 数値型の抽象基底クラス
+print(isinstance(10, numbers.Number))  # True
+print(isinstance(10.5, numbers.Number))  # True
+print(isinstance(3+4j, numbers.Number))  # True
+```
+
+---
+
+### 📝 シーケンス型（Sequence Types）
+
+```python
+# --- str（文字列） ---
+s = "hello"  # 文字列
+print(type(s))  # <class 'str'>
+print(isinstance(s, str))  # True
+print(len(s))  # 5（長さ）
+print(s[0])  # 'h'（インデックスアクセス）
+
+# --- list（リスト） ---
+lst = [1, 2, 3]  # リスト
+print(type(lst))  # <class 'list'>
+print(isinstance(lst, list))  # True
+lst.append(4)  # 変更可能
+print(lst)  # [1, 2, 3, 4]
+
+# --- tuple（タプル） ---
+tpl = (1, 2, 3)  # タプル
+print(type(tpl))  # <class 'tuple'>
+print(isinstance(tpl, tuple))  # True
+# tpl.append(4)  # エラー！変更不可
+
+# --- range（範囲） ---
+rng = range(5)  # 0から4まで
+print(type(rng))  # <class 'range'>
+print(isinstance(rng, range))  # True
+print(list(rng))  # [0, 1, 2, 3, 4]
+
+# シーケンス型の共通チェック
+from collections.abc import Sequence  # シーケンス型の抽象基底クラス
+print(isinstance("abc", Sequence))  # True
+print(isinstance([1,2,3], Sequence))  # True
+print(isinstance((1,2,3), Sequence))  # True
+print(isinstance(range(5), Sequence))  # True
+```
+
+---
+
+### 🗂️ マッピング型（Mapping Types）
+
+```python
+# --- dict（辞書） ---
+d = {"a": 1, "b": 2}  # 辞書
+print(type(d))  # <class 'dict'>
+print(isinstance(d, dict))  # True
+print(d["a"])  # 1（キーでアクセス）
+d["c"] = 3  # 追加可能
+print(d)  # {'a': 1, 'b': 2, 'c': 3}
+
+# マッピング型のチェック
+from collections.abc import Mapping  # マッピング型の抽象基底クラス
+print(isinstance(d, Mapping))  # True
+```
+
+---
+
+### 🎨 集合型（Set Types）
+
+```python
+# --- set（集合） ---
+s = {1, 2, 3}  # セット
+print(type(s))  # <class 'set'>
+print(isinstance(s, set))  # True
+s.add(4)  # 追加可能
+print(s)  # {1, 2, 3, 4}
+
+# --- frozenset（固定集合） ---
+fs = frozenset([1, 2, 3])  # 固定セット
+print(type(fs))  # <class 'frozenset'>
+print(isinstance(fs, frozenset))  # True
+# fs.add(4)  # エラー！変更不可
+
+# 集合型の共通チェック
+from collections.abc import Set  # 集合型の抽象基底クラス
+print(isinstance({1,2,3}, Set))  # True
+print(isinstance(frozenset([1,2,3]), Set))  # True
+```
+
+---
+
+### 💾 バイナリ型（Binary Types）
+
+```python
+# --- bytes（バイト列） ---
+b = b"hello"  # バイト列
+print(type(b))  # <class 'bytes'>
+print(isinstance(b, bytes))  # True
+# b[0] = 65  # エラー！変更不可
+
+# --- bytearray（可変バイト列） ---
+ba = bytearray(b"hello")  # 可変バイト列
+print(type(ba))  # <class 'bytearray'>
+print(isinstance(ba, bytearray))  # True
+ba[0] = 72  # 変更可能（'H'のASCII）
+print(ba)  # bytearray(b'Hello')
+```
+
+---
+
+### ✅ ブール・None型
+
+```python
+# --- bool（真偽値） ---
+b = True  # ブール値
+print(type(b))  # <class 'bool'>
+print(isinstance(b, bool))  # True
+print(isinstance(True, int))  # True（boolはintのサブクラス）
+
+# --- NoneType ---
+n = None  # None
+print(type(n))  # <class 'NoneType'>
+print(n is None)  # True（Noneの確認はis演算子）
+print(isinstance(n, type(None)))  # True
+```
+
+---
+
+## 🔧 型判定の実践テクニック
+
+### ✅ 変更可能性（Mutable）の確認
+
+```python
+# 変更可能な型（Mutable）
+mutable_types = [
+    [1, 2, 3],           # list
+    {"a": 1},            # dict
+    {1, 2, 3},           # set
+    bytearray(b"abc")    # bytearray
+]
+
+# 変更不可能な型（Immutable）
+immutable_types = [
+    10,                  # int
+    10.5,                # float
+    "abc",               # str
+    (1, 2, 3),           # tuple
+    frozenset([1, 2]),   # frozenset
+    b"abc"               # bytes
+]
+
+# ハッシュ可能性で判定（immutableはハッシュ可能）
+def is_mutable(obj):  # 変更可能か判定する関数
+    try:
+        hash(obj)  # ハッシュ値を取得
+        return False  # ハッシュできる=immutable
+    except TypeError:  # ハッシュできない
+        return True  # mutable
+
+print("リスト:", is_mutable([1,2,3]))  # True
+print("タプル:", is_mutable((1,2,3)))  # False
+print("辞書:", is_mutable({"a":1}))  # True
+print("文字列:", is_mutable("abc"))  # False
+```
+
+---
+
+### ✅ 空かどうかの確認
+
+```python
+# 空のコレクション判定
+empty_list = []  # 空のリスト
+empty_dict = {}  # 空の辞書
+empty_str = ""   # 空の文字列
+empty_set = set()  # 空のセット
+
+# bool()で空かチェック
+print(bool(empty_list))  # False（空）
+print(bool([1]))  # True（要素あり）
+
+# len()で長さを確認
+print(len(empty_list))  # 0
+print(len([1,2,3]))  # 3
+
+# より明示的な判定
+if not empty_list:  # 空なら
+    print("リストは空です")
+
+if len(empty_list) == 0:  # 長さが0なら
+    print("リストは空です")
+```
+
+---
+
+### ✅ イテラブル（反復可能）の確認
+
+```python
+from collections.abc import Iterable  # イテラブルの抽象基底クラス
+
+# イテラブルかチェック
+test_objects = [
+    [1, 2, 3],      # list（イテラブル）
+    (1, 2, 3),      # tuple（イテラブル）
+    "abc",          # str（イテラブル）
+    {"a": 1},       # dict（イテラブル）
+    {1, 2, 3},      # set（イテラブル）
+    range(5),       # range（イテラブル）
+    10,             # int（イテラブルでない）
+    10.5            # float（イテラブルでない）
+]
+
+for obj in test_objects:  # 各オブジェクトを確認
+    is_iterable = isinstance(obj, Iterable)  # イテラブルか
+    print(f"{str(obj):20} -> イテラブル: {is_iterable}")
+```
+
+---
+
+## 🎯 実践：型チェッカー関数
+
+```python
+def type_checker(obj):
+    """オブジェクトの詳細な型情報を表示"""
+    print("=" * 50)
+    print(f"値: {obj}")  # 値を表示
+    print(f"型: {type(obj)}")  # 型を表示
+    print(f"型名: {type(obj).__name__}")  # 型の名前
+    
+    # 基本属性
+    print(f"\n--- 基本情報 ---")
+    
+    # 長さ（持っている場合）
+    try:
+        print(f"長さ: {len(obj)}")  # len()で長さを取得
+    except TypeError:  # len()が使えない型
+        print("長さ: （長さを持たない型）")
+    
+    # ハッシュ可能性（変更不可能性の指標）
+    try:
+        hash(obj)  # ハッシュ値を取得
+        print(f"ハッシュ可能: Yes（変更不可能）")
+    except TypeError:  # ハッシュできない
+        print(f"ハッシュ可能: No（変更可能）")
+    
+    # イテラブル性
+    from collections.abc import Iterable  # イテラブルをインポート
+    is_iter = isinstance(obj, Iterable)  # イテラブルか判定
+    print(f"イテラブル: {is_iter}")
+    
+    # 数値型チェック
+    import numbers  # 数値型をインポート
+    is_num = isinstance(obj, numbers.Number)  # 数値型か判定
+    print(f"数値型: {is_num}")
+    
+    print("=" * 50)
+
+# 使用例
+type_checker([1, 2, 3])  # リストを検査
+type_checker("hello")  # 文字列を検査
+type_checker({"a": 1})  # 辞書を検査
+type_checker(10.5)  # 浮動小数点数を検査
+```
+
+---
+
+## 📱 実用的な型判定パターン
+
+```python
+def safe_process(data):
+    """データ型に応じて安全に処理"""
+    
+    # 数値型の処理
+    if isinstance(data, (int, float)):  # intまたはfloat
+        print(f"数値: {data * 2}")  # 計算
+        return
+    
+    # 文字列の処理
+    if isinstance(data, str):  # 文字列
+        print(f"文字列: {data.upper()}")  # 大文字変換
+        return
+    
+    # リストの処理
+    if isinstance(data, list):  # リスト
+        print(f"リスト要素数: {len(data)}")  # 要素数
+        return
+    
+    # 辞書の処理
+    if isinstance(data, dict):  # 辞書
+        print(f"辞書キー: {list(data.keys())}")  # キー一覧
+        return
+    
+    # その他
+    print(f"不明な型: {type(data)}")
+
+# テスト
+safe_process(100)  # 数値: 200
+safe_process("hello")  # 文字列: HELLO
+safe_process([1, 2, 3])  # リスト要素数: 3
+safe_process({"a": 1})  # 辞書キー: ['a']
+```
+
+---
+
+## 🚀 クイックリファレンスカード
+
+```python
+# === 型確認の基本3コマンド ===
+
+# 1. type() - 型を取得
+x = [1, 2, 3]
+print(type(x))  # <class 'list'>
+
+# 2. isinstance() - 型をチェック
+print(isinstance(x, list))  # True
+
+# 3. type().__name__ - 型名を文字列で取得
+print(type(x).__name__)  # 'list'
+
+# === よく使う判定 ===
+
+# 空かどうか
+if not x:  # 空なら
+    print("空")
+
+# 数値型か
+if isinstance(x, (int, float)):
+    print("数値")
+
+# イテラブルか
+from collections.abc import Iterable
+if isinstance(x, Iterable):
+    print("イテラブル")
+
+# Noneか
+if x is None:
+    print("None")
+
+# ハッシュ可能か（変更不可能か）
+try:
+    hash(x)
+    print("immutable")
+except:
+    print("mutable")
+```
+
+---
+
+## 📖 型変換早見表
+
+| 変換元 → 変換先 | コード | 例 |
+|----------------|--------|-----|
+| int → float | `float(x)` | `float(10)` → `10.0` |
+| float → int | `int(x)` | `int(10.5)` → `10` |
+| str → int | `int(x)` | `int("10")` → `10` |
+| str → float | `float(x)` | `float("10.5")` → `10.5` |
+| int → str | `str(x)` | `str(10)` → `"10"` |
+| list → tuple | `tuple(x)` | `tuple([1,2])` → `(1,2)` |
+| tuple → list | `list(x)` | `list((1,2))` → `[1,2]` |
+| list → set | `set(x)` | `set([1,1,2])` → `{1,2}` |
+| str → list | `list(x)` | `list("abc")` → `['a','b','c']` |
+| dict → list | `list(x.keys())` | キー一覧 |
+
+---
+
+## 🌟 まとめ：初心者が覚えるべき5つ
+
+1. **`type(x)`** - 型を確認
+2. **`isinstance(x, 型)`** - 特定の型かチェック
+3. **`len(x)`** - 長さを確認（リスト、文字列など）
+4. **`bool(x)`** - 空かどうかチェック
+5. **`x is None`** - Noneかチェック
+
+このチートシートを保存して、いつでも参照してくださいね！🐰✨
+
+
+ーーー
+
+
+# 🐰 ふわふわ大福店で学ぶオブジェクト指向プログラミング完全ガイド
+
+## 📚 目次
+1. クラスとは？
+2. `__init__`メソッド
+3. インスタンス
+4. メソッド
+5. 継承（親子関係）
+6. オーバーライド
+7. ポリモーフィズム
+8. オーバーロード（Pythonでの扱い）
+
+---
+
+## 1️⃣ クラスとは？ - 大福の設計図
+
+```python
+# クラス = 設計図（大福の作り方）
+class Daifuku:  # クラス名は大文字で始める
+    """大福クラス - 大福の設計図"""
+    
+    # クラス変数 - すべての大福で共通
+    store_name = "ふわふわ大福店"  # 店名（全大福共通）
+    
+    def __init__(self, name, price, weight):  # 初期化メソッド
+        """
+        大福を作る時に最初に呼ばれる特別なメソッド
+        self = 自分自身（作られる大福）
+        name, price, weight = 作る時に指定する情報
+        """
+        # インスタンス変数 - それぞれの大福で異なる
+        self.name = name  # 商品名を保存
+        self.price = price  # 価格を保存
+        self.weight = weight  # 重さを保存
+        self.is_sold = False  # 販売済みフラグ（最初は未販売）
+        print(f"✨ {name}を作りました！")  # 作成メッセージ
+    
+    # メソッド - 大福ができること
+    def show_info(self):  # 情報を表示するメソッド
+        """商品情報を表示"""
+        print(f"--- {self.name} ---")  # 商品名
+        print(f"価格: ¥{self.price}")  # 価格
+        print(f"重さ: {self.weight}g")  # 重さ
+        print(f"状態: {'販売済み' if self.is_sold else '販売中'}")  # 状態
+    
+    def sell(self):  # 販売するメソッド
+        """大福を販売する"""
+        if self.is_sold:  # すでに販売済みなら
+            print(f"❌ {self.name}はすでに売れています")
+            return False  # 失敗
+        
+        self.is_sold = True  # 販売済みにする
+        print(f"💰 {self.name}を販売しました！")
+        return True  # 成功
+    
+    def discount(self, rate):  # 割引するメソッド
+        """割引を適用"""
+        original = self.price  # 元の価格を保存
+        self.price = int(self.price * (1 - rate))  # 割引後の価格
+        print(f"🎉 {self.name}が{int(rate*100)}%OFF！")
+        print(f"   ¥{original} → ¥{self.price}")
+
+# === クラスの使い方 ===
+print("=== 大福クラスの基本 ===\n")
+
+# インスタンスを作成（大福を実際に作る）
+ichigo = Daifuku("いちご大福", 250, 45)  # いちご大福を作成
+matcha = Daifuku("抹茶大福", 230, 43)  # 抹茶大福を作成
+
+print()
+
+# メソッドを呼び出す
+ichigo.show_info()  # いちご大福の情報表示
+print()
+
+matcha.show_info()  # 抹茶大福の情報表示
+print()
+
+# 大福を販売
+ichigo.sell()  # いちご大福を販売
+ichigo.sell()  # もう一度販売しようとする（エラー）
+print()
+
+# 割引を適用
+matcha.discount(0.15)  # 15%割引
+print()
+matcha.show_info()  # 割引後の情報表示
+```
+
+---
+
+## 2️⃣ `__init__`メソッド - 誕生の瞬間
+
+```python
+class Daifuku:
+    """__init__の詳細説明"""
+    
+    def __init__(self, name, price, weight=45, filling="あんこ"):
+        """
+        __init__ = イニシャライザ（初期化メソッド）
+        - クラスからインスタンスを作る時に自動で呼ばれる
+        - 必ず最初に実行される
+        - selfは自動的に渡される（書かなくてOK）
+        - デフォルト引数も使える
+        """
+        print(f"🔧 __init__が呼ばれました！")  # 確認用
+        
+        # インスタンス変数の初期化
+        self.name = name  # 必須引数
+        self.price = price  # 必須引数
+        self.weight = weight  # デフォルト値あり
+        self.filling = filling  # デフォルト値あり
+        
+        # 計算した値も保存できる
+        self.price_per_gram = price / weight  # グラム単価を計算
+        
+        # リストや辞書も初期化できる
+        self.sales_history = []  # 販売履歴（空リスト）
+        
+        print(f"✅ {name}の準備完了！\n")
+
+# 使用例
+print("=== __init__の動作確認 ===\n")
+
+# 必須引数のみ
+daifuku1 = Daifuku("いちご大福", 250)
+
+# すべて指定
+daifuku2 = Daifuku("チョコ大福", 280, 50, "チョコレート")
+
+# キーワード引数で指定
+daifuku3 = Daifuku(
+    name="みかん大福",
+    price=240,
+    filling="みかん餡"
+    # weightは省略（デフォルト値45が使われる）
+)
+```
+
+---
+
+## 3️⃣ インスタンス - 実際の大福
+
+```python
+class Daifuku:
+    """インスタンスの概念"""
+    
+    # クラス変数（全インスタンスで共有）
+    total_count = 0  # 作った大福の総数
+    
+    def __init__(self, name, price):
+        self.name = name  # インスタンス変数
+        self.price = price  # インスタンス変数
+        
+        # クラス変数を更新
+        Daifuku.total_count += 1  # 総数を増やす
+        self.id = Daifuku.total_count  # 個体番号を付与
+    
+    def show_info(self):
+        print(f"ID:{self.id} {self.name} ¥{self.price}")
+
+print("=== インスタンスとクラス変数 ===\n")
+
+# 3つのインスタンスを作成
+d1 = Daifuku("いちご大福", 250)  # 1個目
+d2 = Daifuku("抹茶大福", 230)  # 2個目
+d3 = Daifuku("あんこ大福", 200)  # 3個目
+
+print()
+
+# 各インスタンスは独立している
+d1.show_info()  # ID:1 いちご大福 ¥250
+d2.show_info()  # ID:2 抹茶大福 ¥230
+d3.show_info()  # ID:3 あんこ大福 ¥200
+
+print()
+
+# クラス変数は共有されている
+print(f"作った大福の総数: {Daifuku.total_count}個")  # 3個
+
+# インスタンスからもアクセス可能
+print(f"d1から見た総数: {d1.total_count}個")  # 3個
+print(f"d2から見た総数: {d2.total_count}個")  # 3個
+```
+
+---
+
+## 4️⃣ メソッドの種類
+
+```python
+class Daifuku:
+    """3種類のメソッド"""
+    
+    store_name = "ふわふわ大福店"  # クラス変数
+    
+    def __init__(self, name, price):
+        self.name = name  # インスタンス変数
+        self.price = price  # インスタンス変数
+    
+    # 1. インスタンスメソッド（最も一般的）
+    def show_info(self):  # selfを受け取る
+        """インスタンスのデータにアクセス"""
+        print(f"{self.name}: ¥{self.price}")  # インスタンス変数を使用
+    
+    # 2. クラスメソッド
+    @classmethod  # デコレータ（目印）
+    def show_store_name(cls):  # clsを受け取る（クラス自身）
+        """クラス全体に関わる処理"""
+        print(f"店名: {cls.store_name}")  # クラス変数を使用
+    
+    @classmethod
+    def create_popular_set(cls):  # インスタンスを作るファクトリ
+        """人気セットを作成"""
+        ichigo = cls("いちご大福", 250)  # cls()でインスタンス作成
+        matcha = cls("抹茶大福", 230)
+        return [ichigo, matcha]  # リストで返す
+    
+    # 3. スタティックメソッド
+    @staticmethod  # デコレータ
+    def calculate_tax(price):  # selfもclsも受け取らない
+        """消費税を計算（大福に直接関係ない汎用処理）"""
+        return int(price * 1.10)  # 10%の税込価格
+
+print("=== 3種類のメソッド ===\n")
+
+# インスタンスメソッド
+d = Daifuku("いちご大福", 250)
+d.show_info()  # インスタンス経由で呼ぶ
+
+print()
+
+# クラスメソッド
+Daifuku.show_store_name()  # クラス経由で呼ぶ
+popular = Daifuku.create_popular_set()  # インスタンスを作成
+print(f"人気セット: {len(popular)}個")
+
+print()
+
+# スタティックメソッド
+tax_price = Daifuku.calculate_tax(250)  # クラス経由で呼ぶ
+print(f"税込価格: ¥{tax_price}")
+```
+
+---
+
+## 5️⃣ 継承 - 親クラスと子クラス
+
+```python
+# === 親クラス（基本の大福） ===
+class Daifuku:
+    """基本の大福クラス（親クラス）"""
+    
+    def __init__(self, name, price, weight):
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        self.weight = weight  # 重さ
+        print(f"🍡 基本の{name}を作りました")
+    
+    def show_info(self):  # 基本の表示
+        """商品情報を表示"""
+        print(f"【{self.name}】¥{self.price} ({self.weight}g)")
+    
+    def eat(self):  # 基本の食べ方
+        """食べる"""
+        print(f"😋 {self.name}を食べました。美味しい！")
+
+# === 子クラス1（いちご大福） ===
+class IchigoDaifuku(Daifuku):  # Daifukuを継承
+    """いちご大福クラス（子クラス）"""
+    
+    def __init__(self, name, price, weight, strawberry_size):
+        # 親クラスの__init__を呼ぶ
+        super().__init__(name, price, weight)  # super()で親を呼ぶ
+        
+        # 子クラス独自の属性
+        self.strawberry_size = strawberry_size  # いちごのサイズ
+        print(f"🍓 いちごサイズ: {strawberry_size}")
+    
+    # 子クラス独自のメソッド
+    def check_strawberry(self):
+        """いちごの状態を確認"""
+        if self.strawberry_size == "大":
+            print("🍓 特大いちご入りです！")
+        else:
+            print(f"🍓 {self.strawberry_size}サイズのいちご入り")
+
+# === 子クラス2（プレミアム大福） ===
+class PremiumDaifuku(Daifuku):  # Daifukuを継承
+    """プレミアム大福クラス（高級版）"""
+    
+    def __init__(self, name, price, weight, special_ingredient):
+        super().__init__(name, price, weight)  # 親の初期化
+        
+        self.special_ingredient = special_ingredient  # 特別な材料
+        self.gift_box = True  # ギフトボックス付き
+        print(f"✨ 特別な材料: {special_ingredient}")
+    
+    def wrap_gift(self):
+        """ギフト包装"""
+        print(f"🎁 {self.name}を高級ギフトボックスに入れました")
+
+print("=== 継承の基本 ===\n")
+
+# 親クラスのインスタンス
+normal = Daifuku("あんこ大福", 200, 45)
+normal.show_info()  # 親のメソッド
+normal.eat()  # 親のメソッド
+
+print()
+
+# 子クラス1のインスタンス
+ichigo = IchigoDaifuku("いちご大福", 250, 48, "大")
+ichigo.show_info()  # 親から継承したメソッド
+ichigo.eat()  # 親から継承したメソッド
+ichigo.check_strawberry()  # 子独自のメソッド
+
+print()
+
+# 子クラス2のインスタンス
+premium = PremiumDaifuku("金箔大福", 500, 50, "金箔")
+premium.show_info()  # 親から継承
+premium.wrap_gift()  # 子独自のメソッド
+```
+
+---
+
+## 6️⃣ オーバーライド - メソッドの上書き
+
+```python
+class Daifuku:
+    """親クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def show_info(self):  # 親のメソッド
+        """基本の表示"""
+        print(f"【{self.name}】¥{self.price}")
+    
+    def eat(self):  # 親のメソッド
+        """基本の食べ方"""
+        print(f"もぐもぐ... {self.name}を食べました")
+
+class IchigoDaifuku(Daifuku):
+    """子クラス - メソッドをオーバーライド"""
+    
+    def __init__(self, name, price, strawberry_size):
+        super().__init__(name, price)
+        self.strawberry_size = strawberry_size
+    
+    # show_info()をオーバーライド（上書き）
+    def show_info(self):
+        """いちご大福用の表示"""
+        print(f"🍓【{self.name}】¥{self.price}")  # 🍓を追加
+        print(f"   いちごサイズ: {self.strawberry_size}")  # 追加情報
+    
+    # eat()をオーバーライド
+    def eat(self):
+        """いちご大福の食べ方"""
+        print(f"いちごが甘い！ {self.name}を食べました 🍓")
+
+class PremiumDaifuku(Daifuku):
+    """高級大福 - 親のメソッドを活用"""
+    
+    def __init__(self, name, price, box_type):
+        super().__init__(name, price)
+        self.box_type = box_type
+    
+    def show_info(self):
+        """親のメソッドを呼んでから追加"""
+        super().show_info()  # 親のshow_infoを実行
+        print(f"   パッケージ: {self.box_type}")  # 追加情報
+
+print("=== オーバーライドの実践 ===\n")
+
+# 親クラス
+normal = Daifuku("あんこ大福", 200)
+normal.show_info()  # 親のメソッド
+normal.eat()
+
+print()
+
+# 子クラス1（完全にオーバーライド）
+ichigo = IchigoDaifuku("いちご大福", 250, "大")
+ichigo.show_info()  # 子のメソッド（完全に置き換え）
+ichigo.eat()  # 子のメソッド
+
+print()
+
+# 子クラス2（親を呼んでから追加）
+premium = PremiumDaifuku("金箔大福", 500, "高級桐箱")
+premium.show_info()  # 親+子のメソッド
+premium.eat()  # 親のメソッド（オーバーライドしていない）
+```
+
+---
+
+## 7️⃣ ポリモーフィズム - 同じ操作、違う動作
+
+```python
+class Daifuku:
+    """基本の大福"""
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def make_sound(self):  # 共通のメソッド名
+        """大福の音"""
+        return "もちもち"
+    
+    def serve(self):  # 共通のメソッド名
+        """提供方法"""
+        return f"{self.name}をお皿に載せました"
+
+class IchigoDaifuku(Daifuku):
+    """いちご大福"""
+    def make_sound(self):  # オーバーライド
+        """いちご大福の音"""
+        return "もちもち♪ いちごジューシー"
+    
+    def serve(self):  # オーバーライド
+        """いちご大福の提供"""
+        return f"🍓 {self.name}を小皿と爪楊枝と共にお出しします"
+
+class MochiIceDaifuku(Daifuku):
+    """アイス大福"""
+    def make_sound(self):  # オーバーライド
+        """アイス大福の音"""
+        return "ひんやり もちもち"
+    
+    def serve(self):  # オーバーライド
+        """アイス大福の提供"""
+        return f"🧊 {self.name}を冷凍状態でお出しします"
+
+# === ポリモーフィズムの実践 ===
+print("=== ポリモーフィズム ===\n")
+
+# 異なる種類の大福を作成
+products = [  # リストに色々な大福を入れる
+    Daifuku("あんこ大福", 200),
+    IchigoDaifuku("いちご大福", 250),
+    MochiIceDaifuku("バニラアイス大福", 300)
+]
+
+# 同じメソッド名で呼ぶが、動作は異なる
+print("--- make_sound()の動作 ---")
+for product in products:  # すべての商品に対して
+    # 型に関係なく同じメソッドを呼べる
+    sound = product.make_sound()  # 型によって違う動作
+    print(f"{product.name}: {sound}")
+
+print()
+
+print("--- serve()の動作 ---")
+for product in products:  # すべての商品に対して
+    message = product.serve()  # 型によって違う動作
+    print(message)
+
+print()
+
+# === うさうさ店長の接客関数（ポリモーフィズムの利点） ===
+def usausa_serve(daifuku):
+    """
+    どんな大福でも受け取れる汎用関数
+    ポリモーフィズムのおかげで型を気にしなくていい
+    """
+    print("🐰 うさうさ店長の接客")
+    print(f"   商品: {daifuku.name}")
+    print(f"   音: {daifuku.make_sound()}")  # 自動的に正しいメソッドが呼ばれる
+    print(f"   提供: {daifuku.serve()}")
+    print()
+
+# どんな型でも同じ関数で処理できる！
+usausa_serve(Daifuku("あんこ大福", 200))
+usausa_serve(IchigoDaifuku("いちご大福", 250))
+usausa_serve(MochiIceDaifuku("チョコアイス大福", 320))
+```
+
+---
+
+## 8️⃣ オーバーロード - Pythonでの実現方法
+
+```python
+"""
+Python には厳密なオーバーロード（同名メソッドで引数違い）はありません
+代わりに、デフォルト引数や可変長引数を使います
+"""
+
+class Daifuku:
+    """オーバーロード風の実装"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    # 方法1: デフォルト引数を使う
+    def sell(self, quantity=1, discount=0):
+        """
+        引数の数を変えて呼べる
+        sell() → quantity=1, discount=0
+        sell(3) → quantity=3, discount=0
+        sell(3, 0.1) → quantity=3, discount=0.1
+        """
+        total = self.price * quantity  # 小計
+        if discount > 0:  # 割引あり
+            total = int(total * (1 - discount))  # 割引適用
+        print(f"💰 {self.name} × {quantity}個")
+        print(f"   合計: ¥{total}")
+        if discount > 0:
+            print(f"   ({int(discount*100)}%割引適用)")
+        return total
+    
+    # 方法2: 可変長引数を使う
+    def add_toppings(self, *toppings):
+        """
+        任意の数の引数を受け取る
+        add_toppings("金箔")
+        add_toppings("金箔", "抹茶パウダー")
+        add_toppings("金箔", "抹茶パウダー", "きな粉")
+        """
+        if not toppings:  # 引数なし
+            print(f"{self.name}はそのままです")
+            return
+        
+        print(f"{self.name}にトッピング追加:")
+        for i, topping in enumerate(toppings, 1):  # 番号付きで表示
+            print(f"  {i}. {topping}")
+    
+    # 方法3: キーワード可変長引数を使う
+    def customize(self, **options):
+        """
+        任意のキーワード引数を受け取る
+        customize(box="桐箱", ribbon=True)
+        customize(message="おめでとう", gift_card=True)
+        """
+        print(f"{self.name}のカスタマイズ:")
+        if not options:  # オプションなし
+            print("  カスタマイズなし")
+            return
+        
+        for key, value in options.items():  # オプションを表示
+            print(f"  {key}: {value}")
+    
+    # 方法4: 型チェックで分岐（Pythonらしくないが可能）
+    def process(self, data):
+        """引数の型によって処理を変える"""
+        if isinstance(data, int):  # 整数なら
+            print(f"数量処理: {data}個")
+        elif isinstance(data, str):  # 文字列なら
+            print(f"メッセージ処理: {data}")
+        elif isinstance(data, list):  # リストなら
+            print(f"リスト処理: {len(data)}個の項目")
+        else:
+            print(f"不明な型: {type(data)}")
+
+print("=== オーバーロード風の実装 ===\n")
+
+daifuku = Daifuku("いちご大福", 250)
+
+# 方法1: デフォルト引数
+print("--- 方法1: デフォルト引数 ---")
+daifuku.sell()  # 1個、割引なし
+print()
+daifuku.sell(3)  # 3個、割引なし
+print()
+daifuku.sell(5, 0.15)  # 5個、15%割引
+print()
+
+# 方法2: 可変長引数
+print("--- 方法2: 可変長引数 ---")
+daifuku.add_toppings("金箔")  # 1つ
+print()
+daifuku.add_toppings("金箔", "抹茶パウダー", "きな粉")  # 3つ
+print()
+
+# 方法3: キーワード可変長引数
+print("--- 方法3: キーワード可変長引数 ---")
+daifuku.customize(box="高級桐箱", ribbon=True, message="ありがとう")
+print()
+
+# 方法4: 型による分岐
+print("--- 方法4: 型チェック ---")
+daifuku.process(5)  # int
+daifuku.process("特別注文")  # str
+daifuku.process([1, 2, 3])  # list
+print()
+
+# === 実践的な例：注文メソッド ===
+class SmartDaifuku:
+    """より実践的なオーバーロード風実装"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def order(self, quantity=1, **options):
+        """
+        柔軟な注文システム
+        quantity: 個数（必須、デフォルト1）
+        **options: 追加オプション（任意）
+        """
+        print(f"\n📝 注文内容")
+        print(f"商品: {self.name}")
+        print(f"個数: {quantity}個")
+        
+        # 基本料金
+        total = self.price * quantity
+        
+        # オプション処理
+        if "express" in options and options["express"]:  # 特急
+            print(f"⚡ 特急配送: +¥500")
+            total += 500
+        
+        if "gift_wrap" in options and options["gift_wrap"]:  # ギフト
+            print(f"🎁 ギフト包装: +¥300")
+            total += 300
+        
+        if "message" in options:  # メッセージカード
+            print(f"💌 メッセージ: {options['message']}")
+            total += 100
+        
+        if "discount" in options:  # 割引
+            discount = options["discount"]
+            discount_amount = int(total * discount)
+            total -= discount_amount
+            print(f"🎉 割引: -{discount_amount}円")
+        
+        print(f"合計: ¥{total}")
+        return total
+
+print("=== 実践的な注文システム ===")
+
+smart = SmartDaifuku("プレミアムいちご大福", 400)
+
+# シンプルな注文
+smart.order()
+
+# フルオプション
+smart.order(
+    3,  # 3個
+    express=True,  # 特急配送
+    gift_wrap=True,  # ギフト包装
+    message="お誕生日おめでとう！",  # メッセージ
+    discount=0.1  # 10%割引
+)
+```
+
+---
+
+## 9️⃣ 総合実践例：ふわふわ大福店システム
+
+```python
+# === 親クラス ===
+class Product:
+    """商品の基本クラス（最も抽象的）"""
+    
+    total_products = 0  # クラス変数：作った商品の総数
+    
+    def __init__(self, name, price, category):
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        self.category = category  # カテゴリ
+        
+        Product.total_products += 1  # 総数を増やす
+        self.product_id = Product.total_products  # ID付与
+        
+        print(f"✨ 商品ID:{self.product_id} {name}を登録")
+    
+    def show_info(self):
+        """基本情報表示"""
+        print(f"[ID:{self.product_id}] {self.name}")
+        print(f"  価格: ¥{self.price}")
+        print(f"  カテゴリ: {self.category}")
+    
+    def calculate_total(self, quantity):
+        """合計金額を計算"""
+        return self.price * quantity
+
+# === 子クラス1 ===
+class Daifuku(Product):
+    """大福クラス"""
+    
+    def __init__(self, name, price, filling, weight):
+        super().__init__(name, price, "大福")  # 親の初期化
+        self.filling = filling  # 餡の種類
+        self.weight = weight  # 重さ
+    
+    def show_info(self):  # オーバーライド
+        """大福用の表示"""
+        super().show_info()  # 親のメソッドを呼ぶ
+
+```python
+        print(f"  餡: {self.filling}")
+        print(f"  重さ: {self.weight}g")
+    
+    def taste(self):
+        """味わう"""
+        return f"もちもち食感！{self.filling}が美味しい！"
+
+# === 子クラス2 ===
+class PremiumDaifuku(Daifuku):
+    """プレミアム大福（Daifukuを継承）"""
+    
+    def __init__(self, name, price, filling, weight, special_ingredient):
+        super().__init__(name, price, filling, weight)  # 親の初期化
+        self.special_ingredient = special_ingredient  # 特別な材料
+        self.is_limited = True  # 限定品
+    
+    def show_info(self):  # オーバーライド
+        """プレミアム大福用の表示"""
+        super().show_info()  # 親（Daifuku）のメソッド
+        print(f"  ✨特別な材料: {self.special_ingredient}")
+        print(f"  🌟限定商品")
+    
+    def taste(self):  # オーバーライド
+        """プレミアムな味わい"""
+        return f"高級もちもち！{self.filling}と{self.special_ingredient}の贅沢な味わい！"
+    
+    def gift_wrap(self):
+        """ギフト包装（プレミアム限定）"""
+        return f"🎁 {self.name}を高級桐箱に入れてリボンをかけました"
+
+# === 子クラス3 ===
+class IceDaifuku(Daifuku):
+    """アイス大福"""
+    
+    def __init__(self, name, price, filling, weight, ice_flavor):
+        super().__init__(name, price, filling, weight)
+        self.ice_flavor = ice_flavor  # アイスの味
+        self.frozen = True  # 冷凍状態
+    
+    def show_info(self):  # オーバーライド
+        """アイス大福用の表示"""
+        super().show_info()  # 親のメソッド
+        print(f"  🧊アイス: {self.ice_flavor}")
+        print(f"  冷凍状態: {'はい' if self.frozen else 'いいえ'}")
+    
+    def taste(self):  # オーバーライド
+        """アイス大福の味わい"""
+        if self.frozen:
+            return f"ひんやり冷たい！{self.ice_flavor}アイスともちもちの絶妙なハーモニー！"
+        else:
+            return f"溶けてしまいました..."
+    
+    def defrost(self):
+        """解凍"""
+        if self.frozen:
+            print(f"🌡️ {self.name}を少し解凍しました")
+            self.frozen = False
+        else:
+            print("既に解凍済みです")
+
+# === 店長クラス ===
+class StoreManager:
+    """うさうさ店長クラス"""
+    
+    def __init__(self, name):
+        self.name = name  # 店長の名前
+        self.inventory = []  # 在庫リスト
+        print(f"🐰 {name}が店長に就任しました！\n")
+    
+    def add_product(self, product):
+        """商品を在庫に追加"""
+        self.inventory.append(product)  # リストに追加
+        print(f"📦 {product.name}を在庫に追加しました\n")
+    
+    def show_all_products(self):
+        """全商品を表示"""
+        print(f"\n{'='*50}")
+        print(f"🏪 ふわふわ大福店 在庫一覧")
+        print(f"   店長: {self.name}")
+        print(f"{'='*50}\n")
+        
+        if not self.inventory:  # 在庫が空
+            print("在庫がありません")
+            return
+        
+        for product in self.inventory:  # 各商品を表示
+            product.show_info()  # ポリモーフィズム！
+            print()
+    
+    def serve_customer(self, product, quantity=1):
+        """お客様に提供（ポリモーフィズムの活用）"""
+        print(f"\n🐰 {self.name}: いらっしゃいませ！")
+        print(f"   {product.name}を{quantity}個ご注文ですね")
+        
+        # 合計金額を計算
+        total = product.calculate_total(quantity)
+        print(f"   合計: ¥{total}")
+        
+        # 味の説明（ポリモーフィズム）
+        taste_comment = product.taste()  # 型によって異なる動作
+        print(f"   {taste_comment}")
+        
+        # プレミアム商品ならギフト包装を提案
+        if isinstance(product, PremiumDaifuku):
+            wrap_msg = product.gift_wrap()
+            print(f"   {wrap_msg}")
+        
+        print(f"   ありがとうございました！🐰\n")
+    
+    def recommend_by_category(self, category):
+        """カテゴリ別のおすすめ"""
+        print(f"\n💡 {category}のおすすめ商品:")
+        found = False  # 見つかったかのフラグ
+        
+        for product in self.inventory:
+            if product.category == category:  # カテゴリが一致
+                print(f"  ・{product.name} ¥{product.price}")
+                found = True
+        
+        if not found:
+            print(f"  {category}の商品はありません")
+        print()
+
+# === 実際の運用 ===
+print("="*60)
+print("🏪 ふわふわ大福店 オープン！")
+print("="*60)
+print()
+
+# うさうさ店長を作成
+usausa = StoreManager("うさうさ")
+
+# 通常の大福を作成
+normal1 = Daifuku("あんこ大福", 200, "粒あん", 45)
+normal2 = Daifuku("抹茶大福", 230, "白あん", 43)
+
+# プレミアム大福を作成
+premium1 = PremiumDaifuku("金箔いちご大福", 500, "いちご餡", 50, "金箔")
+premium2 = PremiumDaifuku("トリュフチョコ大福", 800, "生チョコ", 55, "トリュフ")
+
+# アイス大福を作成
+ice1 = IceDaifuku("バニラアイス大福", 300, "カスタード", 60, "バニラ")
+ice2 = IceDaifuku("抹茶アイス大福", 320, "抹茶あん", 60, "抹茶")
+
+# 在庫に追加
+usausa.add_product(normal1)
+usausa.add_product(normal2)
+usausa.add_product(premium1)
+usausa.add_product(premium2)
+usausa.add_product(ice1)
+usausa.add_product(ice2)
+
+# 全商品を表示
+usausa.show_all_products()
+
+# お客様の接客（ポリモーフィズムの実践）
+print("\n" + "="*60)
+print("👥 お客様の接客")
+print("="*60)
+
+# 通常の大福
+usausa.serve_customer(normal1, 2)
+
+# プレミアム大福（特別な処理が自動的に実行される）
+usausa.serve_customer(premium1, 1)
+
+# アイス大福
+usausa.serve_customer(ice1, 3)
+
+# アイス大福を解凍してからもう一度
+print("\n--- アイス大福の状態変更 ---")
+ice1.defrost()  # 解凍
+usausa.serve_customer(ice1, 1)  # 再度提供
+
+# カテゴリ別おすすめ
+usausa.recommend_by_category("大福")
+
+# === 統計情報 ===
+print("\n" + "="*60)
+print("📊 統計情報")
+print("="*60)
+print(f"登録商品総数: {Product.total_products}個")
+print(f"在庫商品数: {len(usausa.inventory)}個")
+
+# 平均価格を計算
+if usausa.inventory:
+    avg_price = sum(p.price for p in usausa.inventory) / len(usausa.inventory)
+    print(f"平均価格: ¥{avg_price:.0f}")
+
+# 最高額・最低額の商品
+if usausa.inventory:
+    most_expensive = max(usausa.inventory, key=lambda p: p.price)
+    cheapest = min(usausa.inventory, key=lambda p: p.price)
+    print(f"最高額商品: {most_expensive.name} ¥{most_expensive.price}")
+    print(f"最低額商品: {cheapest.name} ¥{cheapest.price}")
+
+print("\n" + "="*60)
+```
+
+---
+
+## 🔟 特殊メソッド（マジックメソッド）
+
+```python
+class Daifuku:
+    """特殊メソッドを使った高度な実装"""
+    
+    def __init__(self, name, price, weight):
+        """初期化"""
+        self.name = name
+        self.price = price
+        self.weight = weight
+    
+    def __str__(self):
+        """
+        文字列表現（人間が読みやすい形式）
+        print()で呼ばれる
+        """
+        return f"{self.name}（¥{self.price}）"
+    
+    def __repr__(self):
+        """
+        公式な文字列表現（開発者向け）
+        repr()やインタラクティブシェルで呼ばれる
+        """
+        return f"Daifuku(name='{self.name}', price={self.price}, weight={self.weight})"
+    
+    def __len__(self):
+        """
+        len()が使えるようになる
+        重さを返す
+        """
+        return self.weight
+    
+    def __eq__(self, other):
+        """
+        == 演算子をオーバーロード
+        価格が同じなら等しいとする
+        """
+        if not isinstance(other, Daifuku):  # Daifuku以外
+            return False
+        return self.price == other.price
+    
+    def __lt__(self, other):
+        """
+        < 演算子をオーバーロード
+        価格で比較
+        """
+        if not isinstance(other, Daifuku):
+            return NotImplemented
+        return self.price < other.price
+    
+    def __le__(self, other):
+        """<= 演算子"""
+        if not isinstance(other, Daifuku):
+            return NotImplemented
+        return self.price <= other.price
+    
+    def __gt__(self, other):
+        """> 演算子"""
+        if not isinstance(other, Daifuku):
+            return NotImplemented
+        return self.price > other.price
+    
+    def __ge__(self, other):
+        """>= 演算子"""
+        if not isinstance(other, Daifuku):
+            return NotImplemented
+        return self.price >= other.price
+    
+    def __add__(self, other):
+        """
+        + 演算子をオーバーロード
+        2つの大福を足すとセット商品になる
+        """
+        if isinstance(other, Daifuku):
+            new_name = f"{self.name}+{other.name}セット"
+            new_price = self.price + other.price
+            new_weight = self.weight + other.weight
+            return Daifuku(new_name, new_price, new_weight)
+        return NotImplemented
+    
+    def __mul__(self, quantity):
+        """
+        * 演算子をオーバーロード
+        数量をかけると合計金額
+        """
+        if isinstance(quantity, int):
+            return self.price * quantity
+        return NotImplemented
+    
+    def __getitem__(self, key):
+        """
+        []演算子をオーバーロード
+        辞書のようにアクセスできる
+        """
+        if key == "name":
+            return self.name
+        elif key == "price":
+            return self.price
+        elif key == "weight":
+            return self.weight
+        else:
+            raise KeyError(f"キー'{key}'は存在しません")
+    
+    def __call__(self):
+        """
+        ()で呼び出せるようにする
+        インスタンスを関数のように使える
+        """
+        return f"{self.name}を食べました！もちもち美味しい！"
+
+print("="*60)
+print("🎩 特殊メソッド（マジックメソッド）の活用")
+print("="*60)
+print()
+
+# 大福を作成
+ichigo = Daifuku("いちご大福", 250, 48)
+matcha = Daifuku("抹茶大福", 230, 45)
+anko = Daifuku("あんこ大福", 200, 43)
+
+# __str__の動作
+print("--- __str__: print()での表示 ---")
+print(ichigo)  # いちご大福（¥250）
+print()
+
+# __repr__の動作
+print("--- __repr__: 公式表現 ---")
+print(repr(ichigo))  # Daifuku(name='いちご大福', price=250, weight=48)
+print()
+
+# __len__の動作
+print("--- __len__: len()で重さを取得 ---")
+print(f"{ichigo.name}の重さ: {len(ichigo)}g")
+print()
+
+# __eq__の動作
+print("--- __eq__: ==演算子 ---")
+print(f"{ichigo.name} == {matcha.name}: {ichigo == matcha}")  # False
+anko2 = Daifuku("あんこ大福（別店舗）", 200, 50)
+print(f"{anko.name} == {anko2.name}: {anko == anko2}")  # True（価格が同じ）
+print()
+
+# __lt__, __gt__の動作
+print("--- 比較演算子: <, >, <=, >= ---")
+print(f"{anko.name} < {ichigo.name}: {anko < ichigo}")  # True
+print(f"{ichigo.name} > {matcha.name}: {ichigo > matcha}")  # True
+print()
+
+# ソート（比較演算子のおかげで可能）
+print("--- sorted()でソート ---")
+daifuku_list = [ichigo, matcha, anko]
+sorted_list = sorted(daifuku_list)  # 価格順にソート
+print("価格順:")
+for d in sorted_list:
+    print(f"  {d}")
+print()
+
+# __add__の動作
+print("--- __add__: +演算子でセット商品 ---")
+combo = ichigo + matcha  # 2つを足す
+print(f"セット商品: {combo}")
+print(f"セット価格: ¥{combo.price}")
+print()
+
+# __mul__の動作
+print("--- __mul__: *演算子で合計金額 ---")
+total = ichigo * 5  # 5個分の金額
+print(f"{ichigo.name} × 5個 = ¥{total}")
+print()
+
+# __getitem__の動作
+print("--- __getitem__: []でアクセス ---")
+print(f"商品名: {ichigo['name']}")
+print(f"価格: ¥{ichigo['price']}")
+print(f"重さ: {ichigo['weight']}g")
+print()
+
+# __call__の動作
+print("--- __call__: ()で呼び出し ---")
+message = ichigo()  # インスタンスを関数のように呼ぶ
+print(message)
+print()
+```
+
+---
+
+## 1️⃣1️⃣ まとめ：オブジェクト指向の重要ポイント
+
+```python
+# === 総まとめチートシート ===
+
+"""
+🎯 クラス（Class）
+   - 設計図、テンプレート
+   - class キーワードで定義
+   例: class Daifuku:
+
+🎯 インスタンス（Instance）
+   - クラスから作られた実体
+   - 各インスタンスは独立している
+   例: ichigo = Daifuku("いちご大福", 250)
+
+🎯 __init__メソッド
+   - 初期化メソッド（コンストラクタ）
+   - インスタンス作成時に自動で呼ばれる
+   - selfは必須（自分自身を表す）
+   例: def __init__(self, name, price):
+
+🎯 インスタンス変数
+   - 各インスタンスが持つデータ
+   - self.変数名で定義
+   例: self.name = name
+
+🎯 クラス変数
+   - すべてのインスタンスで共有
+   - インデント直下で定義
+   例: total_count = 0
+
+🎯 メソッド（Method）
+   - クラス内の関数
+   - 必ずselfを第一引数に持つ（インスタンスメソッド）
+   例: def show_info(self):
+
+🎯 継承（Inheritance）
+   - 親クラスの機能を子クラスが受け継ぐ
+   - class 子クラス(親クラス):
+   - super()で親のメソッドを呼ぶ
+   例: class PremiumDaifuku(Daifuku):
+
+🎯 オーバーライド（Override）
+   - 親のメソッドを子で上書き
+   - 同じ名前のメソッドを定義し直す
+   例: def show_info(self): # 親と同じ名前
+
+🎯 ポリモーフィズム（Polymorphism）
+   - 同じメソッド名で異なる動作
+   - 型に関係なく統一的に扱える
+   例: すべての大福でtaste()を呼べる
+
+🎯 オーバーロード（Overload）
+   - Pythonには厳密なオーバーロードはない
+   - デフォルト引数や*args, **kwargsで代用
+   例: def sell(self, quantity=1, **options):
+
+🎯 特殊メソッド（Magic Methods）
+   - __メソッド名__の形式
+   - 演算子のオーバーロードなど
+   主なもの:
+     __init__: 初期化
+     __str__: print()での表示
+     __repr__: 公式表現
+     __len__: len()
+     __eq__: ==
+     __lt__: <
+     __add__: +
+     __mul__: *
+     __getitem__: []
+     __call__: ()
+"""
+
+# === 実践例：すべてを組み合わせた完全版 ===
+
+class Animal:
+    """動物クラス（最も基本）"""
+    count = 0  # クラス変数
+    
+    def __init__(self, name):
+        self.name = name  # インスタンス変数
+        Animal.count += 1
+        self.id = Animal.count
+    
+    def speak(self):
+        """鳴く（基本実装）"""
+        return "..."
+    
+    def __str__(self):
+        return f"{self.name}（ID:{self.id}）"
+
+class Rabbit(Animal):
+    """うさぎクラス（継承）"""
+    
+    def __init__(self, name, ear_length):
+        super().__init__(name)  # 親の__init__を呼ぶ
+        self.ear_length = ear_length  # 子独自の属性
+    
+    def speak(self):  # オーバーライド
+        """うさぎの鳴き声"""
+        return "ぴょんぴょん🐰"
+    
+    def hop(self):  # 子独自のメソッド
+        """跳ねる"""
+        return f"{self.name}がぴょんと跳ねた！"
+
+class ShopManager(Rabbit):
+    """店長うさぎ（さらに継承）"""
+    
+    def __init__(self, name, ear_length, shop_name):
+        super().__init__(name, ear_length)
+        self.shop_name = shop_name
+    
+    def speak(self):  # さらにオーバーライド
+        """店長の挨拶"""
+        return f"いらっしゃいませ！{self.shop_name}へようこそ🐰"
+    
+    def serve(self, animal):
+        """接客（ポリモーフィズム）"""
+        print(f"\n{self.speak()}")
+        print(f"お客様: {animal.name}様")
+        greeting = animal.speak()  # ポリモーフィズム！
+        print(f"お客様の声: {greeting}")
+
+print("\n" + "="*60)
+print("🎓 オブジェクト指向 総合演習")
+print("="*60)
+print()
+
+# インスタンス作成
+usausa = ShopManager("うさうさ", 15, "ふわふわ大福店")
+customer1 = Rabbit("もふもふ", 12)
+customer2 = Animal("たぬきち")
+
+# ポリモーフィズムの実践
+usausa.serve(customer1)  # うさぎのお客様
+usausa.serve(customer2)  # 一般動物のお客様
+
+print()
+print(f"来店動物総数: {Animal.count}匹")
+```
+
+---
+
+## 📖 クイックリファレンスカード
+
+```python
+# === 基本構文 ===
+
+# クラス定義
+class クラス名:
+    クラス変数 = 値
+    
+    def __init__(self, 引数):
+        self.インスタンス変数 = 引数
+    
+    def メソッド名(self):
+        # 処理
+        pass
+
+# インスタンス作成
+変数 = クラス名(引数)
+
+# メソッド呼び出し
+変数.メソッド名()
+
+# === 継承 ===
+
+class 子クラス(親クラス):
+    def __init__(self, 引数):
+        super().__init__(親の引数)  # 親を初期化
+        self.子の変数 = 値
+
+# === 主要な特殊メソッド ===
+
+def __init__(self):       # 初期化
+def __str__(self):        # print()用
+def __repr__(self):       # デバッグ用
+def __len__(self):        # len()
+def __eq__(self, other):  # ==
+def __lt__(self, other):  # <
+def __add__(self, other): # +
+def __mul__(self, other): # *
+def __call__(self):       # ()
+def __getitem__(self, k): # []
+```
+
+---
+
+## 🌟 うさうさ店長からの最終アドバイス
+
+### 初心者が最初に覚えるべき5つ
+
+1. **クラス** = 設計図
+2. **インスタンス** = 実物
+3. **`__init__`** = 作る時に呼ばれる
+4. **self** = 自分自身
+5. **継承** = 親から引き継ぐ
+
+### よく使うパターン
+
+```python
+# パターン1: 基本のクラス
+class Product:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+# パターン2: 継承
+class SpecialProduct(Product):
+    def __init__(self, name, price, feature):
+        super().__init__(name, price)
+        self.feature = feature
+
+# パターン3: オーバーライド
+class PremiumProduct(Product):
+    def show(self):  # 新しいメソッド
+        print(f"✨{self.name}")
+```
+
+これでオブジェクト指向プログラミングの基礎は完璧です！🐰✨
+
+
+
+# 🐰 ふわふわ大福店で学ぶPythonモジュール完全ガイド
+
+## 📚 目次
+1. モジュールとは？
+2. 標準モジュール
+3. 自作モジュール
+4. パッケージ
+5. import の方法
+6. `__name__` と `__main__`
+7. 実践例
+
+---
+
+## 1️⃣ モジュールとは？
+
+```python
+"""
+モジュール = Pythonファイル（.py）
+- 関数、クラス、変数をまとめたもの
+- 再利用可能なコードの集まり
+- 他のファイルから読み込んで使える
+
+例：
+- math.py = 数学関数のモジュール
+- datetime.py = 日付・時刻のモジュール
+- random.py = 乱数のモジュール
+"""
+
+# === 基本的な使い方 ===
+
+# 方法1: モジュール全体をインポート
+import math  # mathモジュールを読み込む
+
+result = math.sqrt(16)  # math.関数名で使う
+print(f"平方根: {result}")  # 4.0
+
+pi = math.pi  # math.変数名で使う
+print(f"円周率: {pi}")  # 3.141592...
+
+# 方法2: 特定の関数だけインポート
+from math import sqrt, pi  # sqrtとpiだけ読み込む
+
+result = sqrt(25)  # math.なしで使える
+print(f"平方根: {result}")  # 5.0
+print(f"円周率: {pi}")  # 3.141592...
+
+# 方法3: 別名（エイリアス）を付ける
+import math as m  # mathをmという名前で使う
+
+result = m.sqrt(36)  # m.関数名で使う
+print(f"平方根: {result}")  # 6.0
+
+# 方法4: すべてインポート（非推奨）
+from math import *  # すべてをインポート（名前衝突の危険）
+
+result = sqrt(49)  # 直接使える
+print(f"平方根: {result}")  # 7.0
+```
+
+---
+
+## 2️⃣ よく使う標準モジュール
+
+### 📊 math - 数学関数
+
+```python
+import math  # 数学モジュール
+
+print("=== mathモジュール ===\n")
+
+# 平方根
+weight = 45.5
+sqrt_weight = math.sqrt(weight)  # 平方根
+print(f"重さの平方根: {sqrt_weight:.2f}")
+
+# べき乗
+price = 250
+squared = math.pow(price, 2)  # 2乗
+print(f"価格の2乗: {squared:.0f}")
+
+# 切り上げ・切り捨て
+price = 245.7
+ceil_price = math.ceil(price)  # 切り上げ
+floor_price = math.floor(price)  # 切り捨て
+print(f"切り上げ: {ceil_price}円")  # 246円
+print(f"切り捨て: {floor_price}円")  # 245円
+
+# 円周率
+radius = 5  # 半径
+circumference = 2 * math.pi * radius  # 円周
+print(f"円周: {circumference:.2f}cm")
+
+# 三角関数
+angle = math.radians(45)  # 度からラジアンに変換
+sin_value = math.sin(angle)  # サイン
+print(f"sin(45°) = {sin_value:.4f}")
+
+# 対数
+value = 100
+log_value = math.log10(value)  # 常用対数（10を底）
+print(f"log10(100) = {log_value}")  # 2.0
+
+print()
+```
+
+---
+
+### 🎲 random - 乱数生成
+
+```python
+import random  # 乱数モジュール
+
+print("=== randomモジュール ===\n")
+
+# ランダムな整数
+dice = random.randint(1, 6)  # 1から6のランダムな整数
+print(f"サイコロ: {dice}")
+
+# ランダムな浮動小数点数
+price_modifier = random.random()  # 0.0以上1.0未満
+print(f"価格変動率: {price_modifier:.4f}")
+
+# 範囲指定の浮動小数点数
+discount = random.uniform(0.05, 0.20)  # 5%〜20%
+print(f"割引率: {discount:.2%}")
+
+# リストからランダムに選択
+menu = ["いちご大福", "抹茶大福", "あんこ大福", "チョコ大福"]
+today_special = random.choice(menu)  # 1つ選ぶ
+print(f"本日のおすすめ: {today_special}")
+
+# 複数選択（重複なし）
+lucky_items = random.sample(menu, 2)  # 2つ選ぶ
+print(f"ラッキーセット: {lucky_items}")
+
+# リストをシャッフル
+menu_copy = menu.copy()  # コピーを作る
+random.shuffle(menu_copy)  # シャッフル（元のリストを変更）
+print(f"シャッフル後: {menu_copy}")
+
+# 重み付き選択
+items = ["いちご大福", "抹茶大福", "あんこ大福"]
+weights = [5, 3, 2]  # 重み（確率の比率）
+selected = random.choices(items, weights=weights, k=10)  # 10回選択
+print(f"重み付き選択: {selected}")
+
+print()
+```
+
+---
+
+### 📅 datetime - 日付と時刻
+
+```python
+import datetime  # 日付・時刻モジュール
+
+print("=== datetimeモジュール ===\n")
+
+# 現在の日時
+now = datetime.datetime.now()  # 現在の日時
+print(f"現在日時: {now}")
+print(f"年: {now.year}")
+print(f"月: {now.month}")
+print(f"日: {now.day}")
+print(f"時: {now.hour}")
+print(f"分: {now.minute}")
+print(f"秒: {now.second}")
+
+# 日付だけ
+today = datetime.date.today()  # 今日の日付
+print(f"\n今日: {today}")
+
+# 時刻だけ
+current_time = datetime.datetime.now().time()  # 現在時刻
+print(f"現在時刻: {current_time}")
+
+# 特定の日時を作成
+opening = datetime.datetime(2020, 4, 1, 9, 0, 0)  # 開店日
+print(f"\n開店日: {opening}")
+
+# 日時の計算
+tomorrow = today + datetime.timedelta(days=1)  # 1日後
+print(f"明日: {tomorrow}")
+
+next_week = today + datetime.timedelta(weeks=1)  # 1週間後
+print(f"来週: {next_week}")
+
+# 営業時間の計算
+open_time = datetime.time(9, 0)  # 9:00
+close_time = datetime.time(18, 0)  # 18:00
+print(f"\n営業時間: {open_time}〜{close_time}")
+
+# 日時のフォーマット
+formatted = now.strftime("%Y年%m月%d日 %H時%M分")  # 書式指定
+print(f"\nフォーマット: {formatted}")
+
+# 文字列から日時に変換
+date_str = "2025-10-03"
+parsed = datetime.datetime.strptime(date_str, "%Y-%m-%d")  # パース
+print(f"パース: {parsed}")
+
+# 経過日数
+opening_date = datetime.date(2020, 4, 1)
+days_since_opening = (today - opening_date).days  # 経過日数
+print(f"\n開店から{days_since_opening}日経過")
+
+print()
+```
+
+---
+
+### 🕐 time - 時間操作
+
+```python
+import time  # 時間モジュール
+
+print("=== timeモジュール ===\n")
+
+# 現在のタイムスタンプ
+timestamp = time.time()  # Unix時間（1970年1月1日からの秒数）
+print(f"タイムスタンプ: {timestamp}")
+
+# スリープ（待機）
+print("大福を焼いています...")
+time.sleep(2)  # 2秒待つ
+print("焼き上がりました！\n")
+
+# 処理時間の計測
+start_time = time.time()  # 開始時刻
+
+# 何か処理
+total = 0
+for i in range(1000000):  # 100万回ループ
+    total += i
+
+end_time = time.time()  # 終了時刻
+elapsed = end_time - start_time  # 経過時間
+print(f"処理時間: {elapsed:.4f}秒\n")
+
+# 見やすい時刻表示
+local_time = time.localtime()  # ローカル時刻
+formatted = time.strftime("%Y-%m-%d %H:%M:%S", local_time)  # 書式化
+print(f"現在時刻: {formatted}")
+
+print()
+```
+
+---
+
+### 🗂️ os - OS操作
+
+```python
+import os  # OSモジュール
+
+print("=== osモジュール ===\n")
+
+# 現在のディレクトリ
+current_dir = os.getcwd()  # カレントディレクトリを取得
+print(f"現在のディレクトリ: {current_dir}")
+
+# 環境変数
+username = os.environ.get("USER", "不明")  # 環境変数を取得
+print(f"ユーザー名: {username}")
+
+# パス操作
+path = os.path.join("店舗", "在庫", "大福.txt")  # パスを結合
+print(f"パス: {path}")
+
+# ファイル存在チェック
+exists = os.path.exists("大福.txt")  # ファイルがあるか
+print(f"ファイル存在: {exists}")
+
+# ディレクトリ作成（例）
+# os.makedirs("新しいフォルダ", exist_ok=True)  # 実際には実行しない
+
+print()
+```
+
+---
+
+### 📁 pathlib - モダンなパス操作
+
+```python
+from pathlib import Path  # pathlibモジュール
+
+print("=== pathlibモジュール ===\n")
+
+# パスオブジェクトを作成
+shop_path = Path("ふわふわ大福店")  # パス作成
+inventory_path = shop_path / "在庫" / "大福リスト.txt"  # / で結合
+print(f"在庫パス: {inventory_path}")
+
+# ホームディレクトリ
+home = Path.home()  # ホームディレクトリ
+print(f"ホーム: {home}")
+
+# カレントディレクトリ
+current = Path.cwd()  # カレントディレクトリ
+print(f"カレント: {current}")
+
+# パスの情報
+example_path = Path("/店舗/在庫/大福.txt")
+print(f"\nパス情報:")
+print(f"  親: {example_path.parent}")  # 親ディレクトリ
+print(f"  名前: {example_path.name}")  # ファイル名
+print(f"  拡張子: {example_path.suffix}")  # 拡張子
+print(f"  拡張子なし: {example_path.stem}")  # 拡張子を除いた名前
+
+print()
+```
+
+---
+
+### 💾 json - JSON操作
+
+```python
+import json  # JSONモジュール
+
+print("=== jsonモジュール ===\n")
+
+# Pythonの辞書
+daifuku_data = {
+    "name": "いちご大福",  # 商品名
+    "price": 250,  # 価格
+    "ingredients": ["餅", "いちご", "あん"],  # 材料
+    "in_stock": True,  # 在庫あり
+    "rating": 4.8  # 評価
+}
+
+# 辞書 → JSON文字列（シリアライズ）
+json_str = json.dumps(daifuku_data, ensure_ascii=False, indent=2)
+# ensure_ascii=False: 日本語をそのまま表示
+# indent=2: 2スペースでインデント
+print("JSON文字列:")
+print(json_str)
+print()
+
+# JSON文字列 → 辞書（デシリアライズ）
+parsed_data = json.loads(json_str)  # 文字列からパース
+print(f"パース後: {parsed_data}")
+print(f"商品名: {parsed_data['name']}")
+print()
+
+# ファイルに保存する例（実際には実行しない）
+# with open("daifuku.json", "w", encoding="utf-8") as f:
+#     json.dump(daifuku_data, f, ensure_ascii=False, indent=2)
+
+# ファイルから読み込む例（実際には実行しない）
+# with open("daifuku.json", "r", encoding="utf-8") as f:
+#     loaded_data = json.load(f)
+
+print()
+```
+
+---
+
+### 📝 csv - CSV操作
+
+```python
+import csv  # CSVモジュール
+import io  # 文字列をファイルのように扱う
+
+print("=== csvモジュール ===\n")
+
+# CSVデータ（サンプル）
+csv_data = """商品名,価格,在庫
+いちご大福,250,15
+抹茶大福,230,20
+あんこ大福,200,30
+チョコ大福,280,10"""
+
+# CSV読み込み
+csv_file = io.StringIO(csv_data)  # 文字列をファイル風に
+reader = csv.reader(csv_file)  # CSVリーダー作成
+
+print("CSV読み込み:")
+for row in reader:  # 1行ずつ読む
+    print(f"  {row}")
+print()
+
+# 辞書として読み込み
+csv_file = io.StringIO(csv_data)  # もう一度作成
+dict_reader = csv.DictReader(csv_file)  # 辞書リーダー
+
+print("辞書形式:")
+for row in dict_reader:  # 1行が辞書になる
+    print(f"  {row['商品名']}: ¥{row['価格']} ({row['在庫']}個)")
+print()
+
+# CSV書き込み（メモリ上）
+output = io.StringIO()  # 出力先
+writer = csv.writer(output)  # CSVライター作成
+
+# ヘッダー
+writer.writerow(["商品", "売上"])  # 1行書き込み
+# データ
+writer.writerow(["いちご大福", 5000])
+writer.writerow(["抹茶大福", 4600])
+
+print("CSV書き込み結果:")
+print(output.getvalue())  # 書き込んだ内容を取得
+
+print()
+```
+
+---
+
+## 3️⃣ 自作モジュールの作成
+
+### ファイル構成
+```
+ふわふわ大福店/
+├── main.py          # メインプログラム
+├── daifuku.py       # 大福モジュール
+├── manager.py       # 店長モジュール
+└── utils.py         # ユーティリティモジュール
+```
+
+### 📄 daifuku.py（大福モジュール）
+
+```python
+# daifuku.py
+"""
+大福関連のクラスと関数をまとめたモジュール
+"""
+
+# モジュールレベルの変数
+STORE_NAME = "ふわふわ大福店"  # 定数（大文字で書く）
+TAX_RATE = 0.10  # 消費税率
+
+class Daifuku:
+    """大福クラス"""
+    
+    count = 0  # クラス変数
+    
+    def __init__(self, name, price, weight=45):
+        """大福を初期化"""
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        self.weight = weight  # 重さ
+        
+        Daifuku.count += 1  # カウントアップ
+        self.id = Daifuku.count  # ID付与
+    
+    def show_info(self):
+        """情報を表示"""
+        print(f"[{self.id}] {self.name}")
+        print(f"    価格: ¥{self.price}")
+        print(f"    重さ: {self.weight}g")
+    
+    def calculate_tax_included(self):
+        """税込価格を計算"""
+        return int(self.price * (1 + TAX_RATE))
+
+def create_popular_set():
+    """人気セットを作成する関数"""
+    ichigo = Daifuku("いちご大福", 250, 48)
+    matcha = Daifuku("抹茶大福", 230, 45)
+    return [ichigo, matcha]
+
+def calculate_total(daifuku_list):
+    """合計金額を計算する関数"""
+    total = sum(d.price for d in daifuku_list)
+    return total
+
+# このファイルが直接実行された時だけ動く
+if __name__ == "__main__":
+    print("daifuku.pyをテスト実行")
+    d = Daifuku("テスト大福", 200)
+    d.show_info()
+```
+
+---
+
+### 📄 manager.py（店長モジュール）
+
+```python
+# manager.py
+"""
+店長クラスをまとめたモジュール
+"""
+
+class Manager:
+    """店長クラス"""
+    
+    def __init__(self, name):
+        """店長を初期化"""
+        self.name = name  # 店長名
+        self.inventory = []  # 在庫リスト
+    
+    def add_product(self, product):
+        """商品を追加"""
+        self.inventory.append(product)
+        print(f"🐰 {product.name}を在庫に追加しました")
+    
+    def show_inventory(self):
+        """在庫一覧を表示"""
+        print(f"\n{'='*40}")
+        print(f"店長: {self.name}の在庫")
+        print(f"{'='*40}")
+        
+        if not self.inventory:
+            print("在庫なし")
+            return
+        
+        for product in self.inventory:
+            product.show_info()
+            print()
+    
+    def greet(self):
+        """挨拶"""
+        return f"🐰 いらっしゃいませ！店長の{self.name}です"
+
+# テスト用
+if __name__ == "__main__":
+    print("manager.pyをテスト実行")
+    m = Manager("うさうさ")
+    print(m.greet())
+```
+
+---
+
+### 📄 utils.py（ユーティリティモジュール）
+
+```python
+# utils.py
+"""
+便利な関数をまとめたユーティリティモジュール
+"""
+
+def format_price(price):
+    """価格をフォーマット"""
+    return f"¥{price:,}"  # カンマ区切り
+
+def calculate_discount(price, rate):
+    """割引後の価格を計算"""
+    if rate < 0 or rate > 1:
+        raise ValueError("割引率は0〜1の範囲で指定してください")
+    return int(price * (1 - rate))
+
+def is_premium(price):
+    """プレミアム商品か判定"""
+    return price >= 400  # 400円以上ならプレミアム
+
+def generate_receipt(items):
+    """レシート生成"""
+    lines = []
+    lines.append("="*30)
+    lines.append("  ふわふわ大福店  ")
+    lines.append("="*30)
+    
+    total = 0
+    for item in items:
+        name = item['name']
+        price = item['price']
+        qty = item['quantity']
+        subtotal = price * qty
+        
+        lines.append(f"{name}")
+        lines.append(f"  ¥{price} × {qty}個 = ¥{subtotal}")
+        total += subtotal
+    
+    lines.append("-"*30)
+    lines.append(f"合計: ¥{total}")
+    lines.append("="*30)
+    
+    return "\n".join(lines)
+
+# 定数
+MAX_DISCOUNT_RATE = 0.30  # 最大割引率30%
+MIN_ORDER_QUANTITY = 1  # 最小注文数
+
+# テスト用
+if __name__ == "__main__":
+    print("utils.pyをテスト実行")
+    print(format_price(1234567))
+    print(calculate_discount(1000, 0.15))
+```
+
+---
+
+### 📄 main.py（メインプログラム）
+
+```python
+# main.py
+"""
+メインプログラム - 他のモジュールをインポートして使う
+"""
+
+# 方法1: モジュール全体をインポート
+import daifuku  # daifuku.pyをインポート
+import manager  # manager.pyをインポート
+import utils  # utils.pyをインポート
+
+print("="*60)
+print("🏪 ふわふわ大福店システム起動")
+print("="*60)
+print()
+
+# daifukuモジュールの定数を使う
+print(f"店名: {daifuku.STORE_NAME}")
+print(f"消費税率: {daifuku.TAX_RATE * 100}%")
+print()
+
+# daifukuモジュールのクラスを使う
+d1 = daifuku.Daifuku("いちご大福", 250)  # daifuku.クラス名
+d2 = daifuku.Daifuku("抹茶大福", 230)
+d3 = daifuku.Daifuku("チョコ大福", 280)
+
+# daifukuモジュールの関数を使う
+popular = daifuku.create_popular_set()  # daifuku.関数名
+print(f"人気セット作成: {len(popular)}個\n")
+
+# managerモジュールのクラスを使う
+usausa = manager.Manager("うさうさ")  # manager.クラス名
+
+# 商品を追加
+usausa.add_product(d1)
+usausa.add_product(d2)
+usausa.add_product(d3)
+print()
+
+# 在庫表示
+usausa.show_inventory()
+
+# utilsモジュールの関数を使う
+print("--- 価格フォーマット ---")
+print(f"通常表示: {d1.price}円")
+print(f"フォーマット: {utils.format_price(d1.price)}")  # utils.関数名
+print()
+
+print("--- 割引計算 ---")
+discounted = utils.calculate_discount(d1.price, 0.15)  # 15%割引
+print(f"元の価格: {utils.format_price(d1.price)}")
+print(f"割引後: {utils.format_price(discounted)}")
+print()
+
+print("--- プレミアム判定 ---")
+for product in [d1, d2, d3]:
+    is_prem = utils.is_premium(product.price)  # プレミアムか
+    status = "⭐プレミアム" if is_prem else "通常"
+    print(f"{product.name}: {status}")
+print()
+
+# レシート生成
+print("--- レシート ---")
+order_items = [
+    {"name": "いちご大福", "price": 250, "quantity": 2},
+    {"name": "抹茶大福", "price": 230, "quantity": 3}
+]
+receipt = utils.generate_receipt(order_items)
+print(receipt)
+print()
+
+# --- 方法2: 特定のものだけインポート ---
+from daifuku import Daifuku, STORE_NAME  # 特定のものだけ
+from utils import format_price, calculate_discount  # 関数を直接
+
+print("--- 直接インポートの例 ---")
+d4 = Daifuku("きなこ大福", 220)  # Daifukuを直接使える
+print(f"店名: {STORE_NAME}")  # STORE_NAMEを直接使える
+print(f"価格: {format_price(d4.price)}")  # format_priceを直接使える
+
+# --- 方法3: エイリアスを使う ---
+import daifuku as df  # dfという短い名前で
+import utils as u  # uという短い名前で
+
+d5 = df.Daifuku("豆大福", 210)  # df.クラス名
+print(f"割引: {u.format_price(u.calculate_discount(d5.price, 0.1))}")
+```
+
+---
+
+## 4️⃣ パッケージ（複数モジュールをまとめる）
+
+### ディレクトリ構造
+```
+ふわふわ大福店/
+├── main.py
+└── shop/                    # パッケージディレクトリ
+    ├── __init__.py          # パッケージの印
+    ├── products/            # サブパッケージ
+    │   ├── __init__.py
+    │   ├── daifuku.py
+    │   └── drink.py
+    ├── staff/               # サブパッケージ
+    │   ├── __init__.py
+    │   ├── manager.py
+    │   └── clerk.py
+    └── utils/               # サブパッケージ
+        ├── __init__.py
+        ├── calculator.py
+        └── formatter.py
+```
+
+### 📄 shop/__init__.py
+
+```python
+# shop/__init__.py
+"""
+shopパッケージの初期化ファイル
+パッケージがインポートされた時に最初に実行される
+"""
+
+# パッケージのバージョン
+__version__ = "1.0.0"
+
+# パッケージの説明
+__author__ = "うさうさ店長"
+
+# パッケージレベルの変数
+SHOP_NAME = "ふわふわ大福店"
+
+# よく使うものを直接インポートできるようにする
+from .products.daifuku import Daifuku  # 相対インポート
+from .staff.manager import Manager
+
+# __all__で公開するものを指定
+__all__ = ["Daifuku", "Manager", "SHOP_NAME"]
+
+print(f"📦 shopパッケージ v{__version__} を読み込みました")
+```
+
+---
+
+### 📄 shop/products/daifuku.py
+
+```python
+# shop/products/daifuku.py
+"""
+大福商品モジュール
+"""
+
+class Daifuku:
+    """大福クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def __str__(self):
+        return f"{self.name} (¥{self.price})"
+```
+
+---
+
+### 📄 shop/staff/manager.py
+
+```python
+# shop/staff/manager.py
+"""
+店長モジュール
+"""
+
+class Manager:
+    """店長クラス"""
+    
+    def __init__(self, name):
+        self.name = name
+        self.products = []
+    
+    def add_product(self, product):
+        """商品追加"""
+        self.products.append(product)
+        print(f"✅ {product.name}を追加")
+    
+    def show_products(self):
+        """商品一覧"""
+        print(f"\n{self.name}の管理商品:")
+        for p in self.products:
+            print(f"  ・{p}")
+```
+
+---
+
+### 📄 main.py（パッケージを使う）
+
+```python
+# main.py
+"""
+パッケージを使うメインプログラム
+"""
+
+# 方法1: パッケージ全体をインポート
+import shop  # shopパッケージ
+
+print(f"店名: {shop.SHOP_NAME}")
+print(f"バージョン: {shop.__version__}")
+print()
+
+# __init__.pyで公開したものを使う
+d1 = shop.Daifuku("いちご大福", 250)  # 直接使える
+manager = shop.Manager("うさうさ")  # 直接使える
+
+# 方法2: サブモジュールをインポート
+from shop.products import daifuku  # サブモジュール
+from shop.staff import manager as mgr  # エイリアス付き
+
+d2 = daifuku.Daifuku("抹茶大福", 230)
+usausa = mgr.Manager("うさうさ")
+
+# 方法3: 特定のクラスだけインポート
+from shop.products.daifuku import Daifuku  # 直接クラス
+from shop.staff.manager import Manager  # 直接クラス
+
+d3 = Daifuku("あんこ大福", 200)  # Daifukuを直接使える
+m = Manager("もふもふ")  # Managerを直接使える
+
+# 使用例
+m.add_product(d1)
+m.add_product(d2)
+m.add_product(d3)
+m.show_products()
+```
+
+---
+
+## 5️⃣ `__name__` と `__main__`
+
+```python
+# sample_module.py
+"""
+__name__と__main__の仕組み
+"""
+
+print(f"このファイルの__name__は: {__name__}")
+
+def hello():
+    """挨拶関数"""
+    print("こんにちは！")
+
+class Product:
+    """商品クラス"""
+    def __init__(self, name):
+        self.name = name
+
+# この部分は直接実行された時だけ
+
+
+
+```python
+# この部分は直接実行された時だけ動く
+if __name__ == "__main__":
+    """
+    __name__ == "__main__" の意味：
+    - このファイルが直接実行された場合、__name__は"__main__"になる
+    - 他のファイルからimportされた場合、__name__はモジュール名になる
+    
+    用途：
+    - テストコード
+    - デモコード
+    - スクリプトとしての実行
+    """
+    print("\n--- 直接実行されました ---")
+    print("テストを実行します\n")
+    
+    # テストコード
+    hello()
+    p = Product("テスト商品")
+    print(f"商品: {p.name}")
+    
+else:
+    print("--- importされました ---")
+```
+
+### 実行結果の違い
+
+```python
+# パターン1: 直接実行
+# $ python sample_module.py
+# 出力:
+# このファイルの__name__は: __main__
+# --- 直接実行されました ---
+# テストを実行します
+# 
+# こんにちは！
+# 商品: テスト商品
+
+# パターン2: 他のファイルからimport
+# main.py で import sample_module した場合
+# 出力:
+# このファイルの__name__は: sample_module
+# --- importされました ---
+```
+
+---
+
+## 6️⃣ 相対インポートと絶対インポート
+
+```python
+"""
+パッケージ構造:
+shop/
+├── __init__.py
+├── products/
+│   ├── __init__.py
+│   ├── daifuku.py
+│   └── drink.py
+└── utils/
+    ├── __init__.py
+    └── calculator.py
+"""
+
+# === shop/products/daifuku.py ===
+
+# 絶対インポート（推奨）
+from shop.utils.calculator import calculate_total  # フルパス
+
+# 相対インポート
+from ..utils.calculator import calculate_total  # 2つ上のutils
+from .drink import Drink  # 同じディレクトリのdrink
+from . import drink  # 同じディレクトリのdrinkモジュール
+
+"""
+相対インポートの記号:
+. = 現在のディレクトリ
+.. = 1つ上のディレクトリ
+... = 2つ上のディレクトリ
+"""
+
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+# 絶対インポートと相対インポートの使い分け
+"""
+絶対インポート:
+✅ わかりやすい
+✅ IDEのサポートが良い
+✅ 推奨される方法
+
+相対インポート:
+✅ パッケージ名が変わっても大丈夫
+❌ 直接実行できない（python daifuku.pyがエラー）
+❌ やや複雑
+"""
+```
+
+---
+
+## 7️⃣ よく使うインポートパターン
+
+```python
+# === パターン1: 標準的なインポート ===
+import math
+import datetime
+import random
+
+result = math.sqrt(16)
+now = datetime.datetime.now()
+num = random.randint(1, 10)
+
+# === パターン2: 特定の関数だけ ===
+from math import sqrt, pi, ceil
+from datetime import datetime, timedelta
+from random import choice, shuffle
+
+result = sqrt(25)  # math.なしで使える
+today = datetime.now()
+dice = choice([1, 2, 3, 4, 5, 6])
+
+# === パターン3: エイリアス（短縮名） ===
+import numpy as np  # numpyをnpで
+import pandas as pd  # pandasをpdで
+import matplotlib.pyplot as plt  # 長い名前を短く
+
+# よく使われるエイリアス
+import datetime as dt
+from datetime import datetime as DateTime
+
+# === パターン4: すべてインポート（非推奨） ===
+from math import *  # すべてをインポート
+
+# 問題点：
+# - どこから来た関数かわからない
+# - 名前の衝突が起きる
+# - コードが読みにくい
+
+# === パターン5: 条件付きインポート ===
+try:
+    import numpy as np  # numpyがあれば使う
+    HAS_NUMPY = True
+except ImportError:
+    HAS_NUMPY = False  # なければFalse
+    print("numpyがインストールされていません")
+
+if HAS_NUMPY:
+    # numpyを使った処理
+    arr = np.array([1, 2, 3])
+else:
+    # 代替処理
+    arr = [1, 2, 3]
+
+# === パターン6: 遅延インポート ===
+def process_data():
+    """関数内でインポート（必要な時だけ）"""
+    import pandas as pd  # この関数が呼ばれた時にインポート
+    df = pd.DataFrame({"a": [1, 2, 3]})
+    return df
+
+# メリット：起動時間が短縮される
+# デメリット：最初の実行が遅い
+```
+
+---
+
+## 8️⃣ 実践：ふわふわ大福店の完全なモジュール構成
+
+### 📁 プロジェクト構造
+```
+daifuku_shop/
+├── README.md
+├── requirements.txt
+├── main.py
+├── config.py              # 設定ファイル
+└── shop/                  # メインパッケージ
+    ├── __init__.py
+    ├── models/            # データモデル
+    │   ├── __init__.py
+    │   ├── product.py
+    │   ├── daifuku.py
+    │   └── customer.py
+    ├── services/          # ビジネスロジック
+    │   ├── __init__.py
+    │   ├── inventory.py
+    │   ├── sales.py
+    │   └── analytics.py
+    ├── utils/             # ユーティリティ
+    │   ├── __init__.py
+    │   ├── formatters.py
+    │   ├── validators.py
+    │   └── calculators.py
+    └── tests/             # テスト
+        ├── __init__.py
+        ├── test_product.py
+        └── test_sales.py
+```
+
+---
+
+### 📄 config.py（設定ファイル）
+
+```python
+# config.py
+"""
+アプリケーション全体の設定
+"""
+
+# 店舗情報
+SHOP_NAME = "ふわふわ大福店"
+SHOP_ADDRESS = "東京都渋谷区"
+SHOP_PHONE = "03-1234-5678"
+
+# 営業情報
+OPENING_TIME = "09:00"
+CLOSING_TIME = "18:00"
+BUSINESS_DAYS = ["月", "火", "水", "木", "金", "土"]
+
+# 価格設定
+TAX_RATE = 0.10  # 消費税率
+MIN_PRICE = 100  # 最低価格
+MAX_PRICE = 1000  # 最高価格
+PREMIUM_THRESHOLD = 400  # プレミアム商品の基準
+
+# 割引設定
+MAX_DISCOUNT_RATE = 0.30  # 最大割引率
+MEMBER_DISCOUNT = 0.05  # 会員割引
+
+# システム設定
+DEBUG = True  # デバッグモード
+LOG_LEVEL = "INFO"  # ログレベル
+DATABASE_PATH = "shop.db"  # データベースパス
+
+# 在庫設定
+LOW_STOCK_THRESHOLD = 5  # 在庫少の基準
+MAX_STOCK = 100  # 最大在庫数
+
+def get_config():
+    """設定を辞書で返す"""
+    return {
+        "shop_name": SHOP_NAME,
+        "tax_rate": TAX_RATE,
+        "debug": DEBUG
+    }
+
+if __name__ == "__main__":
+    # 設定確認
+    print("=== 設定確認 ===")
+    for key, value in get_config().items():
+        print(f"{key}: {value}")
+```
+
+---
+
+### 📄 shop/models/product.py
+
+```python
+# shop/models/product.py
+"""
+商品の基本モデル
+"""
+
+class Product:
+    """商品の基底クラス"""
+    
+    _id_counter = 0  # クラス変数（ID生成用）
+    
+    def __init__(self, name, price, category):
+        """商品を初期化"""
+        Product._id_counter += 1
+        self.id = Product._id_counter  # 自動でIDを付与
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        self.category = category  # カテゴリ
+        self.stock = 0  # 在庫数
+    
+    def __str__(self):
+        """文字列表現"""
+        return f"[{self.id:03d}] {self.name} ¥{self.price}"
+    
+    def __repr__(self):
+        """公式表現"""
+        return f"Product(id={self.id}, name='{self.name}', price={self.price})"
+    
+    def add_stock(self, quantity):
+        """在庫追加"""
+        if quantity <= 0:
+            raise ValueError("追加数は正の数である必要があります")
+        self.stock += quantity
+        return self.stock
+    
+    def reduce_stock(self, quantity):
+        """在庫減少"""
+        if quantity <= 0:
+            raise ValueError("減少数は正の数である必要があります")
+        if quantity > self.stock:
+            raise ValueError("在庫が足りません")
+        self.stock -= quantity
+        return self.stock
+    
+    def is_low_stock(self, threshold=5):
+        """在庫が少ないか"""
+        return self.stock < threshold
+    
+    def to_dict(self):
+        """辞書に変換"""
+        return {
+            "id": self.id,
+            "name": self.name,
+            "price": self.price,
+            "category": self.category,
+            "stock": self.stock
+        }
+```
+
+---
+
+### 📄 shop/models/daifuku.py
+
+```python
+# shop/models/daifuku.py
+"""
+大福モデル
+"""
+
+from .product import Product  # 相対インポート
+
+class Daifuku(Product):
+    """大福クラス"""
+    
+    def __init__(self, name, price, filling, weight=45):
+        """大福を初期化"""
+        super().__init__(name, price, "大福")  # 親クラス初期化
+        self.filling = filling  # 餡の種類
+        self.weight = weight  # 重さ（g）
+    
+    def __str__(self):
+        """文字列表現"""
+        return f"[{self.id:03d}] {self.name} ({self.filling}) ¥{self.price}"
+    
+    def to_dict(self):
+        """辞書に変換（親のメソッドを拡張）"""
+        data = super().to_dict()  # 親のメソッドを呼ぶ
+        data.update({  # 追加情報
+            "filling": self.filling,
+            "weight": self.weight
+        })
+        return data
+    
+    def calculate_price_per_gram(self):
+        """グラム単価を計算"""
+        return self.price / self.weight
+```
+
+---
+
+### 📄 shop/services/inventory.py
+
+```python
+# shop/services/inventory.py
+"""
+在庫管理サービス
+"""
+
+class InventoryManager:
+    """在庫管理クラス"""
+    
+    def __init__(self):
+        """初期化"""
+        self.products = []  # 商品リスト
+    
+    def add_product(self, product):
+        """商品を追加"""
+        self.products.append(product)
+        return len(self.products)
+    
+    def remove_product(self, product_id):
+        """商品を削除"""
+        for i, product in enumerate(self.products):
+            if product.id == product_id:
+                removed = self.products.pop(i)
+                return removed
+        return None
+    
+    def find_by_id(self, product_id):
+        """IDで検索"""
+        for product in self.products:
+            if product.id == product_id:
+                return product
+        return None
+    
+    def find_by_name(self, name):
+        """名前で検索"""
+        results = []
+        for product in self.products:
+            if name.lower() in product.name.lower():
+                results.append(product)
+        return results
+    
+    def get_all(self):
+        """すべての商品を取得"""
+        return self.products.copy()
+    
+    def get_by_category(self, category):
+        """カテゴリで絞り込み"""
+        return [p for p in self.products if p.category == category]
+    
+    def get_low_stock_products(self, threshold=5):
+        """在庫が少ない商品を取得"""
+        return [p for p in self.products if p.is_low_stock(threshold)]
+    
+    def get_total_value(self):
+        """在庫の総額を計算"""
+        return sum(p.price * p.stock for p in self.products)
+    
+    def show_inventory(self):
+        """在庫一覧を表示"""
+        print("\n" + "="*60)
+        print("📦 在庫一覧")
+        print("="*60)
+        
+        if not self.products:
+            print("在庫なし")
+            return
+        
+        for product in self.products:
+            stock_status = "⚠️" if product.is_low_stock() else "✅"
+            print(f"{stock_status} {product} (在庫: {product.stock})")
+        
+        print("-"*60)
+        print(f"商品数: {len(self.products)}点")
+        print(f"在庫総額: ¥{self.get_total_value():,}")
+        print("="*60)
+```
+
+---
+
+### 📄 shop/services/sales.py
+
+```python
+# shop/services/sales.py
+"""
+販売サービス
+"""
+
+import datetime
+
+class SalesManager:
+    """販売管理クラス"""
+    
+    def __init__(self, inventory_manager):
+        """初期化"""
+        self.inventory = inventory_manager  # 在庫管理
+        self.sales_history = []  # 販売履歴
+    
+    def sell_product(self, product_id, quantity=1, customer_name=""):
+        """商品を販売"""
+        # 商品を検索
+        product = self.inventory.find_by_id(product_id)
+        if not product:
+            return {"success": False, "message": "商品が見つかりません"}
+        
+        # 在庫チェック
+        if product.stock < quantity:
+            return {
+                "success": False,
+                "message": f"在庫不足（在庫: {product.stock}個）"
+            }
+        
+        # 在庫を減らす
+        try:
+            product.reduce_stock(quantity)
+        except ValueError as e:
+            return {"success": False, "message": str(e)}
+        
+        # 販売記録
+        sale = {
+            "date": datetime.datetime.now(),
+            "product_id": product.id,
+            "product_name": product.name,
+            "price": product.price,
+            "quantity": quantity,
+            "total": product.price * quantity,
+            "customer": customer_name
+        }
+        self.sales_history.append(sale)
+        
+        return {
+            "success": True,
+            "message": f"{product.name} × {quantity}個を販売しました",
+            "sale": sale
+        }
+    
+    def get_sales_total(self):
+        """売上合計"""
+        return sum(sale["total"] for sale in self.sales_history)
+    
+    def get_sales_count(self):
+        """販売数"""
+        return len(self.sales_history)
+    
+    def get_today_sales(self):
+        """今日の売上"""
+        today = datetime.date.today()
+        today_sales = [
+            sale for sale in self.sales_history
+            if sale["date"].date() == today
+        ]
+        return sum(sale["total"] for sale in today_sales)
+    
+    def show_sales_report(self):
+        """販売レポート"""
+        print("\n" + "="*60)
+        print("💰 販売レポート")
+        print("="*60)
+        
+        if not self.sales_history:
+            print("販売履歴なし")
+            return
+        
+        print(f"総売上: ¥{self.get_sales_total():,}")
+        print(f"販売件数: {self.get_sales_count()}件")
+        print(f"今日の売上: ¥{self.get_today_sales():,}")
+        
+        print("\n--- 最近の販売 ---")
+        for sale in self.sales_history[-5:]:  # 最新5件
+            date_str = sale["date"].strftime("%m/%d %H:%M")
+            print(f"{date_str} {sale['product_name']} × {sale['quantity']} = ¥{sale['total']:,}")
+        
+        print("="*60)
+```
+
+---
+
+### 📄 shop/utils/formatters.py
+
+```python
+# shop/utils/formatters.py
+"""
+フォーマット関連のユーティリティ
+"""
+
+def format_price(price):
+    """価格をフォーマット"""
+    return f"¥{price:,}"
+
+def format_date(dt):
+    """日時をフォーマット"""
+    return dt.strftime("%Y年%m月%d日 %H:%M:%S")
+
+def format_percentage(value):
+    """パーセンテージをフォーマット"""
+    return f"{value:.1%}"
+
+def format_weight(grams):
+    """重さをフォーマット"""
+    return f"{grams}g"
+
+def create_receipt(items, tax_rate=0.10):
+    """レシートを生成"""
+    lines = []
+    lines.append("="*40)
+    lines.append("    ふわふわ大福店    ")
+    lines.append("="*40)
+    lines.append("")
+    
+    subtotal = 0
+    for item in items:
+        name = item["name"]
+        price = item["price"]
+        qty = item["quantity"]
+        item_total = price * qty
+        
+        lines.append(f"{name}")
+        lines.append(f"  {format_price(price)} × {qty}個")
+        lines.append(f"  小計: {format_price(item_total)}")
+        lines.append("")
+        
+        subtotal += item_total
+    
+    tax = int(subtotal * tax_rate)
+    total = subtotal + tax
+    
+    lines.append("-"*40)
+    lines.append(f"小計:     {format_price(subtotal):>20}")
+    lines.append(f"消費税:   {format_price(tax):>20}")
+    lines.append(f"合計:     {format_price(total):>20}")
+    lines.append("="*40)
+    
+    import datetime
+    lines.append(format_date(datetime.datetime.now()))
+    lines.append("      ありがとうございました！")
+    lines.append("="*40)
+    
+    return "\n".join(lines)
+```
+
+---
+
+### 📄 main.py（統合実行）
+
+```python
+# main.py
+"""
+ふわふわ大福店システム - メインプログラム
+"""
+
+# 設定をインポート
+import config
+
+# shopパッケージからインポート
+from shop.models.daifuku import Daifuku
+from shop.services.inventory import InventoryManager
+from shop.services.sales import SalesManager
+from shop.utils.formatters import format_price, create_receipt
+
+def main():
+    """メイン処理"""
+    print("="*60)
+    print(f"  {config.SHOP_NAME} システム起動  ")
+    print("="*60)
+    print(f"営業時間: {config.OPENING_TIME}〜{config.CLOSING_TIME}")
+    print(f"消費税率: {config.TAX_RATE * 100}%")
+    print()
+    
+    # 在庫管理システムを作成
+    inventory = InventoryManager()
+    
+    # 商品を作成
+    products = [
+        Daifuku("いちご大福", 250, "いちご餡", 48),
+        Daifuku("抹茶大福", 230, "白あん", 45),
+        Daifuku("あんこ大福", 200, "粒あん", 43),
+        Daifuku("チョコ大福", 280, "生チョコ", 50),
+        Daifuku("きなこ大福", 220, "きなこ餡", 44)
+    ]
+    
+    # 在庫に追加して初期在庫を設定
+    print("--- 商品登録 ---")
+    for product in products:
+        inventory.add_product(product)
+        product.add_stock(20)  # 各20個の在庫
+        print(f"✅ {product} (在庫: {product.stock}個)")
+    print()
+    
+    # 在庫一覧を表示
+    inventory.show_inventory()
+    
+    # 販売管理システムを作成
+    sales = SalesManager(inventory)
+    
+    # 販売テスト
+    print("\n--- 販売処理 ---")
+    
+    # 販売1
+    result = sales.sell_product(1, 3, "田中さん")  # ID:1を3個
+    if result["success"]:
+        print(f"✅ {result['message']}")
+    
+    # 販売2
+    result = sales.sell_product(3, 5, "佐藤さん")  # ID:3を5個
+    if result["success"]:
+        print(f"✅ {result['message']}")
+    
+    # 販売3
+    result = sales.sell_product(2, 2)  # ID:2を2個
+    if result["success"]:
+        print(f"✅ {result['message']}")
+    
+    print()
+    
+    # レシート生成
+    print("--- レシート生成 ---")
+    receipt_items = [
+        {"name": "いちご大福", "price": 250, "quantity": 2},
+        {"name": "抹茶大福", "price": 230, "quantity": 3}
+    ]
+    receipt = create_receipt(receipt_items, config.TAX_RATE)
+    print(receipt)
+    print()
+    
+    # 販売レポート
+    sales.show_sales_report()
+    
+    # 在庫一覧（更新後）
+    inventory.show_inventory()
+    
+    # 在庫が少ない商品を確認
+    low_stock = inventory.get_low_stock_products(10)
+    if low_stock:
+        print("\n⚠️  在庫が少ない商品:")
+        for product in low_stock:
+            print(f"  {product.name}: {product.stock}個")
+    
+    print("\n" + "="*60)
+    print("システム終了")
+    print("="*60)
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+## 9️⃣ モジュールのベストプラクティス
+
+```python
+"""
+✅ 良い例
+"""
+
+# 1. 明確なモジュール名
+# good_names.py
+# daifuku_manager.py
+# inventory_service.py
+
+# 2. docstringを書く
+"""
+このモジュールは大福の在庫管理機能を提供します。
+
+Classes:
+    InventoryManager: 在庫管理クラス
+    
+Functions:
+    check_stock: 在庫確認
+    
+Constants:
+    MAX_STOCK: 最大在庫数
+"""
+
+# 3. __all__で公開APIを明示
+__all__ = ["InventoryManager", "check_stock"]
+
+# 4. 適切なインポート順序
+# 標準ライブラリ
+import os
+import sys
+from datetime import datetime
+
+# サードパーティ
+import numpy as np
+import pandas as pd
+
+# 自作モジュール
+from shop.models import Product
+from shop.utils import format_price
+
+"""
+❌ 悪い例
+"""
+
+# 1. 曖昧なモジュール名
+# utils.py（何のユーティリティ？）
+# data.py（何のデータ？）
+# stuff.py（何が入ってる？）
+
+# 2. docstringなし
+
+# 3. from module import * を多用
+
+# 4. 循環インポート
+# a.py が b.py をインポート
+# b.py が a.py をインポート
+# → エラー！
+```
+
+---
+
+## 🔟 まとめ：モジュールチートシート
+
+```python
+# === 基本構文 ===
+
+# モジュール全体をインポート
+import モジュール名
+
+# 特定のものをインポート
+from モジュール名 import 関数名, クラス名
+
+# エイリアス付きインポート
+import モジュール名 as 別名
+from モジュール名 import 関数名 as 別名
+
+# 相対インポート（パッケージ内）
+from . import モジュール名      # 同じディレクトリ
+from .. import モジュール名     # 1つ上
+from .サブ import 関数名        # サブディレクトリ
+
+# === よく使うパターン ===
+
+# 標準ライブラリ
+import math
+import datetime
+import random
+import os
+import sys
+import json
+
+# エイリアス付き
+import datetime as dt
+from datetime import datetime as DateTime
+
+# 特定の関数だけ
+from math import sqrt, pi, ceil
+from random import choice, randint
+
+# === モジュールファイル構造 ===
+
+# モジュール作成の基本
+"""モジュールの説明"""
+
+# 定数
+CONSTANT_VALUE = 100
+
+# 関数
+def function_name():
+    pass
+
+# クラス
+class ClassName:
+    pass
+
+# テスト・デモ用
+if __name__ == "__main__":
+    print("このモジュールを直接実行しました")
+
+# === パッケージ構造 ===
+
+package/
+├── __init__.py      # パッケージの印
+├── module1.py
+├── module2.py
+└── subpackage/
+    ├── __init__.py
+    └── module3.py
+```
+
+---
+
+## 🌟 うさうさ店長からの最終アドバイス
+
+### 初心者が覚えるべき5つ
+
+1. **`import モジュール名`** - 基本のインポート
+2. **`from モジュール import 関数`** - 特定のものだけ
+3. **`if __name__ == "__main__":`** - 直接実行の判定
+4. **docstring** - モジュールの説明を書く
+5. **`__init__.py`** - パッケージの印
+
+### よく使う標準モジュール
+
+- **math**: 数学計算
+- **random**: 乱数
+- **datetime**: 日付・時刻
+- **os**: ファイル・ディレクトリ操作
+- **json**: JSON処理
+- **csv**: CSV処理
+
+これでモジュールは完璧です！🐰✨
+
+# 🐰 ふわふわ大福店で学ぶクラス・メソッド・インスタンス完全ガイド
+
+## 📚 目次
+1. クラスとは？
+2. インスタンスとは？
+3. メソッドとは？
+4. 実践演習
+5. チートシート
+
+---
+
+## 1️⃣ クラスとは？ - 設計図
+
+```python
+"""
+クラス = 設計図、テンプレート
+- モノの「型」を定義する
+- 何を持っているか（属性・変数）
+- 何ができるか（メソッド・関数）
+
+例：大福の設計図
+  持っているもの：名前、価格、重さ
+  できること：情報表示、販売、割引
+"""
+
+# === 最もシンプルなクラス ===
+class Daifuku:
+    """大福クラス（設計図）"""
+    pass  # 何もない空のクラス
+
+# クラスを使ってインスタンス（実物）を作る
+my_daifuku = Daifuku()  # 大福を1つ作る
+print(type(my_daifuku))  # <class '__main__.Daifuku'>
+print()
+
+# === 属性を持つクラス ===
+class Daifuku:
+    """大福クラス - 属性付き"""
+    
+    # クラス変数（すべての大福で共通）
+    store_name = "ふわふわ大福店"  # 店名
+    tax_rate = 0.10  # 消費税率
+
+# クラス変数にアクセス
+print(f"店名: {Daifuku.store_name}")  # クラス名.変数名
+print(f"消費税: {Daifuku.tax_rate * 100}%")
+print()
+
+# === 初期化メソッド付きクラス ===
+class Daifuku:
+    """大福クラス - 完全版"""
+    
+    # クラス変数
+    store_name = "ふわふわ大福店"
+    
+    def __init__(self, name, price, weight):
+        """
+        初期化メソッド（コンストラクタ）
+        - インスタンスを作る時に自動で呼ばれる
+        - インスタンス変数を設定する
+        
+        Parameters:
+        -----------
+        name : str
+            商品名
+        price : int
+            価格（円）
+        weight : int
+            重さ（グラム）
+        """
+        # インスタンス変数（それぞれの大福で異なる）
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        self.weight = weight  # 重さ
+        
+        print(f"✨ {name}を作りました！")
+
+# インスタンスを作成
+print("=== インスタンス作成 ===")
+ichigo = Daifuku("いちご大福", 250, 48)  # いちご大福を作る
+matcha = Daifuku("抹茶大福", 230, 45)  # 抹茶大福を作る
+print()
+
+# インスタンス変数にアクセス
+print(f"{ichigo.name}の価格: ¥{ichigo.price}")
+print(f"{matcha.name}の重さ: {matcha.weight}g")
+```
+
+**出力:**
+```
+=== インスタンス作成 ===
+✨ いちご大福を作りました！
+✨ 抹茶大福を作りました！
+
+いちご大福の価格: ¥250
+抹茶大福の重さ: 45g
+```
+
+---
+
+## 2️⃣ インスタンスとは？ - 実物
+
+```python
+"""
+インスタンス = クラスから作られた実物
+- 設計図（クラス）から作った具体的なモノ
+- 各インスタンスは独立している
+- それぞれ異なる値を持てる
+
+例：
+  クラス（設計図）：大福
+  インスタンス（実物）：いちご大福、抹茶大福、あんこ大福
+"""
+
+class Daifuku:
+    """大福クラス"""
+    
+    # クラス変数（共通データ）
+    total_count = 0  # 作った大福の総数
+    
+    def __init__(self, name, price):
+        # インスタンス変数（個別データ）
+        self.name = name  # この大福の名前
+        self.price = price  # この大福の価格
+        self.is_sold = False  # 販売済みフラグ
+        
+        # クラス変数を更新
+        Daifuku.total_count += 1  # 総数を増やす
+        self.id = Daifuku.total_count  # ID付与
+
+print("=== インスタンスの独立性 ===\n")
+
+# 3つのインスタンスを作成
+ichigo = Daifuku("いちご大福", 250)
+matcha = Daifuku("抹茶大福", 230)
+anko = Daifuku("あんこ大福", 200)
+
+# 各インスタンスは独立している
+print("--- 個別の情報 ---")
+print(f"ID:{ichigo.id} {ichigo.name} ¥{ichigo.price}")
+print(f"ID:{matcha.id} {matcha.name} ¥{matcha.price}")
+print(f"ID:{anko.id} {anko.name} ¥{anko.price}")
+print()
+
+# 1つのインスタンスを変更しても他には影響しない
+ichigo.is_sold = True  # いちご大福だけ売れた
+print("--- 販売状態 ---")
+print(f"{ichigo.name}: {'売り切れ' if ichigo.is_sold else '販売中'}")
+print(f"{matcha.name}: {'売り切れ' if matcha.is_sold else '販売中'}")
+print(f"{anko.name}: {'売り切れ' if anko.is_sold else '販売中'}")
+print()
+
+# クラス変数は共有されている
+print("--- 共通情報 ---")
+print(f"作った大福の総数: {Daifuku.total_count}個")
+print(f"ichigo経由: {ichigo.total_count}個")  # インスタンスからもアクセス可
+print(f"matcha経由: {matcha.total_count}個")
+print()
+
+# インスタンスのアイデンティティ
+print("--- インスタンスの比較 ---")
+print(f"ichigo is matcha: {ichigo is matcha}")  # False（別物）
+print(f"id(ichigo): {id(ichigo)}")  # メモリ上の位置
+print(f"id(matcha): {id(matcha)}")  # 違う位置
+```
+
+**出力:**
+```
+=== インスタンスの独立性 ===
+
+--- 個別の情報 ---
+ID:1 いちご大福 ¥250
+ID:2 抹茶大福 ¥230
+ID:3 あんこ大福 ¥200
+
+--- 販売状態 ---
+いちご大福: 売り切れ
+抹茶大福: 販売中
+あんこ大福: 販売中
+
+--- 共通情報 ---
+作った大福の総数: 3個
+ichigo経由: 3個
+matcha経由: 3個
+
+--- インスタンスの比較 ---
+ichigo is matcha: False
+id(ichigo): 140234567891234
+id(matcha): 140234567891456
+```
+
+---
+
+## 3️⃣ メソッドとは？ - インスタンスができること
+
+```python
+"""
+メソッド = クラス内の関数
+- インスタンスが実行できる動作
+- 必ず第一引数に self を持つ
+- self = 自分自身（そのインスタンス）
+
+種類：
+1. インスタンスメソッド - 普通のメソッド
+2. クラスメソッド - クラス全体に関わるメソッド
+3. スタティックメソッド - クラスに関連する汎用関数
+"""
+
+class Daifuku:
+    """大福クラス - メソッド完全版"""
+    
+    store_name = "ふわふわ大福店"  # クラス変数
+    
+    def __init__(self, name, price, weight):
+        """初期化メソッド"""
+        self.name = name
+        self.price = price
+        self.weight = weight
+        self.is_sold = False
+    
+    # === インスタンスメソッド ===
+    
+    def show_info(self):
+        """
+        商品情報を表示するメソッド
+        self = このメソッドを呼んだインスタンス
+        """
+        print(f"--- {self.name} ---")
+        print(f"価格: ¥{self.price}")
+        print(f"重さ: {self.weight}g")
+        status = "売り切れ" if self.is_sold else "販売中"
+        print(f"状態: {status}")
+    
+    def sell(self):
+        """販売するメソッド"""
+        if self.is_sold:  # 既に売れている
+            print(f"❌ {self.name}は既に売れています")
+            return False
+        
+        self.is_sold = True  # 販売済みにする
+        print(f"💰 {self.name}を販売しました！")
+        return True
+    
+    def discount(self, rate):
+        """
+        割引を適用するメソッド
+        
+        Parameters:
+        -----------
+        rate : float
+            割引率（0.1 = 10%割引）
+        """
+        if rate < 0 or rate > 1:
+            print("❌ 割引率は0〜1の範囲で指定してください")
+            return
+        
+        original_price = self.price  # 元の価格を保存
+        self.price = int(self.price * (1 - rate))  # 割引適用
+        
+        print(f"🎉 {self.name}が{int(rate*100)}%OFF！")
+        print(f"   ¥{original_price} → ¥{self.price}")
+    
+    def calculate_tax_included(self):
+        """
+        税込価格を計算して返すメソッド
+        
+        Returns:
+        --------
+        int
+            税込価格
+        """
+        tax_rate = 0.10  # 消費税率
+        return int(self.price * (1 + tax_rate))
+    
+    def get_price_per_gram(self):
+        """グラム単価を計算"""
+        return self.price / self.weight
+    
+    # === クラスメソッド ===
+    
+    @classmethod
+    def show_store_info(cls):
+        """
+        店舗情報を表示するクラスメソッド
+        cls = クラス自身
+        個別の大福に関係ない、店全体の情報
+        """
+        print(f"🏪 店名: {cls.store_name}")
+        print(f"📍 所在地: 東京都渋谷区")
+        print(f"⏰ 営業時間: 9:00〜18:00")
+    
+    @classmethod
+    def create_popular_set(cls):
+        """
+        人気セットを作成するファクトリメソッド
+        インスタンスを作って返す
+        """
+        ichigo = cls("いちご大福", 250, 48)  # cls()でインスタンス作成
+        matcha = cls("抹茶大福", 230, 45)
+        return [ichigo, matcha]
+    
+    # === スタティックメソッド ===
+    
+    @staticmethod
+    def calculate_total_price(items):
+        """
+        複数商品の合計金額を計算
+        self もcls も使わない汎用関数
+        
+        Parameters:
+        -----------
+        items : list
+            商品リスト
+        
+        Returns:
+        --------
+        int
+            合計金額
+        """
+        return sum(item.price for item in items)
+    
+    @staticmethod
+    def is_premium_price(price):
+        """プレミアム価格帯か判定"""
+        return price >= 400  # 400円以上ならプレミアム
+
+# === メソッドの使い方 ===
+
+print("="*60)
+print("🐰 メソッドの実践")
+print("="*60)
+print()
+
+# インスタンスを作成
+ichigo = Daifuku("いちご大福", 250, 48)
+matcha = Daifuku("抹茶大福", 230, 45)
+print()
+
+# インスタンスメソッドを呼ぶ
+print("--- show_info() メソッド ---")
+ichigo.show_info()  # インスタンス.メソッド名()
+print()
+
+matcha.show_info()
+print()
+
+# 販売メソッド
+print("--- sell() メソッド ---")
+ichigo.sell()  # 販売
+ichigo.sell()  # もう一度（エラーメッセージ）
+print()
+
+# 割引メソッド
+print("--- discount() メソッド ---")
+matcha.discount(0.15)  # 15%割引
+print()
+
+# 税込価格を計算
+print("--- calculate_tax_included() メソッド ---")
+tax_price = matcha.calculate_tax_included()
+print(f"{matcha.name}の税込価格: ¥{tax_price}")
+print()
+
+# グラム単価
+print("--- get_price_per_gram() メソッド ---")
+ppg = matcha.get_price_per_gram()
+print(f"{matcha.name}のグラム単価: ¥{ppg:.2f}/g")
+print()
+
+# クラスメソッドを呼ぶ
+print("--- show_store_info() クラスメソッド ---")
+Daifuku.show_store_info()  # クラス名.メソッド名()
+print()
+
+print("--- create_popular_set() クラスメソッド ---")
+popular_set = Daifuku.create_popular_set()
+print(f"人気セット: {len(popular_set)}個")
+for item in popular_set:
+    print(f"  ・{item.name} ¥{item.price}")
+print()
+
+# スタティックメソッドを呼ぶ
+print("--- calculate_total_price() スタティックメソッド ---")
+all_items = [ichigo, matcha] + popular_set
+total = Daifuku.calculate_total_price(all_items)
+print(f"全商品の合計: ¥{total}")
+print()
+
+print("--- is_premium_price() スタティックメソッド ---")
+print(f"¥250はプレミアム? {Daifuku.is_premium_price(250)}")
+print(f"¥450はプレミアム? {Daifuku.is_premium_price(450)}")
+```
+
+---
+
+## 4️⃣ 実践演習：うさうさ店長システム
+
+```python
+class Daifuku:
+    """大福クラス"""
+    
+    count = 0  # 作った大福の総数
+    
+    def __init__(self, name, price, weight, filling):
+        """大福を初期化"""
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        self.weight = weight  # 重さ
+        self.filling = filling  # 餡の種類
+        self.is_sold = False  # 販売状態
+        
+        Daifuku.count += 1  # カウントアップ
+        self.id = Daifuku.count  # ID付与
+    
+    def __str__(self):
+        """文字列表現（print時）"""
+        return f"[{self.id:03d}] {self.name} ¥{self.price}"
+    
+    def __repr__(self):
+        """公式表現（デバッグ時）"""
+        return f"Daifuku('{self.name}', {self.price}, {self.weight}, '{self.filling}')"
+    
+    def show_info(self):
+        """詳細情報を表示"""
+        print(f"🍡 {self.name}")
+        print(f"   ID: {self.id:03d}")
+        print(f"   価格: ¥{self.price}")
+        print(f"   重さ: {self.weight}g")
+        print(f"   餡: {self.filling}")
+        print(f"   状態: {'売り切れ' if self.is_sold else '販売中'}")
+    
+    def sell(self):
+        """販売"""
+        if not self.is_sold:
+            self.is_sold = True
+            return True
+        return False
+    
+    def calculate_price_per_gram(self):
+        """グラム単価"""
+        return self.price / self.weight
+
+
+class StoreManager:
+    """店長クラス"""
+    
+    def __init__(self, name):
+        """店長を初期化"""
+        self.name = name  # 店長名
+        self.inventory = []  # 在庫リスト
+        self.sales_history = []  # 販売履歴
+        print(f"🐰 {name}が店長に就任しました！\n")
+    
+    def greet(self):
+        """挨拶"""
+        return f"🐰 いらっしゃいませ！店長の{self.name}です"
+    
+    def add_product(self, product):
+        """
+        商品を在庫に追加
+        
+        Parameters:
+        -----------
+        product : Daifuku
+            追加する商品
+        """
+        self.inventory.append(product)
+        print(f"📦 {product.name}を在庫に追加しました")
+    
+    def show_inventory(self):
+        """在庫一覧を表示"""
+        print(f"\n{'='*50}")
+        print(f"📦 {self.name}の在庫一覧")
+        print(f"{'='*50}\n")
+        
+        if not self.inventory:
+            print("在庫なし")
+            return
+        
+        available = []  # 販売中
+        sold_out = []  # 売り切れ
+        
+        for product in self.inventory:
+            if product.is_sold:
+                sold_out.append(product)
+            else:
+                available.append(product)
+        
+        print("--- 販売中 ---")
+        if available:
+            for p in available:
+                print(f"✅ {p}")
+        else:
+            print("なし")
+        
+        print("\n--- 売り切れ ---")
+        if sold_out:
+            for p in sold_out:
+                print(f"❌ {p}")
+        else:
+            print("なし")
+        
+        print(f"\n合計: {len(self.inventory)}商品")
+        print(f"{'='*50}\n")
+    
+    def sell_product(self, product_id):
+        """
+        商品を販売
+        
+        Parameters:
+        -----------
+        product_id : int
+            商品ID
+        
+        Returns:
+        --------
+        bool
+            販売成功したらTrue
+        """
+        # IDで商品を検索
+        for product in self.inventory:
+            if product.id == product_id:
+                if product.sell():  # 販売処理
+                    print(f"💰 {product.name}を販売しました！")
+                    self.sales_history.append({
+                        "product": product,
+                        "price": product.price
+                    })
+                    return True
+                else:
+                    print(f"❌ {product.name}は既に売れています")
+                    return False
+        
+        print(f"❌ ID:{product_id}の商品が見つかりません")
+        return False
+    
+    def show_sales_report(self):
+        """販売レポート"""
+        print(f"\n{'='*50}")
+        print(f"💰 {self.name}の販売レポート")
+        print(f"{'='*50}\n")
+        
+        if not self.sales_history:
+            print("販売履歴なし")
+            return
+        
+        total_sales = 0
+        for i, sale in enumerate(self.sales_history, 1):
+            print(f"{i}. {sale['product'].name} - ¥{sale['price']}")
+            total_sales += sale['price']
+        
+        print(f"\n販売数: {len(self.sales_history)}個")
+        print(f"売上合計: ¥{total_sales:,}")
+        print(f"{'='*50}\n")
+    
+    def recommend_product(self):
+        """おすすめ商品"""
+        available = [p for p in self.inventory if not p.is_sold]
+        
+        if not available:
+            print("おすすめできる商品がありません")
+            return None
+        
+        # グラム単価が最もお得な商品
+        best_deal = min(available, key=lambda p: p.calculate_price_per_gram())
+        
+        print(f"\n💡 本日のおすすめ")
+        print(f"   {best_deal.name}")
+        print(f"   ¥{best_deal.price} ({best_deal.weight}g)")
+        ppg = best_deal.calculate_price_per_gram()
+        print(f"   お得度: ¥{ppg:.2f}/g\n")
+        
+        return best_deal
+
+
+# === システム起動 ===
+
+print("="*60)
+print("🏪 ふわふわ大福店システム")
+print("="*60)
+print()
+
+# うさうさ店長を作成
+usausa = StoreManager("うさうさ")
+
+# 挨拶
+print(usausa.greet())
+print()
+
+# 商品を作成
+print("--- 商品入荷 ---")
+products = [
+    Daifuku("いちご大福", 250, 48, "いちご餡"),
+    Daifuku("抹茶大福", 230, 45, "白あん"),
+    Daifuku("あんこ大福", 200, 43, "粒あん"),
+    Daifuku("チョコ大福", 280, 50, "生チョコ"),
+    Daifuku("きなこ大福", 220, 44, "きなこ餡")
+]
+
+# 在庫に追加
+for product in products:
+    usausa.add_product(product)
+
+print()
+
+# 在庫一覧
+usausa.show_inventory()
+
+# おすすめ商品
+usausa.recommend_product()
+
+# 販売シミュレーション
+print("--- 販売処理 ---")
+usausa.sell_product(1)  # ID:1を販売
+usausa.sell_product(3)  # ID:3を販売
+usausa.sell_product(1)  # ID:1をもう一度（エラー）
+usausa.sell_product(5)  # ID:5を販売
+print()
+
+# 在庫状況（更新後）
+usausa.show_inventory()
+
+# 販売レポート
+usausa.show_sales_report()
+
+# 商品詳細
+print("--- 商品詳細 ---")
+products[0].show_info()
+print()
+products[1].show_info()
+```
+
+---
+
+## 5️⃣ チートシート
+
+### 🎯 基本構文
+
+```python
+# === クラス定義 ===
+class クラス名:
+    """クラスの説明"""
+    
+    # クラス変数（全インスタンスで共有）
+    クラス変数 = 値
+    
+    # 初期化メソッド（コンストラクタ）
+    def __init__(self, 引数1, 引数2):
+        """初期化処理"""
+        self.インスタンス変数1 = 引数1  # インスタンス変数
+        self.インスタンス変数2 = 引数2
+    
+    # インスタンスメソッド
+    def メソッド名(self, 引数):
+        """メソッドの説明"""
+        # 処理
+        return 戻り値
+    
+    # クラスメソッド
+    @classmethod
+    def クラスメソッド名(cls, 引数):
+        """クラス全体に関わる処理"""
+        # 処理
+        return 戻り値
+    
+    # スタティックメソッド
+    @staticmethod
+    def スタティックメソッド名(引数):
+        """汎用的な処理"""
+        # 処理
+        return 戻り値
+
+# === インスタンス作成 ===
+変数名 = クラス名(引数1, 引数2)
+
+# === メソッド呼び出し ===
+変数名.メソッド名(引数)  # インスタンスメソッド
+クラス名.クラスメソッド名(引数)  # クラスメソッド
+クラス名.スタティックメソッド名(引数)  # スタティックメソッド
+
+# === 変数アクセス ===
+変数名.インスタンス変数  # インスタンス変数
+クラス名.クラス変数  # クラス変数
+変数名.クラス変数  # インスタンスからもアクセス可
+```
+
+---
+
+### 📝 よく使うパターン
+
+```python
+# パターン1: シンプルなデータクラス
+class Product:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def __str__(self):
+        return f"{self.name} (¥{self.price})"
+
+# パターン2: カウンター付きクラス
+class Item:
+    count = 0  # クラス変数
+    
+    def __init__(self, name):
+        Item.count += 1
+        self.id = Item.count
+        self.name = name
+
+# パターン3: ファクトリメソッド付き
+class User:
+    @classmethod
+    def create_guest(cls):
+        return cls("ゲスト", "guest@example.com")
+    
+    def __init__(self, name, email):
+        self.name = name
+        self.email = email
+
+# パターン4: バリデーション付き
+class Price:
+    def __init__(self, value):
+        if value < 0:
+            raise ValueError("価格は0以上である必要があります")
+        self.value = value
+```
+
+---
+
+### 🔑 重要ポイント
+
+```python
+"""
+1. self の意味
+   - メソッドの第一引数
+   - 自分自身（そのインスタンス）を指す
+   - 自動的に渡される（呼び出し時に書かない）
+
+2. __init__ の役割
+   - 初期化メソッド
+   - インスタンス作成時に自動で呼ばれる
+   - インスタンス変数を設定する
+
+3. クラス変数 vs インスタンス変数
+   クラス変数:
+     - クラス直下で定義
+     - 全インスタンスで共有
+     - クラス名.変数名でアクセス
+   
+   インスタンス変数:
+     - __init__内で self.変数名で定義
+     - 各インスタンスで独立
+     - インスタンス.変数名でアクセス
+
+4. メソッドの種類
+   インスタンスメソッド:
+     - def method(self):
+     - インスタンスの操作
+   
+   クラスメソッド:
+     - @classmethod
+     - def method(cls):
+     - クラス全体の操作
+   
+   スタティックメソッド:
+     - @staticmethod
+     - def method():
+     - 汎用的な関数
+
+5. 特殊メソッド
+   __init__: 初期化
+   __str__: print()での表示
+   __repr__: 公式表現
+   __len__: len()
+   __eq__: ==
+"""
+```
+
+---
+
+### 💡 実践例テンプレート
+
+```python
+class Daifuku:
+    """大福クラス - 完全テンプレート"""
+    
+    # クラス変数
+    store_name = "ふわふわ大福店"
+    count = 0
+    
+    def __init__(self, name, price):
+        """初期化"""
+        # ID生成
+        Daifuku.count += 1
+        self.id = Daifuku.count
+        
+        # インスタンス変数
+        self.name = name
+        self.price = price
+        self.is_sold = False
+    
+    def __str__(self):
+        """文字列表現"""
+        return f"[{self.id}] {self.name} ¥{self.price}"
+    
+    def __repr__(self):
+        """公式表現"""
+        return f"Daifuku({self.name!r}, {self.price})"
+    
+    def show_info(self):
+        """情報表示"""
+        print(f"{self.name}")
+        print(f"  価格: ¥{self.price}")
+        print(f"  状態: {'売り切れ' if self.is_sold else '販売中'}")
+    
+    def sell(self):
+        """販売"""
+        if not self.is_sold:
+            self.is_sold = True
+            return True
+        return False
+    
+    @classmethod
+    def show_store_name(cls):
+        """店名表示"""
+        print(f"店名: {cls.store_name}")
+    
+    @staticmethod
+    def calculate_total(items):
+        """合計計算"""
+        return sum(item.price for item in items)
+
+# 使用例
+d1 = Daifuku("いちご大福", 250)
+d2 = Daifuku("
+
+ーーーー
+
+抹茶大福", 230)
+
+# インスタンスメソッド
+d1.show_info()
+d1.sell()
+
+# クラスメソッド
+Daifuku.show_store_name()
+
+# スタティックメソッド
+total = Daifuku.calculate_total([d1, d2])
+print(f"合計: ¥{total}")
+```
+
+---
+
+## 6️⃣ よくある間違いと解決法
+
+```python
+# === 間違い1: selfを書き忘れる ===
+
+# ❌ 間違い
+class Daifuku:
+    def __init__(name, price):  # selfがない！
+        name = name  # これは self.name にならない
+        price = price
+
+# ✅ 正しい
+class Daifuku:
+    def __init__(self, name, price):  # selfが必要
+        self.name = name  # self.を付ける
+        self.price = price
+
+
+# === 間違い2: selfを付け忘れる ===
+
+# ❌ 間違い
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def show_info(self):
+        print(name)  # NameError: name が見つからない
+        print(price)  # NameError: price が見つからない
+
+# ✅ 正しい
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def show_info(self):
+        print(self.name)  # self.を付ける
+        print(self.price)
+
+
+# === 間違い3: __init__のスペルミス ===
+
+# ❌ 間違い
+class Daifuku:
+    def _init_(self, name):  # アンダースコアが1つだけ
+        self.name = name
+
+d = Daifuku("いちご大福")  # TypeError: 引数を受け取れない
+
+# ✅ 正しい
+class Daifuku:
+    def __init__(self, name):  # __init__ (アンダースコア2つずつ)
+        self.name = name
+
+
+# === 間違い4: メソッド呼び出し時にselfを渡す ===
+
+# ❌ 間違い
+d = Daifuku("いちご大福", 250)
+d.show_info(d)  # selfを明示的に渡す必要はない
+
+# ✅ 正しい
+d = Daifuku("いちご大福", 250)
+d.show_info()  # selfは自動的に渡される
+
+
+# === 間違い5: クラス変数とインスタンス変数の混同 ===
+
+# ❌ 間違い（意図しない動作）
+class Daifuku:
+    ingredients = []  # クラス変数（全インスタンスで共有）
+    
+    def __init__(self, name):
+        self.name = name
+    
+    def add_ingredient(self, ingredient):
+        self.ingredients.append(ingredient)  # 全インスタンスに影響！
+
+d1 = Daifuku("いちご大福")
+d2 = Daifuku("抹茶大福")
+
+d1.add_ingredient("いちご")
+d2.add_ingredient("抹茶")
+
+print(d1.ingredients)  # ['いちご', '抹茶'] ← d2の材料も入ってる！
+print(d2.ingredients)  # ['いちご', '抹茶'] ← d1の材料も入ってる！
+
+# ✅ 正しい
+class Daifuku:
+    def __init__(self, name):
+        self.name = name
+        self.ingredients = []  # インスタンス変数（各インスタンスで独立）
+    
+    def add_ingredient(self, ingredient):
+        self.ingredients.append(ingredient)
+
+d1 = Daifuku("いちご大福")
+d2 = Daifuku("抹茶大福")
+
+d1.add_ingredient("いちご")
+d2.add_ingredient("抹茶")
+
+print(d1.ingredients)  # ['いちご'] ← d1だけ
+print(d2.ingredients)  # ['抹茶'] ← d2だけ
+
+
+# === 間違い6: クラス名で呼ぶべきメソッドをインスタンスで呼ぶ ===
+
+# ❌ 間違い（動くが非推奨）
+class Daifuku:
+    @classmethod
+    def show_store(cls):
+        print("ふわふわ大福店")
+
+d = Daifuku()
+d.show_store()  # インスタンス経由（混乱を招く）
+
+# ✅ 正しい
+Daifuku.show_store()  # クラスメソッドはクラス名で呼ぶ
+```
+
+---
+
+## 7️⃣ 実践演習問題
+
+```python
+"""
+演習問題：顧客管理システムを作ろう
+
+要件：
+1. Customerクラスを作成
+   - 名前、電話番号、購入履歴を持つ
+   - 商品を購入するメソッド
+   - 購入合計金額を計算するメソッド
+   - ポイント計算（購入額の10%）
+
+2. VIPCustomerクラスを作成（Customerを継承）
+   - ポイント還元率が20%
+   - 特別割引メソッド
+"""
+
+# === 解答例 ===
+
+class Customer:
+    """顧客クラス"""
+    
+    customer_count = 0  # 顧客番号用
+    
+    def __init__(self, name, phone):
+        """顧客を初期化"""
+        Customer.customer_count += 1
+        self.id = Customer.customer_count  # 顧客ID
+        self.name = name  # 名前
+        self.phone = phone  # 電話番号
+        self.purchase_history = []  # 購入履歴
+        self.points = 0  # ポイント
+        
+        print(f"✅ 顧客登録: {name}様 (ID:{self.id:04d})")
+    
+    def __str__(self):
+        """文字列表現"""
+        return f"[{self.id:04d}] {self.name}様"
+    
+    def purchase(self, product_name, price):
+        """
+        商品を購入
+        
+        Parameters:
+        -----------
+        product_name : str
+            商品名
+        price : int
+            価格
+        """
+        self.purchase_history.append({
+            "product": product_name,
+            "price": price
+        })
+        
+        # ポイント加算（10%）
+        earned_points = int(price * 0.10)
+        self.points += earned_points
+        
+        print(f"💰 {self.name}様が{product_name}を購入")
+        print(f"   価格: ¥{price}")
+        print(f"   獲得ポイント: {earned_points}P")
+    
+    def get_total_purchase(self):
+        """購入合計金額"""
+        return sum(item["price"] for item in self.purchase_history)
+    
+    def show_info(self):
+        """顧客情報を表示"""
+        print(f"\n{'='*40}")
+        print(f"👤 顧客情報")
+        print(f"{'='*40}")
+        print(f"ID: {self.id:04d}")
+        print(f"名前: {self.name}")
+        print(f"電話: {self.phone}")
+        print(f"購入回数: {len(self.purchase_history)}回")
+        print(f"購入合計: ¥{self.get_total_purchase():,}")
+        print(f"保有ポイント: {self.points}P")
+        print(f"{'='*40}\n")
+    
+    def show_purchase_history(self):
+        """購入履歴を表示"""
+        print(f"\n--- {self.name}様の購入履歴 ---")
+        if not self.purchase_history:
+            print("購入履歴なし")
+            return
+        
+        for i, item in enumerate(self.purchase_history, 1):
+            print(f"{i}. {item['product']} - ¥{item['price']:,}")
+        print()
+
+
+class VIPCustomer(Customer):
+    """VIP顧客クラス（Customerを継承）"""
+    
+    def __init__(self, name, phone):
+        """VIP顧客を初期化"""
+        super().__init__(name, phone)  # 親クラスの初期化
+        self.vip_level = "ゴールド"  # VIPレベル
+        print(f"⭐ {name}様をVIP会員として登録しました")
+    
+    def __str__(self):
+        """文字列表現"""
+        return f"⭐[{self.id:04d}] {self.name}様 ({self.vip_level})"
+    
+    def purchase(self, product_name, price):
+        """
+        商品を購入（オーバーライド）
+        VIPは20%ポイント還元
+        """
+        self.purchase_history.append({
+            "product": product_name,
+            "price": price
+        })
+        
+        # VIPポイント加算（20%）
+        earned_points = int(price * 0.20)  # 通常の2倍
+        self.points += earned_points
+        
+        print(f"💰 ⭐{self.name}様が{product_name}を購入")
+        print(f"   価格: ¥{price}")
+        print(f"   獲得ポイント: {earned_points}P (VIP特典)")
+    
+    def apply_vip_discount(self, price, discount_rate=0.10):
+        """
+        VIP割引を適用
+        
+        Parameters:
+        -----------
+        price : int
+            元の価格
+        discount_rate : float
+            割引率（デフォルト10%）
+        
+        Returns:
+        --------
+        int
+            割引後の価格
+        """
+        discounted = int(price * (1 - discount_rate))
+        print(f"🎉 VIP割引適用: ¥{price} → ¥{discounted}")
+        return discounted
+    
+    def show_info(self):
+        """顧客情報を表示（親メソッドを拡張）"""
+        print(f"\n{'='*40}")
+        print(f"⭐ VIP顧客情報")
+        print(f"{'='*40}")
+        print(f"ID: {self.id:04d}")
+        print(f"名前: {self.name}")
+        print(f"電話: {self.phone}")
+        print(f"VIPレベル: {self.vip_level}")
+        print(f"購入回数: {len(self.purchase_history)}回")
+        print(f"購入合計: ¥{self.get_total_purchase():,}")
+        print(f"保有ポイント: {self.points}P")
+        print(f"{'='*40}\n")
+
+
+# === システムテスト ===
+
+print("="*60)
+print("🏪 ふわふわ大福店 顧客管理システム")
+print("="*60)
+print()
+
+# 通常顧客を作成
+print("--- 通常顧客登録 ---")
+tanaka = Customer("田中太郎", "090-1234-5678")
+suzuki = Customer("鈴木花子", "090-8765-4321")
+print()
+
+# VIP顧客を作成
+print("--- VIP顧客登録 ---")
+yamada = VIPCustomer("山田次郎", "090-1111-2222")
+print()
+
+# 購入シミュレーション
+print("--- 購入処理 ---")
+tanaka.purchase("いちご大福", 250)
+print()
+
+tanaka.purchase("抹茶大福", 230)
+print()
+
+suzuki.purchase("あんこ大福", 200)
+print()
+
+# VIP顧客の購入（ポイント2倍）
+yamada.purchase("チョコ大福", 280)
+print()
+
+# VIP割引適用
+print("--- VIP割引 ---")
+original_price = 500
+discounted_price = yamada.apply_vip_discount(original_price, 0.15)
+yamada.purchase("プレミアム大福", discounted_price)
+print()
+
+# 顧客情報表示
+tanaka.show_info()
+suzuki.show_info()
+yamada.show_info()
+
+# 購入履歴
+tanaka.show_purchase_history()
+yamada.show_purchase_history()
+
+# 統計
+print("="*60)
+print("📊 統計情報")
+print("="*60)
+print(f"総顧客数: {Customer.customer_count}名")
+print(f"通常顧客: 2名")
+print(f"VIP顧客: 1名")
+print()
+
+all_customers = [tanaka, suzuki, yamada]
+total_sales = sum(c.get_total_purchase() for c in all_customers)
+print(f"総売上: ¥{total_sales:,}")
+print(f"平均購入額: ¥{total_sales // len(all_customers):,}")
+print("="*60)
+```
+
+---
+
+## 8️⃣ ボーナス：便利な特殊メソッド
+
+```python
+class Daifuku:
+    """特殊メソッドを活用した大福クラス"""
+    
+    def __init__(self, name, price, weight):
+        self.name = name
+        self.price = price
+        self.weight = weight
+        self.quantity = 1  # 数量
+    
+    # === 文字列表現 ===
+    
+    def __str__(self):
+        """print()で呼ばれる（人間が読む用）"""
+        return f"{self.name} ¥{self.price}"
+    
+    def __repr__(self):
+        """repr()で呼ばれる（開発者用）"""
+        return f"Daifuku('{self.name}', {self.price}, {self.weight})"
+    
+    # === 比較演算子 ===
+    
+    def __eq__(self, other):
+        """== 演算子（等しい）"""
+        if not isinstance(other, Daifuku):
+            return False
+        return self.price == other.price
+    
+    def __lt__(self, other):
+        """< 演算子（より小さい）"""
+        if not isinstance(other, Daifuku):
+            return NotImplemented
+        return self.price < other.price
+    
+    def __le__(self, other):
+        """<= 演算子"""
+        return self.price <= other.price
+    
+    def __gt__(self, other):
+        """> 演算子（より大きい）"""
+        return self.price > other.price
+    
+    def __ge__(self, other):
+        """>= 演算子"""
+        return self.price >= other.price
+    
+    # === 算術演算子 ===
+    
+    def __add__(self, other):
+        """+ 演算子（足し算）"""
+        if isinstance(other, Daifuku):
+            # 2つの大福を足す → セット商品
+            new_name = f"{self.name}+{other.name}セット"
+            new_price = self.price + other.price
+            new_weight = self.weight + other.weight
+            return Daifuku(new_name, new_price, new_weight)
+        return NotImplemented
+    
+    def __mul__(self, number):
+        """* 演算子（掛け算）"""
+        if isinstance(number, int):
+            # 大福 × 個数 = 合計金額
+            return self.price * number
+        return NotImplemented
+    
+    def __rmul__(self, number):
+        """* 演算子（逆順：個数 × 大福）"""
+        return self.__mul__(number)
+    
+    # === コンテナ操作 ===
+    
+    def __len__(self):
+        """len()で重さを返す"""
+        return self.weight
+    
+    def __getitem__(self, key):
+        """[]演算子（インデックスアクセス）"""
+        if key == "name":
+            return self.name
+        elif key == "price":
+            return self.price
+        elif key == "weight":
+            return self.weight
+        else:
+            raise KeyError(f"キー'{key}'は存在しません")
+    
+    def __setitem__(self, key, value):
+        """[]演算子（値の設定）"""
+        if key == "name":
+            self.name = value
+        elif key == "price":
+            self.price = value
+        elif key == "weight":
+            self.weight = value
+        else:
+            raise KeyError(f"キー'{key}'は存在しません")
+    
+    # === その他 ===
+    
+    def __call__(self):
+        """()で呼び出せる（関数のように）"""
+        return f"{self.name}を食べました！もちもち美味しい！"
+    
+    def __bool__(self):
+        """bool()や if文での真偽判定"""
+        return self.quantity > 0  # 在庫があればTrue
+    
+    def __hash__(self):
+        """hash()でハッシュ値を返す（辞書のキーに使える）"""
+        return hash((self.name, self.price))
+
+
+# === 使用例 ===
+
+print("="*60)
+print("🎩 特殊メソッドの実践")
+print("="*60)
+print()
+
+ichigo = Daifuku("いちご大福", 250, 48)
+matcha = Daifuku("抹茶大福", 230, 45)
+anko = Daifuku("あんこ大福", 200, 43)
+
+# __str__ と __repr__
+print("--- 文字列表現 ---")
+print(f"str: {str(ichigo)}")  # print()でも同じ
+print(f"repr: {repr(ichigo)}")  # デバッグ用
+print()
+
+# 比較演算子
+print("--- 比較演算子 ---")
+print(f"{ichigo.name} == {matcha.name}: {ichigo == matcha}")  # False
+print(f"{anko.name} < {ichigo.name}: {anko < ichigo}")  # True
+print(f"{ichigo.name} > {matcha.name}: {ichigo > matcha}")  # True
+print()
+
+# ソート
+print("--- ソート（価格順） ---")
+products = [ichigo, matcha, anko]
+sorted_products = sorted(products)  # 価格の安い順
+for p in sorted_products:
+    print(f"  {p}")
+print()
+
+# 算術演算子
+print("--- 算術演算子 ---")
+combo = ichigo + matcha  # +でセット商品
+print(f"セット: {combo}")
+
+total1 = ichigo * 3  # 大福 × 個数
+total2 = 5 * matcha  # 個数 × 大福
+print(f"{ichigo.name} × 3個 = ¥{total1}")
+print(f"5個 × {matcha.name} = ¥{total2}")
+print()
+
+# len()
+print("--- len() ---")
+print(f"{ichigo.name}の重さ: {len(ichigo)}g")
+print()
+
+# []アクセス
+print("--- []演算子 ---")
+print(f"商品名: {ichigo['name']}")
+print(f"価格: {ichigo['price']}")
+ichigo['price'] = 260  # 値を変更
+print(f"変更後の価格: {ichigo['price']}")
+print()
+
+# ()呼び出し
+print("--- ()呼び出し ---")
+message = ichigo()  # 関数のように呼ぶ
+print(message)
+print()
+
+# bool判定
+print("--- bool判定 ---")
+ichigo.quantity = 5
+matcha.quantity = 0
+print(f"{ichigo.name}は在庫あり? {bool(ichigo)}")  # True
+print(f"{matcha.name}は在庫あり? {bool(matcha)}")  # False
+
+if ichigo:
+    print(f"  → {ichigo.name}は販売できます")
+if not matcha:
+    print(f"  → {matcha.name}は売り切れです")
+print()
+
+# hash（辞書のキーに使える）
+print("--- hash（辞書のキー） ---")
+stock_dict = {
+    ichigo: 10,  # Daifukuをキーにできる
+    matcha: 15,
+    anko: 20
+}
+print("在庫辞書:")
+for product, stock in stock_dict.items():
+    print(f"  {product}: {stock}個")
+```
+
+---
+
+## 🎓 まとめ：重要ポイント
+
+```python
+"""
+🎯 クラス・メソッド・インスタンスの関係
+
+クラス（設計図）
+  ↓ インスタンス化
+インスタンス（実物）
+  ↓ メソッド呼び出し
+動作・処理
+
+━━━━━━━━━━━━━━━━━━━
+
+📝 最低限覚えること
+
+1. クラス定義
+   class クラス名:
+
+2. 初期化
+   def __init__(self, 引数):
+       self.変数 = 引数
+
+3. インスタンス作成
+   変数 = クラス名(引数)
+
+4. メソッド定義
+   def メソッド名(self, 引数):
+
+5. メソッド呼び出し
+   変数.メソッド名(引数)
+
+━━━━━━━━━━━━━━━━━━━
+
+🔑 キーワード
+
+self = 自分自身（そのインスタンス）
+__init__ = 初期化メソッド
+クラス変数 = 全体で共有
+インスタンス変数 = 個別に保持
+@classmethod = クラスメソッド
+@staticmethod = スタティックメソッド
+
+━━━━━━━━━━━━━━━━━━━
+
+✅ ベストプラクティス
+
+1. クラス名は大文字で始める (PascalCase)
+2. メソッド名は小文字+アンダースコア (snake_case)
+3. docstringを書く
+4. __str__と__repr__を実装すると便利
+5. 関連するデータと処理をまとめる
+"""
+```
+
+これでクラス・メソッド・インスタンスは完璧です！🐰✨
+
+
+
+# 🐰 ふわふわ大福店で学ぶ継承・オーバーライド・ポリモーフィズム完全ガイド
+
+## 📚 目次
+1. 継承（親子関係）
+2. オーバーライド
+3. ポリモーフィズム
+4. オーバーロード
+5. 実践演習
+6. チートシート
+
+---
+
+## 1️⃣ 継承（Inheritance）- 親子関係
+
+```python
+"""
+継承 = 親クラスの機能を子クラスが受け継ぐ
+- コードの再利用
+- 機能の拡張
+- 階層構造の表現
+
+用語：
+- 親クラス（基底クラス、スーパークラス）
+- 子クラス（派生クラス、サブクラス）
+"""
+
+# === 基本の継承 ===
+
+# 親クラス
+class Product:
+    """商品クラス（親）"""
+    
+    def __init__(self, name, price):
+        """商品の初期化"""
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        print(f"📦 商品「{name}」を作成")
+    
+    def show_info(self):
+        """商品情報を表示"""
+        print(f"商品名: {self.name}")
+        print(f"価格: ¥{self.price}")
+    
+    def calculate_tax_included(self):
+        """税込価格を計算"""
+        return int(self.price * 1.10)
+
+# 子クラス
+class Daifuku(Product):  # Productを継承
+    """大福クラス（子）"""
+    
+    def __init__(self, name, price, filling):
+        """大福の初期化"""
+        # 親クラスの初期化を呼ぶ
+        super().__init__(name, price)  # super()で親を呼ぶ
+        
+        # 子クラス独自の属性
+        self.filling = filling  # 餡の種類
+        print(f"🍡 餡の種類: {filling}")
+    
+    # 子クラス独自のメソッド
+    def check_filling(self):
+        """餡の種類を確認"""
+        print(f"この大福は{self.filling}が入っています")
+
+print("="*60)
+print("🎓 継承の基本")
+print("="*60)
+print()
+
+# 親クラスのインスタンス
+print("--- 親クラス（Product） ---")
+product = Product("一般商品", 100)
+product.show_info()
+print()
+
+# 子クラスのインスタンス
+print("--- 子クラス（Daifuku） ---")
+ichigo = Daifuku("いちご大福", 250, "いちご餡")
+print()
+
+# 親から継承したメソッドを使える
+print("親から継承したメソッド:")
+ichigo.show_info()  # 親のメソッド
+print(f"税込: ¥{ichigo.calculate_tax_included()}")  # 親のメソッド
+print()
+
+# 子独自のメソッドも使える
+print("子独自のメソッド:")
+ichigo.check_filling()  # 子のメソッド
+print()
+```
+
+**出力:**
+```
+=== 継承の基本 ===
+
+--- 親クラス（Product） ---
+📦 商品「一般商品」を作成
+商品名: 一般商品
+価格: ¥100
+
+--- 子クラス（Daifuku） ---
+📦 商品「いちご大福」を作成
+🍡 餡の種類: いちご餡
+
+親から継承したメソッド:
+商品名: いちご大福
+価格: ¥250
+税込: ¥275
+
+子独自のメソッド:
+この大福はいちご餡が入っています
+```
+
+---
+
+### 🌳 多段階継承
+
+```python
+"""
+継承の階層構造
+Product（商品）
+  ↓
+Daifuku（大福）
+  ↓
+PremiumDaifuku（プレミアム大福）
+"""
+
+# 親クラス（レベル1）
+class Product:
+    """商品クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def show_info(self):
+        print(f"【{self.name}】¥{self.price}")
+
+# 子クラス（レベル2）
+class Daifuku(Product):
+    """大福クラス"""
+    
+    def __init__(self, name, price, filling):
+        super().__init__(name, price)  # 親（Product）を初期化
+        self.filling = filling
+    
+    def eat(self):
+        return f"もちもち！{self.filling}が美味しい！"
+
+# 孫クラス（レベル3）
+class PremiumDaifuku(Daifuku):
+    """プレミアム大福クラス"""
+    
+    def __init__(self, name, price, filling, special_ingredient):
+        super().__init__(name, price, filling)  # 親（Daifuku）を初期化
+        self.special_ingredient = special_ingredient  # 特別な材料
+        self.gift_box = True  # ギフトボックス付き
+    
+    def wrap_gift(self):
+        """ギフト包装（プレミアム限定）"""
+        return f"🎁 {self.name}を高級桐箱に入れました"
+
+print("="*60)
+print("🌳 多段階継承")
+print("="*60)
+print()
+
+# 孫クラスのインスタンス
+premium = PremiumDaifuku("金箔いちご大福", 500, "いちご餡", "金箔")
+
+# すべての祖先のメソッドが使える
+print("親（Product）のメソッド:")
+premium.show_info()  # Productから継承
+print()
+
+print("親（Daifuku）のメソッド:")
+print(premium.eat())  # Daifukuから継承
+print()
+
+print("自分（PremiumDaifuku）のメソッド:")
+print(premium.wrap_gift())  # 自分のメソッド
+print()
+
+# 継承チェーンの確認
+print("--- 継承関係の確認 ---")
+print(f"isinstance(premium, PremiumDaifuku): {isinstance(premium, PremiumDaifuku)}")
+print(f"isinstance(premium, Daifuku): {isinstance(premium, Daifuku)}")
+print(f"isinstance(premium, Product): {isinstance(premium, Product)}")
+print()
+
+# MRO（メソッド解決順序）
+print("--- MRO（Method Resolution Order） ---")
+print(PremiumDaifuku.__mro__)
+```
+
+---
+
+## 2️⃣ オーバーライド（Override）- メソッドの上書き
+
+```python
+"""
+オーバーライド = 親のメソッドを子で上書き
+- 同じ名前のメソッドを再定義
+- 子クラス独自の動作を実装
+- super()で親のメソッドも呼べる
+"""
+
+class Product:
+    """親クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def show_info(self):
+        """基本の表示"""
+        print(f"商品: {self.name}")
+        print(f"価格: ¥{self.price}")
+    
+    def get_description(self):
+        """説明文を返す"""
+        return f"{self.name}は¥{self.price}です"
+
+
+class Daifuku(Product):
+    """子クラス - オーバーライドあり"""
+    
+    def __init__(self, name, price, filling, weight):
+        super().__init__(name, price)
+        self.filling = filling
+        self.weight = weight
+    
+    # show_info()をオーバーライド（完全に置き換え）
+    def show_info(self):
+        """大福用の表示"""
+        print(f"🍡 商品: {self.name}")
+        print(f"💰 価格: ¥{self.price}")
+        print(f"🎨 餡: {self.filling}")
+        print(f"⚖️  重さ: {self.weight}g")
+    
+    # get_description()をオーバーライド（親を呼んでから追加）
+    def get_description(self):
+        """大福用の説明（親も使う）"""
+        base_description = super().get_description()  # 親のメソッドを呼ぶ
+        return f"{base_description}（{self.filling}、{self.weight}g）"
+
+
+class PremiumDaifuku(Daifuku):
+    """孫クラス - さらにオーバーライド"""
+    
+    def __init__(self, name, price, filling, weight, special):
+        super().__init__(name, price, filling, weight)
+        self.special = special
+    
+    # show_info()をさらにオーバーライド
+    def show_info(self):
+        """プレミアム大福用の表示"""
+        print(f"✨ プレミアム商品 ✨")
+        super().show_info()  # 親（Daifuku）のshow_infoを呼ぶ
+        print(f"🌟 特別素材: {self.special}")
+    
+    # get_description()をさらにオーバーライド
+    def get_description(self):
+        """プレミアム用の説明"""
+        base = super().get_description()  # 親のメソッド
+        return f"【高級】{base} + {self.special}"
+
+
+print("="*60)
+print("🔄 オーバーライドの実践")
+print("="*60)
+print()
+
+# 親クラス
+print("--- 親クラス（Product） ---")
+product = Product("一般商品", 100)
+product.show_info()
+print(product.get_description())
+print()
+
+# 子クラス（オーバーライドあり）
+print("--- 子クラス（Daifuku） ---")
+matcha = Daifuku("抹茶大福", 230, "白あん", 45)
+matcha.show_info()  # 子のメソッド（親と違う）
+print(matcha.get_description())  # 親を呼んでから追加
+print()
+
+# 孫クラス（さらにオーバーライド）
+print("--- 孫クラス（PremiumDaifuku） ---")
+premium = PremiumDaifuku("金箔大福", 500, "特製餡", 50, "金箔")
+premium.show_info()  # 孫のメソッド
+print(premium.get_description())
+print()
+```
+
+**出力:**
+```
+=== オーバーライドの実践 ===
+
+--- 親クラス（Product） ---
+商品: 一般商品
+価格: ¥100
+一般商品は¥100です
+
+--- 子クラス（Daifuku） ---
+🍡 商品: 抹茶大福
+💰 価格: ¥230
+🎨 餡: 白あん
+⚖️  重さ: 45g
+抹茶大福は¥230です（白あん、45g）
+
+--- 孫クラス（PremiumDaifuku） ---
+✨ プレミアム商品 ✨
+🍡 商品: 金箔大福
+💰 価格: ¥500
+🎨 餡: 特製餡
+⚖️  重さ: 50g
+🌟 特別素材: 金箔
+【高級】金箔大福は¥500です（特製餡、50g） + 金箔
+```
+
+---
+
+## 3️⃣ ポリモーフィズム（Polymorphism）- 同じ操作、違う動作
+
+```python
+"""
+ポリモーフィズム = 多態性
+- 同じメソッド名で異なる動作
+- 型に関係なく統一的に扱える
+- インターフェースの統一
+
+メリット：
+- コードがシンプル
+- 拡張が容易
+- 保守性が向上
+"""
+
+class Product:
+    """商品基底クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def make_sound(self):
+        """商品の音（基本）"""
+        return "..."
+    
+    def serve(self):
+        """提供方法（基本）"""
+        return f"{self.name}をお出しします"
+
+
+class Daifuku(Product):
+    """大福クラス"""
+    
+    def __init__(self, name, price):
+        super().__init__(name, price)
+    
+    def make_sound(self):  # オーバーライド
+        """大福の音"""
+        return "もちもち♪"
+    
+    def serve(self):  # オーバーライド
+        """大福の提供"""
+        return f"🍡 {self.name}をお皿に載せてお出しします"
+
+
+class IchigoDaifuku(Daifuku):
+    """いちご大福クラス"""
+    
+    def make_sound(self):  # オーバーライド
+        """いちご大福の音"""
+        return "もちもち♪ いちごジューシー！"
+    
+    def serve(self):  # オーバーライド
+        """いちご大福の提供"""
+        return f"🍓 {self.name}を小皿と爪楊枝と共にお出しします"
+
+
+class IceDaifuku(Product):
+    """アイス大福クラス"""
+    
+    def make_sound(self):  # オーバーライド
+        """アイス大福の音"""
+        return "ひんやり♪ もちもち！"
+    
+    def serve(self):  # オーバーライド
+        """アイス大福の提供"""
+        return f"🧊 {self.name}を冷凍状態でお出しします"
+
+
+class Drink(Product):
+    """飲み物クラス"""
+    
+    def make_sound(self):  # オーバーライド
+        """飲み物の音"""
+        return "ゴクゴク"
+    
+    def serve(self):  # オーバーライド
+        """飲み物の提供"""
+        return f"🥤 {self.name}をグラスに注いでお出しします"
+
+
+# === ポリモーフィズムの実践 ===
+
+print("="*60)
+print("✨ ポリモーフィズム - 統一的な扱い")
+print("="*60)
+print()
+
+# 様々な商品を作成
+products = [
+    Product("一般商品", 100),
+    Daifuku("あんこ大福", 200),
+    IchigoDaifuku("いちご大福", 250),
+    IceDaifuku("バニラアイス大福", 300),
+    Drink("抹茶ラテ", 400)
+]
+
+# 同じメソッド名で呼べるが、動作は異なる
+print("--- make_sound() の動作 ---")
+for product in products:
+    # 型を気にせず同じメソッドを呼べる
+    sound = product.make_sound()  # ポリモーフィズム！
+    print(f"{product.name:20} → {sound}")
+
+print()
+
+print("--- serve() の動作 ---")
+for product in products:
+    # 型に応じて適切な動作が実行される
+    message = product.serve()  # ポリモーフィズム！
+    print(message)
+
+print()
+
+
+# === うさうさ店長の接客関数（ポリモーフィズムの利点） ===
+
+def usausa_serve(product):
+    """
+    どんな商品でも受け取れる汎用関数
+    ポリモーフィズムのおかげで型を気にしなくていい
+    
+    Parameters:
+    -----------
+    product : Product
+        商品（どの子クラスでもOK）
+    """
+    print("🐰 うさうさ店長の接客")
+    print(f"   商品: {product.name}")
+    print(f"   音: {product.make_sound()}")  # 自動的に正しいメソッドが呼ばれる
+    print(f"   {product.serve()}")
+    print()
+
+
+print("--- 統一的な接客関数 ---")
+# どんな型でも同じ関数で処理できる！
+usausa_serve(Daifuku("あんこ大福", 200))
+usausa_serve(IchigoDaifuku("いちご大福", 250))
+usausa_serve(IceDaifuku("チョコアイス大福", 320))
+usausa_serve(Drink("ほうじ茶", 350))
+
+
+# === レジシステム（ポリモーフィズムの活用） ===
+
+class CashRegister:
+    """レジクラス"""
+    
+    def __init__(self):
+        self.items = []  # 購入商品リスト
+    
+    def add_item(self, product):
+        """商品を追加"""
+        self.items.append(product)
+        print(f"📝 {product.name}を追加")
+    
+    def checkout(self):
+        """会計"""
+        print("\n" + "="*50)
+        print("🧾 お会計")
+        print("="*50)
+        
+        total = 0
+        for product in self.items:
+            print(f"{product.name:20} ¥{product.price:>6,}")
+            total += product.price
+        
+        print("-"*50)
+        print(f"{'合計':20} ¥{total:>6,}")
+        print("="*50)
+        print()
+        
+        # 提供方法を表示（ポリモーフィズム）
+        print("📋 提供方法:")
+        for product in self.items:
+            print(f"  ・{product.serve()}")
+        print()
+
+
+print("--- レジシステム ---")
+register = CashRegister()
+
+# 様々な商品を追加（型を気にしない）
+register.add_item(IchigoDaifuku("いちご大福", 250))
+register.add_item(Daifuku("抹茶大福", 230))
+register.add_item(IceDaifuku("バニラアイス大福", 300))
+register.add_item(Drink("抹茶ラテ", 400))
+
+# 会計（ポリモーフィズムで統一処理）
+register.checkout()
+```
+
+---
+
+## 4️⃣ オーバーロード（Overload）- Pythonでの実現
+
+```python
+"""
+オーバーロード = 同名メソッドで引数違い
+- 他の言語（Java, C++）にはある
+- Pythonには厳密なオーバーロードは無い
+- 代わりにデフォルト引数や可変長引数を使う
+"""
+
+class Daifuku:
+    """大福クラス - オーバーロード風実装"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    # === 方法1: デフォルト引数 ===
+    def sell(self, quantity=1, discount=0, customer_name=""):
+        """
+        販売メソッド（デフォルト引数）
+        
+        呼び方:
+        - sell() → 1個、割引なし、名前なし
+        - sell(3) → 3個、割引なし、名前なし
+        - sell(3, 0.1) → 3個、10%割引、名前なし
+        - sell(3, 0.1, "田中さん") → すべて指定
+        """
+        total = self.price * quantity  # 小計
+        
+        if discount > 0:  # 割引適用
+            discount_amount = int(total * discount)
+            total -= discount_amount
+            print(f"🎉 {int(discount*100)}%割引: -¥{discount_amount}")
+        
+        customer_info = f" ({customer_name}様)" if customer_name else ""
+        print(f"💰 {self.name} × {quantity}個{customer_info}")
+        print(f"   合計: ¥{total:,}")
+        
+        return total
+    
+    # === 方法2: 可変長引数 (*args) ===
+    def add_toppings(self, *toppings):
+        """
+        トッピング追加（可変長引数）
+        
+        呼び方:
+        - add_toppings() → トッピングなし
+        - add_toppings("金箔") → 1つ
+        - add_toppings("金箔", "抹茶パウダー") → 2つ
+        - add_toppings("金箔", "抹茶パウダー", "きなこ") → 3つ
+        """
+        if not toppings:
+            print(f"{self.name}はそのままです")
+            return
+        
+        print(f"🎨 {self.name}にトッピング:")
+        for i, topping in enumerate(toppings, 1):
+            print(f"  {i}. {topping}")
+        
+        # トッピング料金（例）
+        topping_fee = len(toppings) * 50
+        print(f"   トッピング料金: ¥{topping_fee}")
+    
+    # === 方法3: キーワード可変長引数 (**kwargs) ===
+    def customize(self, **options):
+        """
+        カスタマイズ（キーワード可変長引数）
+        
+        呼び方:
+        - customize() → オプションなし
+        - customize(box="桐箱") → 箱だけ
+        - customize(box="桐箱", ribbon=True) → 箱とリボン
+        - customize(box="桐箱", ribbon=True, message="おめでとう") → 全部
+        """
+        print(f"✨ {self.name}のカスタマイズ:")
+        
+        if not options:
+            print("  カスタマイズなし")
+            return
+        
+        total_fee = 0
+        
+        if "box" in options:
+            box_type = options["box"]
+            print(f"  📦 箱: {box_type}")
+            total_fee += 300
+        
+        if "ribbon" in options and options["ribbon"]:
+            print(f"  🎀 リボン付き")
+            total_fee += 100
+        
+        if "message" in options:
+            message = options["message"]
+            print(f"  💌 メッセージ: {message}")
+            total_fee += 100
+        
+        print(f"   カスタマイズ料金: ¥{total_fee}")
+        return total_fee
+    
+    # === 方法4: 型チェックで分岐 ===
+    def process(self, data):
+        """
+        引数の型によって処理を変える
+        
+        呼び方:
+        - process(5) → 整数として処理
+        - process("特別注文") → 文字列として処理
+        - process([1, 2, 3]) → リストとして処理
+        """
+        if isinstance(data, int):  # 整数なら数量処理
+            print(f"📊 数量処理: {data}個の注文")
+        elif isinstance(data, str):  # 文字列ならメッセージ処理
+            print(f"💬 メッセージ処理: {data}")
+        elif isinstance(data, list):  # リストなら一括処理
+            print(f"📋 リスト処理: {len(data)}件の注文")
+        else:
+            print(f"❓ 不明な型: {type(data)}")
+    
+    # === 方法5: 複合（すべて組み合わせ） ===
+    def order(self, quantity=1, *toppings, **options):
+        """
+        総合注文システム
+        
+        呼び方:
+        - order() → 1個、シンプル
+        - order(3) → 3個
+        - order(3, "金箔") → 3個、トッピング1つ
+        - order(3, "金箔", "抹茶", express=True) → すべて
+        """
+        print(f"\n📝 注文受付")
+        print(f"商品: {self.name}")
+        print(f"個数: {quantity}個")
+        
+        # 基本料金
+        subtotal = self.price * quantity
+        print(f"基本料金: ¥{subtotal}")
+        
+        # トッピング
+        if toppings:
+            print(f"トッピング: {', '.join(toppings)}")
+            subtotal += len(toppings) * 50 * quantity
+        
+        # オプション
+        if "express" in options and options["express"]:
+            print(f"⚡ 特急配送: +¥500")
+            subtotal += 500
+        
+        if "gift_wrap" in options and options["gift_wrap"]:
+            print(f"🎁 ギフト包装: +¥300")
+            subtotal += 300
+        
+        if "message" in options:
+            print(f"💌 メッセージ: {options['message']}")
+            subtotal += 100
+        
+        print(f"合計: ¥{subtotal:,}")
+        return subtotal
+
+
+print("="*60)
+print("🔄 オーバーロード風の実装")
+print("="*60)
+print()
+
+daifuku = Daifuku("いちご大福", 250)
+
+# 方法1: デフォルト引数
+print("--- 方法1: デフォルト引数 ---")
+daifuku.sell()  # 1個
+print()
+daifuku.sell(3)  # 3個
+print()
+daifuku.sell(5, 0.15, "佐藤さん")  # 全部指定
+print()
+
+# 方法2: 可変長引数
+print("--- 方法2: 可変長引数 (*args) ---")
+daifuku.add_toppings()  # なし
+print()
+daifuku.add_toppings("金箔")  # 1つ
+print()
+daifuku.add_toppings("金箔", "抹茶パウダー", "きなこ")  # 3つ
+print()
+
+# 方法3: キーワード可変長引数
+print("--- 方法3: キーワード可変長引数 (**kwargs) ---")
+daifuku.customize()  # なし
+print()
+daifuku.customize(box="高級桐箱")  # 1つ
+print()
+daifuku.customize(box="高級桐箱", ribbon=True, message="おめでとう")  # 全部
+print()
+
+# 方法4: 型チェック
+print("--- 方法4: 型チェック ---")
+daifuku.process(5)  # int
+daifuku.process("特別注文")  # str
+daifuku.process([1, 2, 3])  # list
+print()
+
+# 方法5: 複合
+print("--- 方法5: 総合注文 ---")
+daifuku.order()  # シンプル
+daifuku.order(3)  # 個数のみ
+daifuku.order(3, "金箔")  # 個数+トッピング
+daifuku.order(
+    5,  # 個数
+    "金箔", "抹茶パウダー",  # トッピング
+    express=True,  # 特急配送
+    gift_wrap=True,  # ギフト包装
+    message="お誕生日おめでとう"  # メッセージ
+)
+```
+
+---
+
+## 5️⃣ 実践演習：ふわふわ大福店完全版
+
+```python
+# === 親クラス（最上位） ===
+class Product:
+    """商品の基底クラス"""
+    
+    total_count = 0  # 全商品の総数
+    
+    def __init__(self, name, price, category):
+        Product.total_count += 1
+        self.id = Product.total_count
+        self.name = name
+        self.price = price
+        self.category = category
+        self.stock = 0
+    
+    def __str__(self):
+        return f"[{self.id:03d}] {self.name} ¥{self.price}"
+    
+    def show_info(self):
+        """商品情報（基本）"""
+        print(f"ID: {self.id:03d}")
+        print(f"商品: {self.name}")
+        print(f"価格: ¥{self.price}")
+        print(f"カテゴリ: {self.category}")
+    
+    def serve(self):
+        """提供方法（基本）"""
+        return f"{self.name}をお出しします"
+
+
+# === 子クラス1 ===
+class Daifuku(Product):
+    """大福クラス"""
+    
+    def __init__(self, name, price, filling, weight):
+        super().__init__(name, price, "大福")
+        self.filling = filling
+        self.weight = weight
+    
+    def show_info(self):
+        """大福の情報（オーバーライド）"""
+        super().show_info()  # 親のメソッドを呼ぶ
+        print(f"餡: {self.filling}")
+        print(f"重さ: {self.weight}g")
+    
+    def serve(self):
+        """大福の提供（オーバーライド）"""
+        return f"🍡 {self.name}をお皿に載せてお出しします"
+
+
+```python
+    
+    def taste(self):
+        """味わう"""
+        return f"もちもち！{self.filling}が美味しい！"
+
+
+# === 子クラス2（Daifukuを継承） ===
+class PremiumDaifuku(Daifuku):
+    """プレミアム大福クラス"""
+    
+    def __init__(self, name, price, filling, weight, special_ingredient):
+        super().__init__(name, price, filling, weight)
+        self.special_ingredient = special_ingredient
+        self.is_limited = True
+    
+    def show_info(self):
+        """プレミアム大福の情報（オーバーライド）"""
+        print("✨ プレミアム商品 ✨")
+        super().show_info()  # 親（Daifuku）のメソッド
+        print(f"特別素材: {self.special_ingredient}")
+        print(f"限定品: はい")
+    
+    def serve(self):
+        """プレミアム大福の提供（オーバーライド）"""
+        return f"🌟 {self.name}を高級皿に盛り付けてお出しします"
+    
+    def taste(self):
+        """プレミアムな味わい（オーバーライド）"""
+        return f"極上もちもち！{self.filling}と{self.special_ingredient}の贅沢なハーモニー！"
+    
+    def gift_wrap(self):
+        """ギフト包装（プレミアム限定メソッド）"""
+        return f"🎁 {self.name}を高級桐箱に入れてリボンをかけました"
+
+
+# === 子クラス3（Daifukuを継承） ===
+class IceDaifuku(Daifuku):
+    """アイス大福クラス"""
+    
+    def __init__(self, name, price, filling, weight, ice_flavor):
+        super().__init__(name, price, filling, weight)
+        self.ice_flavor = ice_flavor
+        self.frozen = True
+    
+    def show_info(self):
+        """アイス大福の情報（オーバーライド）"""
+        super().show_info()
+        print(f"アイス: {self.ice_flavor}")
+        print(f"冷凍状態: {'はい' if self.frozen else 'いいえ'}")
+    
+    def serve(self):
+        """アイス大福の提供（オーバーライド）"""
+        return f"🧊 {self.name}を冷凍状態でお出しします"
+    
+    def taste(self):
+        """アイス大福の味わい（オーバーライド）"""
+        if self.frozen:
+            return f"ひんやり冷たい！{self.ice_flavor}アイスともちもちの絶妙な組み合わせ！"
+        else:
+            return f"溶けてしまいました..."
+    
+    def defrost(self, minutes=5):
+        """解凍する（アイス大福限定メソッド）"""
+        if self.frozen:
+            print(f"🌡️ {self.name}を{minutes}分解凍しました")
+            self.frozen = False
+        else:
+            print("既に解凍済みです")
+
+
+# === 子クラス4（Productを直接継承） ===
+class Drink(Product):
+    """飲み物クラス"""
+    
+    def __init__(self, name, price, volume, temperature):
+        super().__init__(name, price, "飲み物")
+        self.volume = volume  # 容量（ml）
+        self.temperature = temperature  # 温度（hot/cold）
+    
+    def show_info(self):
+        """飲み物の情報（オーバーライド）"""
+        super().show_info()
+        print(f"容量: {self.volume}ml")
+        print(f"温度: {self.temperature}")
+    
+    def serve(self):
+        """飲み物の提供（オーバーライド）"""
+        temp_icon = "🔥" if self.temperature == "hot" else "🧊"
+        return f"{temp_icon} {self.name}をグラスに注いでお出しします"
+    
+    def taste(self):
+        """飲み物の味わい"""
+        return f"ゴクゴク！{self.name}が美味しい！"
+
+
+# === 店長クラス ===
+class StoreManager:
+    """うさうさ店長クラス"""
+    
+    def __init__(self, name):
+        self.name = name
+        self.inventory = []  # 在庫
+        self.sales_history = []  # 販売履歴
+        print(f"🐰 {name}が店長に就任しました！\n")
+    
+    def greet(self):
+        """挨拶"""
+        return f"🐰 いらっしゃいませ！店長の{self.name}です"
+    
+    def add_product(self, product, quantity=10):
+        """商品を在庫に追加"""
+        self.inventory.append(product)
+        product.stock = quantity
+        print(f"📦 {product.name}を{quantity}個入荷しました")
+    
+    def show_inventory(self):
+        """在庫一覧"""
+        print(f"\n{'='*60}")
+        print(f"📦 {self.name}の在庫一覧")
+        print(f"{'='*60}\n")
+        
+        if not self.inventory:
+            print("在庫なし")
+            return
+        
+        # カテゴリ別に表示
+        categories = {}
+        for product in self.inventory:
+            if product.category not in categories:
+                categories[product.category] = []
+            categories[product.category].append(product)
+        
+        for category, products in categories.items():
+            print(f"--- {category} ---")
+            for p in products:
+                stock_status = "✅" if p.stock > 0 else "❌"
+                print(f"{stock_status} {p} (在庫: {p.stock})")
+            print()
+    
+    def serve_customer(self, product, quantity=1):
+        """
+        お客様に商品を提供（ポリモーフィズム）
+        どんな種類の商品でも同じように扱える
+        """
+        print(f"\n🐰 {self.name}: いらっしゃいませ！")
+        
+        # 在庫チェック
+        if product.stock < quantity:
+            print(f"❌ 申し訳ございません。{product.name}の在庫が足りません")
+            return False
+        
+        # 在庫を減らす
+        product.stock -= quantity
+        
+        # 注文内容
+        total = product.price * quantity
+        print(f"   {product.name} × {quantity}個")
+        print(f"   合計: ¥{total:,}")
+        
+        # 提供方法（ポリモーフィズム！）
+        serve_msg = product.serve()  # 型によって異なる動作
+        print(f"   {serve_msg}")
+        
+        # 味の説明（ポリモーフィズム！）
+        taste_msg = product.taste()  # 型によって異なる動作
+        print(f"   {taste_msg}")
+        
+        # プレミアム商品なら特別対応
+        if isinstance(product, PremiumDaifuku):
+            gift_msg = product.gift_wrap()
+            print(f"   {gift_msg}")
+        
+        # 販売履歴に記録
+        self.sales_history.append({
+            "product": product,
+            "quantity": quantity,
+            "total": total
+        })
+        
+        print(f"   ありがとうございました！🐰\n")
+        return True
+    
+    def show_sales_report(self):
+        """販売レポート"""
+        print(f"\n{'='*60}")
+        print(f"💰 {self.name}の販売レポート")
+        print(f"{'='*60}\n")
+        
+        if not self.sales_history:
+            print("販売履歴なし")
+            return
+        
+        total_sales = 0
+        total_items = 0
+        
+        for i, sale in enumerate(self.sales_history, 1):
+            product = sale["product"]
+            quantity = sale["quantity"]
+            price = sale["total"]
+            
+            print(f"{i}. {product.name} × {quantity}個 = ¥{price:,}")
+            total_sales += price
+            total_items += quantity
+        
+        print(f"\n{'='*60}")
+        print(f"販売数: {total_items}個")
+        print(f"売上合計: ¥{total_sales:,}")
+        print(f"{'='*60}\n")
+    
+    def recommend_by_category(self, category):
+        """カテゴリ別おすすめ"""
+        print(f"\n💡 {category}のおすすめ:")
+        
+        found = [p for p in self.inventory if p.category == category and p.stock > 0]
+        
+        if not found:
+            print(f"  {category}の在庫がありません")
+            return
+        
+        for product in found:
+            print(f"  ・{product.name} ¥{product.price} (在庫: {product.stock})")
+
+
+# === システム実行 ===
+
+print("="*70)
+print("🏪 ふわふわ大福店 総合システム")
+print("="*70)
+print()
+
+# うさうさ店長を作成
+usausa = StoreManager("うさうさ")
+
+# 挨拶
+print(usausa.greet())
+print()
+
+# 商品を作成して入荷
+print("--- 商品入荷 ---")
+
+# 通常の大福
+daifuku1 = Daifuku("あんこ大福", 200, "粒あん", 43)
+daifuku2 = Daifuku("抹茶大福", 230, "白あん", 45)
+
+# プレミアム大福
+premium1 = PremiumDaifuku("金箔いちご大福", 500, "いちご餡", 50, "金箔")
+premium2 = PremiumDaifuku("トリュフチョコ大福", 800, "生チョコ", 55, "トリュフ")
+
+# アイス大福
+ice1 = IceDaifuku("バニラアイス大福", 300, "カスタード", 60, "バニラ")
+ice2 = IceDaifuku("抹茶アイス大福", 320, "抹茶あん", 60, "抹茶")
+
+# 飲み物
+drink1 = Drink("抹茶ラテ", 400, 350, "hot")
+drink2 = Drink("アイスコーヒー", 350, 300, "cold")
+
+# 在庫に追加
+usausa.add_product(daifuku1, 20)
+usausa.add_product(daifuku2, 15)
+usausa.add_product(premium1, 5)
+usausa.add_product(premium2, 3)
+usausa.add_product(ice1, 10)
+usausa.add_product(ice2, 10)
+usausa.add_product(drink1, 30)
+usausa.add_product(drink2, 30)
+
+print()
+
+# 在庫一覧
+usausa.show_inventory()
+
+# お客様の接客（ポリモーフィズムの実践）
+print("="*70)
+print("👥 お客様の接客")
+print("="*70)
+
+# 通常の大福
+usausa.serve_customer(daifuku1, 2)
+
+# プレミアム大福（特別な処理が自動的に実行される）
+usausa.serve_customer(premium1, 1)
+
+# アイス大福
+usausa.serve_customer(ice1, 3)
+
+# 飲み物
+usausa.serve_customer(drink1, 2)
+
+# アイス大福を解凍してからもう一度
+print("--- アイス大福の状態変更 ---")
+ice2.defrost(3)  # 解凍
+usausa.serve_customer(ice2, 1)
+
+# 販売レポート
+usausa.show_sales_report()
+
+# カテゴリ別おすすめ
+usausa.recommend_by_category("大福")
+usausa.recommend_by_category("飲み物")
+
+# 在庫状況（更新後）
+usausa.show_inventory()
+
+# 商品詳細表示（ポリモーフィズム）
+print("="*70)
+print("📋 商品詳細")
+print("="*70)
+print()
+
+products_to_show = [daifuku1, premium1, ice1, drink1]
+
+for product in products_to_show:
+    print(f"--- {product.name} ---")
+    product.show_info()  # 型によって異なる表示
+    print()
+
+# 統計情報
+print("="*70)
+print("📊 統計情報")
+print("="*70)
+print(f"登録商品総数: {Product.total_count}個")
+print(f"在庫商品種類: {len(usausa.inventory)}種類")
+print()
+
+# カテゴリ別集計
+categories = {}
+for product in usausa.inventory:
+    if product.category not in categories:
+        categories[product.category] = 0
+    categories[product.category] += 1
+
+print("カテゴリ別商品数:")
+for category, count in categories.items():
+    print(f"  {category}: {count}種類")
+print()
+
+# 価格帯分析
+prices = [p.price for p in usausa.inventory]
+print(f"最高額: ¥{max(prices):,}")
+print(f"最低額: ¥{min(prices):,}")
+print(f"平均額: ¥{sum(prices) // len(prices):,}")
+print()
+
+print("="*70)
+```
+
+---
+
+## 6️⃣ チートシート
+
+### 🎯 継承の基本構文
+
+```python
+# === 基本パターン ===
+
+# 親クラス
+class 親クラス:
+    def __init__(self, 引数):
+        self.属性 = 引数
+    
+    def メソッド(self):
+        # 処理
+        pass
+
+# 子クラス
+class 子クラス(親クラス):  # 親クラスを指定
+    def __init__(self, 引数1, 引数2):
+        super().__init__(引数1)  # 親の初期化
+        self.子の属性 = 引数2  # 子独自の属性
+    
+    def 子のメソッド(self):  # 子独自のメソッド
+        # 処理
+        pass
+
+# === 使用例 ===
+子インスタンス = 子クラス(値1, 値2)
+子インスタンス.メソッド()  # 親のメソッドが使える
+子インスタンス.子のメソッド()  # 子のメソッドも使える
+```
+
+---
+
+### 🔄 オーバーライドのパターン
+
+```python
+# パターン1: 完全に置き換え
+class 子クラス(親クラス):
+    def メソッド(self):
+        # 親のメソッドを完全に置き換え
+        # 新しい処理
+        pass
+
+# パターン2: 親を呼んでから追加
+class 子クラス(親クラス):
+    def メソッド(self):
+        super().メソッド()  # 親のメソッドを呼ぶ
+        # 追加の処理
+        pass
+
+# パターン3: 親を呼んで結果を拡張
+class 子クラス(親クラス):
+    def メソッド(self):
+        result = super().メソッド()  # 親の結果を取得
+        # resultを使って拡張
+        return 拡張したresult
+```
+
+---
+
+### ✨ ポリモーフィズムのパターン
+
+```python
+# 共通のメソッド名を持つクラス群
+class A:
+    def action(self):
+        return "Aの動作"
+
+class B:
+    def action(self):
+        return "Bの動作"
+
+class C:
+    def action(self):
+        return "Cの動作"
+
+# 統一的に扱える
+objects = [A(), B(), C()]
+for obj in objects:
+    print(obj.action())  # 型によって異なる動作
+
+# 汎用関数
+def execute(obj):
+    """どんなオブジェクトでも受け取れる"""
+    return obj.action()  # 自動的に正しいメソッドが呼ばれる
+```
+
+---
+
+### 🔧 オーバーロード風実装
+
+```python
+# パターン1: デフォルト引数
+def method(self, arg1, arg2=None, arg3=None):
+    # arg2, arg3 は省略可能
+    pass
+
+# パターン2: 可変長引数
+def method(self, *args):
+    # 任意の数の引数
+    for arg in args:
+        # 処理
+        pass
+
+# パターン3: キーワード可変長引数
+def method(self, **kwargs):
+    # 任意のキーワード引数
+    if "key" in kwargs:
+        # 処理
+        pass
+
+# パターン4: 組み合わせ
+def method(self, arg1, arg2=None, *args, **kwargs):
+    # すべて組み合わせ
+    pass
+```
+
+---
+
+### 📋 継承関係の確認
+
+```python
+# isinstance: インスタンスの型チェック
+isinstance(obj, クラス)  # objがクラスのインスタンスか
+
+# issubclass: 継承関係チェック
+issubclass(子クラス, 親クラス)  # 子が親を継承しているか
+
+# type: 正確な型を取得
+type(obj)  # objの型
+
+# __mro__: メソッド解決順序
+クラス.__mro__  # 継承チェーン
+```
+
+---
+
+### 💡 実用例テンプレート
+
+```python
+# === 3階層継承の完全テンプレート ===
+
+# レベル1: 最も抽象的
+class 基底クラス:
+    """すべての基礎"""
+    
+    def __init__(self, 共通属性):
+        self.共通属性 = 共通属性
+    
+    def 共通メソッド(self):
+        """すべてのクラスで共通の処理"""
+        pass
+
+# レベル2: 中間クラス
+class 中間クラス(基底クラス):
+    """基底クラスを継承して拡張"""
+    
+    def __init__(self, 共通属性, 追加属性1):
+        super().__init__(共通属性)
+        self.追加属性1 = 追加属性1
+    
+    def 共通メソッド(self):
+        """オーバーライド"""
+        super().共通メソッド()  # 親を呼ぶ
+        # 追加処理
+    
+    def 追加メソッド1(self):
+        """中間クラス独自"""
+        pass
+
+# レベル3: 具体的なクラス
+class 具体クラス(中間クラス):
+    """中間クラスを継承してさらに拡張"""
+    
+    def __init__(self, 共通属性, 追加属性1, 追加属性2):
+        super().__init__(共通属性, 追加属性1)
+        self.追加属性2 = 追加属性2
+    
+    def 共通メソッド(self):
+        """さらにオーバーライド"""
+        super().共通メソッド()  # 親を呼ぶ
+        # さらに追加処理
+    
+    def 追加メソッド2(self):
+        """具体クラス独自"""
+        pass
+```
+
+---
+
+## 🎓 まとめ：重要ポイント
+
+```python
+"""
+━━━━━━━━━━━━━━━━━━━
+🎯 継承（Inheritance）
+━━━━━━━━━━━━━━━━━━━
+
+定義:
+  class 子(親):
+
+目的:
+  - コードの再利用
+  - 機能の拡張
+  - 階層構造の表現
+
+ポイント:
+  - super()で親を呼ぶ
+  - 親のメソッドが使える
+  - 子独自のメソッドも追加できる
+
+━━━━━━━━━━━━━━━━━━━
+🔄 オーバーライド（Override）
+━━━━━━━━━━━━━━━━━━━
+
+定義:
+  親と同じ名前のメソッドを定義
+
+目的:
+  - 親の動作を変更
+  - 子クラス独自の動作を実装
+
+パターン:
+  1. 完全置き換え
+  2. 親を呼んでから追加
+  3. 親の結果を拡張
+
+━━━━━━━━━━━━━━━━━━━
+✨ ポリモーフィズム（Polymorphism）
+━━━━━━━━━━━━━━━━━━━
+
+意味:
+  同じメソッド名で異なる動作
+
+目的:
+  - 型に関係なく統一的に扱う
+  - コードのシンプル化
+  - 拡張性の向上
+
+活用:
+  def 関数(obj):
+      obj.メソッド()  # 型によって異なる動作
+
+━━━━━━━━━━━━━━━━━━━
+
+
+
+🔧 オーバーロード（Overload）
+━━━━━━━━━━━━━━━━━━━
+
+Python:
+  厳密なオーバーロードは無い
+
+代替手段:
+  - デフォルト引数
+  - *args
+  - **kwargs
+  - 型チェックで分岐
+
+━━━━━━━━━━━━━━━━━━━
+✅ ベストプラクティス
+━━━━━━━━━━━━━━━━━━━
+
+1. 継承は「is-a関係」で使う
+   例: 大福 is a 商品 ✅
+   
+2. 深すぎる継承は避ける
+   3階層まで推奨# 🐰 ふわふわ大福店で学ぶ継承・オーバーライド・ポリモーフィズム完全ガイド
+
+## 📚 目次
+1. 継承（親子関係）
+2. オーバーライド
+3. ポリモーフィズム
+4. オーバーロード
+5. 実践演習
+6. チートシート
+
+---
+
+## 1️⃣ 継承（Inheritance）- 親子関係
+
+```python
+"""
+継承 = 親クラスの機能を子クラスが受け継ぐ
+- コードの再利用
+- 機能の拡張
+- 階層構造の表現
+
+用語：
+- 親クラス（基底クラス、スーパークラス）
+- 子クラス（派生クラス、サブクラス）
+"""
+
+# === 基本の継承 ===
+
+# 親クラス
+class Product:
+    """商品クラス（親）"""
+    
+    def __init__(self, name, price):
+        """商品の初期化"""
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        print(f"📦 商品「{name}」を作成")
+    
+    def show_info(self):
+        """商品情報を表示"""
+        print(f"商品名: {self.name}")
+        print(f"価格: ¥{self.price}")
+    
+    def calculate_tax_included(self):
+        """税込価格を計算"""
+        return int(self.price * 1.10)
+
+# 子クラス
+class Daifuku(Product):  # Productを継承
+    """大福クラス（子）"""
+    
+    def __init__(self, name, price, filling):
+        """大福の初期化"""
+        # 親クラスの初期化を呼ぶ
+        super().__init__(name, price)  # super()で親を呼ぶ
+        
+        # 子クラス独自の属性
+        self.filling = filling  # 餡の種類
+        print(f"🍡 餡の種類: {filling}")
+    
+    # 子クラス独自のメソッド
+    def check_filling(self):
+        """餡の種類を確認"""
+        print(f"この大福は{self.filling}が入っています")
+
+print("="*60)
+print("🎓 継承の基本")
+print("="*60)
+print()
+
+# 親クラスのインスタンス
+print("--- 親クラス（Product） ---")
+product = Product("一般商品", 100)
+product.show_info()
+print()
+
+# 子クラスのインスタンス
+print("--- 子クラス（Daifuku） ---")
+ichigo = Daifuku("いちご大福", 250, "いちご餡")
+print()
+
+# 親から継承したメソッドを使える
+print("親から継承したメソッド:")
+ichigo.show_info()  # 親のメソッド
+print(f"税込: ¥{ichigo.calculate_tax_included()}")  # 親のメソッド
+print()
+
+# 子独自のメソッドも使える
+print("子独自のメソッド:")
+ichigo.check_filling()  # 子のメソッド
+print()
+```
+
+**出力:**
+```
+=== 継承の基本 ===
+
+--- 親クラス（Product） ---
+📦 商品「一般商品」を作成
+商品名: 一般商品
+価格: ¥100
+
+--- 子クラス（Daifuku） ---
+📦 商品「いちご大福」を作成
+🍡 餡の種類: いちご餡
+
+親から継承したメソッド:
+商品名: いちご大福
+価格: ¥250
+税込: ¥275
+
+子独自のメソッド:
+この大福はいちご餡が入っています
+```
+
+---
+
+### 🌳 多段階継承
+
+```python
+"""
+継承の階層構造
+Product（商品）
+  ↓
+Daifuku（大福）
+  ↓
+PremiumDaifuku（プレミアム大福）
+"""
+
+# 親クラス（レベル1）
+class Product:
+    """商品クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def show_info(self):
+        print(f"【{self.name}】¥{self.price}")
+
+# 子クラス（レベル2）
+class Daifuku(Product):
+    """大福クラス"""
+    
+    def __init__(self, name, price, filling):
+        super().__init__(name, price)  # 親（Product）を初期化
+        self.filling = filling
+    
+    def eat(self):
+        return f"もちもち！{self.filling}が美味しい！"
+
+# 孫クラス（レベル3）
+class PremiumDaifuku(Daifuku):
+    """プレミアム大福クラス"""
+    
+    def __init__(self, name, price, filling, special_ingredient):
+        super().__init__(name, price, filling)  # 親（Daifuku）を初期化
+        self.special_ingredient = special_ingredient  # 特別な材料
+        self.gift_box = True  # ギフトボックス付き
+    
+    def wrap_gift(self):
+        """ギフト包装（プレミアム限定）"""
+        return f"🎁 {self.name}を高級桐箱に入れました"
+
+print("="*60)
+print("🌳 多段階継承")
+print("="*60)
+print()
+
+# 孫クラスのインスタンス
+premium = PremiumDaifuku("金箔いちご大福", 500, "いちご餡", "金箔")
+
+# すべての祖先のメソッドが使える
+print("親（Product）のメソッド:")
+premium.show_info()  # Productから継承
+print()
+
+print("親（Daifuku）のメソッド:")
+print(premium.eat())  # Daifukuから継承
+print()
+
+print("自分（PremiumDaifuku）のメソッド:")
+print(premium.wrap_gift())  # 自分のメソッド
+print()
+
+# 継承チェーンの確認
+print("--- 継承関係の確認 ---")
+print(f"isinstance(premium, PremiumDaifuku): {isinstance(premium, PremiumDaifuku)}")
+print(f"isinstance(premium, Daifuku): {isinstance(premium, Daifuku)}")
+print(f"isinstance(premium, Product): {isinstance(premium, Product)}")
+print()
+
+# MRO（メソッド解決順序）
+print("--- MRO（Method Resolution Order） ---")
+print(PremiumDaifuku.__mro__)
+```
+
+---
+
+## 2️⃣ オーバーライド（Override）- メソッドの上書き
+
+```python
+"""
+オーバーライド = 親のメソッドを子で上書き
+- 同じ名前のメソッドを再定義
+- 子クラス独自の動作を実装
+- super()で親のメソッドも呼べる
+"""
+
+class Product:
+    """親クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def show_info(self):
+        """基本の表示"""
+        print(f"商品: {self.name}")
+        print(f"価格: ¥{self.price}")
+    
+    def get_description(self):
+        """説明文を返す"""
+        return f"{self.name}は¥{self.price}です"
+
+
+class Daifuku(Product):
+    """子クラス - オーバーライドあり"""
+    
+    def __init__(self, name, price, filling, weight):
+        super().__init__(name, price)
+        self.filling = filling
+        self.weight = weight
+    
+    # show_info()をオーバーライド（完全に置き換え）
+    def show_info(self):
+        """大福用の表示"""
+        print(f"🍡 商品: {self.name}")
+        print(f"💰 価格: ¥{self.price}")
+        print(f"🎨 餡: {self.filling}")
+        print(f"⚖️  重さ: {self.weight}g")
+    
+    # get_description()をオーバーライド（親を呼んでから追加）
+    def get_description(self):
+        """大福用の説明（親も使う）"""
+        base_description = super().get_description()  # 親のメソッドを呼ぶ
+        return f"{base_description}（{self.filling}、{self.weight}g）"
+
+
+class PremiumDaifuku(Daifuku):
+    """孫クラス - さらにオーバーライド"""
+    
+    def __init__(self, name, price, filling, weight, special):
+        super().__init__(name, price, filling, weight)
+        self.special = special
+    
+    # show_info()をさらにオーバーライド
+    def show_info(self):
+        """プレミアム大福用の表示"""
+        print(f"✨ プレミアム商品 ✨")
+        super().show_info()  # 親（Daifuku）のshow_infoを呼ぶ
+        print(f"🌟 特別素材: {self.special}")
+    
+    # get_description()をさらにオーバーライド
+    def get_description(self):
+        """プレミアム用の説明"""
+        base = super().get_description()  # 親のメソッド
+        return f"【高級】{base} + {self.special}"
+
+
+print("="*60)
+print("🔄 オーバーライドの実践")
+print("="*60)
+print()
+
+# 親クラス
+print("--- 親クラス（Product） ---")
+product = Product("一般商品", 100)
+product.show_info()
+print(product.get_description())
+print()
+
+# 子クラス（オーバーライドあり）
+print("--- 子クラス（Daifuku） ---")
+matcha = Daifuku("抹茶大福", 230, "白あん", 45)
+matcha.show_info()  # 子のメソッド（親と違う）
+print(matcha.get_description())  # 親を呼んでから追加
+print()
+
+# 孫クラス（さらにオーバーライド）
+print("--- 孫クラス（PremiumDaifuku） ---")
+premium = PremiumDaifuku("金箔大福", 500, "特製餡", 50, "金箔")
+premium.show_info()  # 孫のメソッド
+print(premium.get_description())
+print()
+```
+
+**出力:**
+```
+=== オーバーライドの実践 ===
+
+--- 親クラス（Product） ---
+商品: 一般商品
+価格: ¥100
+一般商品は¥100です
+
+--- 子クラス（Daifuku） ---
+🍡 商品: 抹茶大福
+💰 価格: ¥230
+🎨 餡: 白あん
+⚖️  重さ: 45g
+抹茶大福は¥230です（白あん、45g）
+
+--- 孫クラス（PremiumDaifuku） ---
+✨ プレミアム商品 ✨
+🍡 商品: 金箔大福
+💰 価格: ¥500
+🎨 餡: 特製餡
+⚖️  重さ: 50g
+🌟 特別素材: 金箔
+【高級】金箔大福は¥500です（特製餡、50g） + 金箔
+```
+
+---
+
+## 3️⃣ ポリモーフィズム（Polymorphism）- 同じ操作、違う動作
+
+```python
+"""
+ポリモーフィズム = 多態性
+- 同じメソッド名で異なる動作
+- 型に関係なく統一的に扱える
+- インターフェースの統一
+
+メリット：
+- コードがシンプル
+- 拡張が容易
+- 保守性が向上
+"""
+
+class Product:
+    """商品基底クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def make_sound(self):
+        """商品の音（基本）"""
+        return "..."
+    
+    def serve(self):
+        """提供方法（基本）"""
+        return f"{self.name}をお出しします"
+
+
+class Daifuku(Product):
+    """大福クラス"""
+    
+    def __init__(self, name, price):
+        super().__init__(name, price)
+    
+    def make_sound(self):  # オーバーライド
+        """大福の音"""
+        return "もちもち♪"
+    
+    def serve(self):  # オーバーライド
+        """大福の提供"""
+        return f"🍡 {self.name}をお皿に載せてお出しします"
+
+
+class IchigoDaifuku(Daifuku):
+    """いちご大福クラス"""
+    
+    def make_sound(self):  # オーバーライド
+        """いちご大福の音"""
+        return "もちもち♪ いちごジューシー！"
+    
+    def serve(self):  # オーバーライド
+        """いちご大福の提供"""
+        return f"🍓 {self.name}を小皿と爪楊枝と共にお出しします"
+
+
+class IceDaifuku(Product):
+    """アイス大福クラス"""
+    
+    def make_sound(self):  # オーバーライド
+        """アイス大福の音"""
+        return "ひんやり♪ もちもち！"
+    
+    def serve(self):  # オーバーライド
+        """アイス大福の提供"""
+        return f"🧊 {self.name}を冷凍状態でお出しします"
+
+
+class Drink(Product):
+    """飲み物クラス"""
+    
+    def make_sound(self):  # オーバーライド
+        """飲み物の音"""
+        return "ゴクゴク"
+    
+    def serve(self):  # オーバーライド
+        """飲み物の提供"""
+        return f"🥤 {self.name}をグラスに注いでお出しします"
+
+
+# === ポリモーフィズムの実践 ===
+
+print("="*60)
+print("✨ ポリモーフィズム - 統一的な扱い")
+print("="*60)
+print()
+
+# 様々な商品を作成
+products = [
+    Product("一般商品", 100),
+    Daifuku("あんこ大福", 200),
+    IchigoDaifuku("いちご大福", 250),
+    IceDaifuku("バニラアイス大福", 300),
+    Drink("抹茶ラテ", 400)
+]
+
+# 同じメソッド名で呼べるが、動作は異なる
+print("--- make_sound() の動作 ---")
+for product in products:
+    # 型を気にせず同じメソッドを呼べる
+    sound = product.make_sound()  # ポリモーフィズム！
+    print(f"{product.name:20} → {sound}")
+
+print()
+
+print("--- serve() の動作 ---")
+for product in products:
+    # 型に応じて適切な動作が実行される
+    message = product.serve()  # ポリモーフィズム！
+    print(message)
+
+print()
+
+
+# === うさうさ店長の接客関数（ポリモーフィズムの利点） ===
+
+def usausa_serve(product):
+    """
+    どんな商品でも受け取れる汎用関数
+    ポリモーフィズムのおかげで型を気にしなくていい
+    
+    Parameters:
+    -----------
+    product : Product
+        商品（どの子クラスでもOK）
+    """
+    print("🐰 うさうさ店長の接客")
+    print(f"   商品: {product.name}")
+    print(f"   音: {product.make_sound()}")  # 自動的に正しいメソッドが呼ばれる
+    print(f"   {product.serve()}")
+    print()
+
+
+print("--- 統一的な接客関数 ---")
+# どんな型でも同じ関数で処理できる！
+usausa_serve(Daifuku("あんこ大福", 200))
+usausa_serve(IchigoDaifuku("いちご大福", 250))
+usausa_serve(IceDaifuku("チョコアイス大福", 320))
+usausa_serve(Drink("ほうじ茶", 350))
+
+
+# === レジシステム（ポリモーフィズムの活用） ===
+
+class CashRegister:
+    """レジクラス"""
+    
+    def __init__(self):
+        self.items = []  # 購入商品リスト
+    
+    def add_item(self, product):
+        """商品を追加"""
+        self.items.append(product)
+        print(f"📝 {product.name}を追加")
+    
+    def checkout(self):
+        """会計"""
+        print("\n" + "="*50)
+        print("🧾 お会計")
+        print("="*50)
+        
+        total = 0
+        for product in self.items:
+            print(f"{product.name:20} ¥{product.price:>6,}")
+            total += product.price
+        
+        print("-"*50)
+        print(f"{'合計':20} ¥{total:>6,}")
+        print("="*50)
+        print()
+        
+        # 提供方法を表示（ポリモーフィズム）
+        print("📋 提供方法:")
+        for product in self.items:
+            print(f"  ・{product.serve()}")
+        print()
+
+
+print("--- レジシステム ---")
+register = CashRegister()
+
+# 様々な商品を追加（型を気にしない）
+register.add_item(IchigoDaifuku("いちご大福", 250))
+register.add_item(Daifuku("抹茶大福", 230))
+register.add_item(IceDaifuku("バニラアイス大福", 300))
+register.add_item(Drink("抹茶ラテ", 400))
+
+# 会計（ポリモーフィズムで統一処理）
+register.checkout()
+```
+
+---
+
+## 4️⃣ オーバーロード（Overload）- Pythonでの実現
+
+```python
+"""
+オーバーロード = 同名メソッドで引数違い
+- 他の言語（Java, C++）にはある
+- Pythonには厳密なオーバーロードは無い
+- 代わりにデフォルト引数や可変長引数を使う
+"""
+
+class Daifuku:
+    """大福クラス - オーバーロード風実装"""
+    
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    # === 方法1: デフォルト引数 ===
+    def sell(self, quantity=1, discount=0, customer_name=""):
+        """
+        販売メソッド（デフォルト引数）
+        
+        呼び方:
+        - sell() → 1個、割引なし、名前なし
+        - sell(3) → 3個、割引なし、名前なし
+        - sell(3, 0.1) → 3個、10%割引、名前なし
+        - sell(3, 0.1, "田中さん") → すべて指定
+        """
+        total = self.price * quantity  # 小計
+        
+        if discount > 0:  # 割引適用
+            discount_amount = int(total * discount)
+            total -= discount_amount
+            print(f"🎉 {int(discount*100)}%割引: -¥{discount_amount}")
+        
+        customer_info = f" ({customer_name}様)" if customer_name else ""
+        print(f"💰 {self.name} × {quantity}個{customer_info}")
+        print(f"   合計: ¥{total:,}")
+        
+        return total
+    
+    # === 方法2: 可変長引数 (*args) ===
+    def add_toppings(self, *toppings):
+        """
+        トッピング追加（可変長引数）
+        
+        呼び方:
+        - add_toppings() → トッピングなし
+        - add_toppings("金箔") → 1つ
+        - add_toppings("金箔", "抹茶パウダー") → 2つ
+        - add_toppings("金箔", "抹茶パウダー", "きなこ") → 3つ
+        """
+        if not toppings:
+            print(f"{self.name}はそのままです")
+            return
+        
+        print(f"🎨 {self.name}にトッピング:")
+        for i, topping in enumerate(toppings, 1):
+            print(f"  {i}. {topping}")
+        
+        # トッピング料金（例）
+        topping_fee = len(toppings) * 50
+        print(f"   トッピング料金: ¥{topping_fee}")
+    
+    # === 方法3: キーワード可変長引数 (**kwargs) ===
+    def customize(self, **options):
+        """
+        カスタマイズ（キーワード可変長引数）
+        
+        呼び方:
+        - customize() → オプションなし
+        - customize(box="桐箱") → 箱だけ
+        - customize(box="桐箱", ribbon=True) → 箱とリボン
+        - customize(box="桐箱", ribbon=True, message="おめでとう") → 全部
+        """
+        print(f"✨ {self.name}のカスタマイズ:")
+        
+        if not options:
+            print("  カスタマイズなし")
+            return
+        
+        total_fee = 0
+        
+        if "box" in options:
+            box_type = options["box"]
+            print(f"  📦 箱: {box_type}")
+            total_fee += 300
+        
+        if "ribbon" in options and options["ribbon"]:
+            print(f"  🎀 リボン付き")
+            total_fee += 100
+        
+        if "message" in options:
+            message = options["message"]
+            print(f"  💌 メッセージ: {message}")
+            total_fee += 100
+        
+        print(f"   カスタマイズ料金: ¥{total_fee}")
+        return total_fee
+    
+    # === 方法4: 型チェックで分岐 ===
+    def process(self, data):
+        """
+        引数の型によって処理を変える
+        
+        呼び方:
+        - process(5) → 整数として処理
+        - process("特別注文") → 文字列として処理
+        - process([1, 2, 3]) → リストとして処理
+        """
+        if isinstance(data, int):  # 整数なら数量処理
+            print(f"📊 数量処理: {data}個の注文")
+        elif isinstance(data, str):  # 文字列ならメッセージ処理
+            print(f"💬 メッセージ処理: {data}")
+        elif isinstance(data, list):  # リストなら一括処理
+            print(f"📋 リスト処理: {len(data)}件の注文")
+        else:
+            print(f"❓ 不明な型: {type(data)}")
+    
+    # === 方法5: 複合（すべて組み合わせ） ===
+    def order(self, quantity=1, *toppings, **options):
+        """
+        総合注文システム
+        
+        呼び方:
+        - order() → 1個、シンプル
+        - order(3) → 3個
+        - order(3, "金箔") → 3個、トッピング1つ
+        - order(3, "金箔", "抹茶", express=True) → すべて
+        """
+        print(f"\n📝 注文受付")
+        print(f"商品: {self.name}")
+        print(f"個数: {quantity}個")
+        
+        # 基本料金
+        subtotal = self.price * quantity
+        print(f"基本料金: ¥{subtotal}")
+        
+        # トッピング
+        if toppings:
+            print(f"トッピング: {', '.join(toppings)}")
+            subtotal += len(toppings) * 50 * quantity
+        
+        # オプション
+        if "express" in options and options["express"]:
+            print(f"⚡ 特急配送: +¥500")
+            subtotal += 500
+        
+        if "gift_wrap" in options and options["gift_wrap"]:
+            print(f"🎁 ギフト包装: +¥300")
+            subtotal += 300
+        
+        if "message" in options:
+            print(f"💌 メッセージ: {options['message']}")
+            subtotal += 100
+        
+        print(f"合計: ¥{subtotal:,}")
+        return subtotal
+
+
+print("="*60)
+print("🔄 オーバーロード風の実装")
+print("="*60)
+print()
+
+daifuku = Daifuku("いちご大福", 250)
+
+# 方法1: デフォルト引数
+print("--- 方法1: デフォルト引数 ---")
+daifuku.sell()  # 1個
+print()
+daifuku.sell(3)  # 3個
+print()
+daifuku.sell(5, 0.15, "佐藤さん")  # 全部指定
+print()
+
+# 方法2: 可変長引数
+print("--- 方法2: 可変長引数 (*args) ---")
+daifuku.add_toppings()  # なし
+print()
+daifuku.add_toppings("金箔")  # 1つ
+print()
+daifuku.add_toppings("金箔", "抹茶パウダー", "きなこ")  # 3つ
+print()
+
+# 方法3: キーワード可変長引数
+print("--- 方法3: キーワード可変長引数 (**kwargs) ---")
+daifuku.customize()  # なし
+print()
+daifuku.customize(box="高級桐箱")  # 1つ
+print()
+daifuku.customize(box="高級桐箱", ribbon=True, message="おめでとう")  # 全部
+print()
+
+# 方法4: 型チェック
+print("--- 方法4: 型チェック ---")
+daifuku.process(5)  # int
+daifuku.process("特別注文")  # str
+daifuku.process([1, 2, 3])  # list
+print()
+
+# 方法5: 複合
+print("--- 方法5: 総合注文 ---")
+daifuku.order()  # シンプル
+daifuku.order(3)  # 個数のみ
+daifuku.order(3, "金箔")  # 個数+トッピング
+daifuku.order(
+    5,  # 個数
+    "金箔", "抹茶パウダー",  # トッピング
+    express=True,  # 特急配送
+    gift_wrap=True,  # ギフト包装
+    message="お誕生日おめでとう"  # メッセージ
+)
+```
+
+---
+
+## 5️⃣ 実践演習：ふわふわ大福店完全版
+
+```python
+# === 親クラス（最上位） ===
+class Product:
+    """商品の基底クラス"""
+    
+    total_count = 0  # 全商品の総数
+    
+    def __init__(self, name, price, category):
+        Product.total_count += 1
+        self.id = Product.total_count
+        self.name = name
+        self.price = price
+        self.category = category
+        self.stock = 0
+    
+    def __str__(self):
+        return f"[{self.id:03d}] {self.name} ¥{self.price}"
+    
+    def show_info(self):
+        """商品情報（基本）"""
+        print(f"ID: {self.id:03d}")
+        print(f"商品: {self.name}")
+        print(f"価格: ¥{self.price}")
+        print(f"カテゴリ: {self.category}")
+    
+    def serve(self):
+        """提供方法（基本）"""
+        return f"{self.name}をお出しします"
+
+
+# === 子クラス1 ===
+class Daifuku(Product):
+    """大福クラス"""
+    
+    def __init__(self, name, price, filling, weight):
+        super().__init__(name, price, "大福")
+        self.filling = filling
+        self.weight = weight
+    
+    def show_info(self):
+        """大福の情報（オーバーライド）"""
+        super().show_info()  # 親のメソッドを呼ぶ
+        print(f"餡: {self.filling}")
+        print(f"重さ: {self.weight}g")
+    
+    def serve(self):
+        """大福の提供（オーバーライド）"""
+        return f"🍡 {self.name}をお皿に載せてお出しします"
+   
+3. super()を使う
+   親のコードを再利用
+   
+4. オーバーライドは慎重に
+   親の動作を理解してから
+   
+5. ポリモーフィズムを活用
+   統一的なインターフェース
+"""
+```
+
+これで継承・オーバーライド・ポリモーフィズムは完璧です！🐰✨
