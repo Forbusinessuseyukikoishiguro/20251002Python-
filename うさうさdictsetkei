@@ -1,0 +1,1585 @@
+# 🐰 ふわふわ大福店で学ぶdict・set・list・tuple完全ガイド
+
+## 📚 目次
+1. list（リスト）- []
+2. tuple（タプル）- ()
+3. dict（辞書）- {}
+4. set（セット）- {}
+5. 比較表
+6. 実践例
+
+---
+
+## 1️⃣ list（リスト）- 角括弧 []
+
+```python
+"""
+list = 順番付きのコレクション
+- 角括弧 [] で作成
+- 順序がある
+- 重複OK
+- 変更可能（mutable）
+- インデックスでアクセス
+"""
+
+# === 基本的な作成 ===
+
+# 空のリスト
+products = []  # 空のリストを作成
+
+# 要素を持つリスト
+products = ["いちご大福", "抹茶大福", "あんこ大福"]  # 商品名のリスト
+print(products)  # ['いちご大福', '抹茶大福', 'あんこ大福']
+
+prices = [250, 230, 200]  # 価格のリスト
+print(prices)  # [250, 230, 200]
+
+# 異なる型を混在できる
+mixed = ["いちご大福", 250, True, 45.5]  # 文字列、整数、真偽値、浮動小数点
+print(mixed)  # ['いちご大福', 250, True, 45.5]
+
+# リストの中にリストを入れられる（ネスト）
+nested = [["いちご大福", 250], ["抹茶大福", 230]]  # 2次元リスト
+print(nested)  # [['いちご大福', 250], ['抹茶大福', 230]]
+print()
+
+
+# === 要素へのアクセス ===
+
+products = ["いちご大福", "抹茶大福", "あんこ大福", "チョコ大福"]  # 商品リスト
+
+# インデックスでアクセス（0から始まる）
+first = products[0]  # 最初の要素（インデックス0）
+print(f"1番目: {first}")  # いちご大福
+
+second = products[1]  # 2番目の要素（インデックス1）
+print(f"2番目: {second}")  # 抹茶大福
+
+# 負のインデックス（後ろから数える）
+last = products[-1]  # 最後の要素
+print(f"最後: {last}")  # チョコ大福
+
+second_last = products[-2]  # 後ろから2番目
+print(f"後ろから2番目: {second_last}")  # あんこ大福
+print()
+
+
+# === スライス（範囲取得） ===
+
+products = ["いちご大福", "抹茶大福", "あんこ大福", "チョコ大福", "きなこ大福"]  # 5つの商品
+
+# [開始:終了] - 終了は含まない
+first_three = products[0:3]  # インデックス0から2まで（3は含まない）
+print(f"最初の3つ: {first_three}")  # ['いちご大福', '抹茶大福', 'あんこ大福']
+
+# 開始を省略（最初から）
+first_three = products[:3]  # 0から2まで
+print(f"最初の3つ: {first_three}")  # ['いちご大福', '抹茶大福', 'あんこ大福']
+
+# 終了を省略（最後まで）
+from_third = products[2:]  # インデックス2から最後まで
+print(f"3番目から: {from_third}")  # ['あんこ大福', 'チョコ大福', 'きなこ大福']
+
+# 両方省略（全体のコピー）
+all_products = products[:]  # 全要素のコピー
+print(f"全部: {all_products}")  # 全商品
+
+# ステップを指定
+every_other = products[::2]  # 0, 2, 4番目（2つおき）
+print(f"1つおき: {every_other}")  # ['いちご大福', 'あんこ大福', 'きなこ大福']
+
+# 逆順
+reversed_products = products[::-1]  # 全体を逆順に
+print(f"逆順: {reversed_products}")  # ['きなこ大福', 'チョコ大福', 'あんこ大福', '抹茶大福', 'いちご大福']
+print()
+
+
+# === 要素の追加 ===
+
+products = ["いちご大福"]  # 最初は1つだけ
+
+# append() - 最後に追加
+products.append("抹茶大福")  # リストの最後に追加
+print(products)  # ['いちご大福', '抹茶大福']
+
+products.append("あんこ大福")  # さらに追加
+print(products)  # ['いちご大福', '抹茶大福', 'あんこ大福']
+
+# insert() - 指定位置に挿入
+products.insert(0, "季節限定大福")  # インデックス0（最初）に挿入
+print(products)  # ['季節限定大福', 'いちご大福', '抹茶大福', 'あんこ大福']
+
+products.insert(2, "チョコ大福")  # インデックス2（3番目）に挿入
+print(products)  # ['季節限定大福', 'いちご大福', 'チョコ大福', '抹茶大福', 'あんこ大福']
+
+# extend() - 複数追加（リストを結合）
+new_products = ["きなこ大福", "豆大福"]  # 追加する商品リスト
+products.extend(new_products)  # リストを結合
+print(products)  # ['季節限定大福', 'いちご大福', 'チョコ大福', '抹茶大福', 'あんこ大福', 'きなこ大福', '豆大福']
+
+# + 演算子で結合（新しいリストを作成）
+more_products = products + ["みかん大福"]  # 新しいリストを作成
+print(more_products)  # 元のリストは変わらない
+print()
+
+
+# === 要素の削除 ===
+
+products = ["いちご大福", "抹茶大福", "あんこ大福", "チョコ大福", "抹茶大福"]  # 抹茶大福が2つ
+
+# remove() - 値で削除（最初の1つだけ）
+products.remove("抹茶大福")  # 最初の"抹茶大福"を削除
+print(products)  # ['いちご大福', 'あんこ大福', 'チョコ大福', '抹茶大福']
+
+# pop() - インデックスで削除して取得
+removed = products.pop(1)  # インデックス1を削除して取得
+print(f"削除: {removed}")  # あんこ大福
+print(products)  # ['いちご大福', 'チョコ大福', '抹茶大福']
+
+last_item = products.pop()  # 引数なしで最後を削除
+print(f"削除: {last_item}")  # 抹茶大福
+print(products)  # ['いちご大福', 'チョコ大福']
+
+# del文 - インデックスで削除
+del products[0]  # インデックス0を削除
+print(products)  # ['チョコ大福']
+
+# clear() - 全削除
+products.clear()  # リストを空にする
+print(products)  # []
+print()
+
+
+# === 要素の変更 ===
+
+products = ["いちご大福", "抹茶大福", "あんこ大福"]  # 商品リスト
+
+# インデックスで変更
+products[0] = "特大いちご大福"  # 0番目を変更
+print(products)  # ['特大いちご大福', '抹茶大福', 'あんこ大福']
+
+# スライスで一括変更
+products[1:3] = ["新抹茶大福", "新あんこ大福"]  # 1番目と2番目を変更
+print(products)  # ['特大いちご大福', '新抹茶大福', '新あんこ大福']
+print()
+
+
+# === リストの操作 ===
+
+products = ["いちご大福", "抹茶大福", "あんこ大福", "チョコ大福"]  # 商品リスト
+
+# 長さを取得
+length = len(products)  # 要素数を取得
+print(f"商品数: {length}個")  # 4個
+
+# 要素の存在チェック
+exists = "いちご大福" in products  # 含まれているか
+print(f"いちご大福はある? {exists}")  # True
+
+not_exists = "豆大福" not in products  # 含まれていないか
+print(f"豆大福はない? {not_exists}")  # True
+
+# インデックスを取得
+index = products.index("抹茶大福")  # "抹茶大福"のインデックス
+print(f"抹茶大福のインデックス: {index}")  # 1
+
+# 要素の個数をカウント
+products_with_dup = ["いちご大福", "抹茶大福", "いちご大福", "あんこ大福"]  # 重複あり
+count = products_with_dup.count("いちご大福")  # "いちご大福"の個数
+print(f"いちご大福の個数: {count}個")  # 2個
+print()
+
+
+# === ソート（並び替え） ===
+
+prices = [250, 200, 280, 230, 220]  # 価格リスト
+
+# sort() - リスト自体を並び替え
+prices.sort()  # 昇順に並び替え（小さい順）
+print(f"昇順: {prices}")  # [200, 220, 230, 250, 280]
+
+prices.sort(reverse=True)  # 降順に並び替え（大きい順）
+print(f"降順: {prices}")  # [280, 250, 230, 220, 200]
+
+# sorted() - 新しいリストを作成
+original = [250, 200, 280]  # 元のリスト
+sorted_prices = sorted(original)  # 新しいソート済みリストを作成
+print(f"元のリスト: {original}")  # [250, 200, 280] - 変わらない
+print(f"ソート済み: {sorted_prices}")  # [200, 250, 280]
+
+# 文字列のソート
+products = ["いちご大福", "抹茶大福", "あんこ大福"]  # 商品リスト
+products.sort()  # 文字コード順（50音順）に並び替え
+print(f"50音順: {products}")  # ['あんこ大福', 'いちご大福', '抹茶大福']
+
+# reverse() - 逆順にする
+products.reverse()  # リストを逆順に
+print(f"逆順: {products}")  # ['抹茶大福', 'いちご大福', 'あんこ大福']
+print()
+
+
+# === リスト内包表記 ===
+
+# 通常のfor文
+prices = [250, 230, 200, 280]  # 価格リスト
+tax_included = []  # 税込価格を入れる空リスト
+for price in prices:  # 各価格に対して
+    tax_included.append(int(price * 1.1))  # 税込価格を計算して追加
+print(f"税込: {tax_included}")  # [275, 253, 220, 308]
+
+# リスト内包表記（簡潔に書ける）
+tax_included = [int(price * 1.1) for price in prices]  # 1行で書ける
+print(f"税込: {tax_included}")  # [275, 253, 220, 308]
+
+# 条件付きリスト内包表記
+prices = [250, 230, 200, 280, 150, 300]  # 価格リスト
+premium = [p for p in prices if p >= 250]  # 250円以上だけ抽出
+print(f"プレミアム価格: {premium}")  # [250, 280, 300]
+
+# 変換と条件を組み合わせ
+discounted = [int(p * 0.9) for p in prices if p >= 250]  # 250円以上を10%割引
+print(f"割引後: {discounted}")  # [225, 252, 270]
+print()
+
+
+# === リストのコピー ===
+
+original = ["いちご大福", "抹茶大福"]  # 元のリスト
+
+# 浅いコピー（方法1）
+copy1 = original[:]  # スライスでコピー
+copy1.append("あんこ大福")  # コピーに追加
+print(f"元: {original}")  # ['いちご大福', '抹茶大福'] - 変わらない
+print(f"コピー: {copy1}")  # ['いちご大福', '抹茶大福', 'あんこ大福']
+
+# 浅いコピー（方法2）
+copy2 = original.copy()  # copyメソッドでコピー
+copy2.append("チョコ大福")  # コピーに追加
+print(f"元: {original}")  # ['いちご大福', '抹茶大福'] - 変わらない
+print(f"コピー: {copy2}")  # ['いちご大福', '抹茶大福', 'チョコ大福']
+
+# 浅いコピー（方法3）
+copy3 = list(original)  # list()でコピー
+copy3.append("きなこ大福")  # コピーに追加
+print(f"元: {original}")  # ['いちご大福', '抹茶大福'] - 変わらない
+print(f"コピー: {copy3}")  # ['いちご大福', '抹茶大福', 'きなこ大福']
+
+# 参照のコピー（注意！）
+reference = original  # 参照をコピー（同じリストを指す）
+reference.append("豆大福")  # 参照に追加
+print(f"元: {original}")  # ['いちご大福', '抹茶大福', '豆大福'] - 変わってしまう！
+print(f"参照: {reference}")  # ['いちご大福', '抹茶大福', '豆大福'] - 同じリスト
+```
+
+---
+
+## 2️⃣ tuple（タプル）- 丸括弧 ()
+
+```python
+"""
+tuple = 変更不可能なリスト
+- 丸括弧 () で作成（省略可）
+- 順序がある
+- 重複OK
+- 変更不可（immutable）
+- インデックスでアクセス
+- リストより高速・メモリ効率が良い
+"""
+
+# === 基本的な作成 ===
+
+# 空のタプル
+empty = ()  # 空のタプルを作成
+print(empty)  # ()
+print(type(empty))  # <class 'tuple'>
+
+# 要素を持つタプル
+products = ("いちご大福", "抹茶大福", "あんこ大福")  # 丸括弧で作成
+print(products)  # ('いちご大福', '抹茶大福', 'あんこ大福')
+
+# 括弧なしでも作成可能
+products = "いちご大福", "抹茶大福", "あんこ大福"  # カンマで区切るだけでもOK
+print(products)  # ('いちご大福', '抹茶大福', 'あんこ大福')
+print(type(products))  # <class 'tuple'>
+
+# 1要素のタプル（カンマが必要！）
+single = ("いちご大福",)  # カンマを付けないとタプルにならない
+print(single)  # ('いちご大福',)
+print(type(single))  # <class 'tuple'>
+
+not_tuple = ("いちご大福")  # カンマがないので文字列
+print(not_tuple)  # いちご大福
+print(type(not_tuple))  # <class 'str'>
+
+# 異なる型を混在できる
+store_info = ("ふわふわ大福店", "東京都", 2020, True)  # 文字列、整数、真偽値
+print(store_info)  # ('ふわふわ大福店', '東京都', 2020, True)
+print()
+
+
+# === 要素へのアクセス（リストと同じ） ===
+
+products = ("いちご大福", "抹茶大福", "あんこ大福", "チョコ大福")  # タプル
+
+# インデックスでアクセス
+first = products[0]  # 最初の要素
+print(f"1番目: {first}")  # いちご大福
+
+last = products[-1]  # 最後の要素
+print(f"最後: {last}")  # チョコ大福
+
+# スライス
+first_two = products[:2]  # 最初の2つ
+print(f"最初の2つ: {first_two}")  # ('いちご大福', '抹茶大福')
+print()
+
+
+# === 変更できない（重要！） ===
+
+products = ("いちご大福", "抹茶大福", "あんこ大福")  # タプル
+
+# 要素を変更しようとするとエラー
+# products[0] = "特大いちご大福"  # TypeError: 'tuple' object does not support item assignment
+
+# 要素を追加しようとするとエラー
+# products.append("チョコ大福")  # AttributeError: 'tuple' object has no attribute 'append'
+
+# 要素を削除しようとするとエラー
+# products.remove("抹茶大福")  # AttributeError: 'tuple' object has no attribute 'remove'
+
+# タプル全体の削除はできる
+del products  # タプル自体を削除
+# print(products)  # NameError: name 'products' is not defined
+print()
+
+
+# === タプルの操作 ===
+
+products = ("いちご大福", "抹茶大福", "あんこ大福", "チョコ大福")  # タプル
+
+# 長さを取得
+length = len(products)  # 要素数を取得
+print(f"商品数: {length}個")  # 4個
+
+# 要素の存在チェック
+exists = "いちご大福" in products  # 含まれているか
+print(f"いちご大福はある? {exists}")  # True
+
+# インデックスを取得
+index = products.index("抹茶大福")  # "抹茶大福"のインデックス
+print(f"抹茶大福のインデックス: {index}")  # 1
+
+# 要素の個数をカウント
+products_with_dup = ("いちご大福", "抹茶大福", "いちご大福")  # 重複あり
+count = products_with_dup.count("いちご大福")  # "いちご大福"の個数
+print(f"いちご大福の個数: {count}個")  # 2個
+print()
+
+
+# === タプルの結合 ===
+
+products1 = ("いちご大福", "抹茶大福")  # タプル1
+products2 = ("あんこ大福", "チョコ大福")  # タプル2
+
+# + 演算子で結合（新しいタプルを作成）
+all_products = products1 + products2  # 結合
+print(f"結合: {all_products}")  # ('いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福')
+
+# * 演算子で繰り返し
+repeated = products1 * 3  # 3回繰り返す
+print(f"繰り返し: {repeated}")  # ('いちご大福', '抹茶大福', 'いちご大福', '抹茶大福', 'いちご大福', '抹茶大福')
+print()
+
+
+# === アンパック（展開） ===
+
+# タプルの各要素を変数に代入
+store_info = ("ふわふわ大福店", "東京都", 2020)  # 店舗情報のタプル
+
+# アンパック
+name, location, year = store_info  # 各要素を変数に代入
+print(f"店名: {name}")  # ふわふわ大福店
+print(f"所在地: {location}")  # 東京都
+print(f"開店年: {year}")  # 2020
+
+# 一部だけアンパック（*を使用）
+products = ("いちご大福", "抹茶大福", "あんこ大福", "チョコ大福")  # 商品タプル
+
+first, *middle, last = products  # 最初と最後以外を*middleに
+print(f"最初: {first}")  # いちご大福
+print(f"中間: {middle}")  # ['抹茶大福', 'あんこ大福'] - リストになる
+print(f"最後: {last}")  # チョコ大福
+
+# 関数の戻り値として使用
+def get_product_info():
+    """商品情報を返す関数"""
+    return "いちご大福", 250, 48  # タプルを返す（括弧省略）
+
+name, price, weight = get_product_info()  # アンパックして受け取る
+print(f"{name}: ¥{price}, {weight}g")  # いちご大福: ¥250, 48g
+print()
+
+
+# === タプルとリストの変換 ===
+
+# リストからタプルへ
+product_list = ["いちご大福", "抹茶大福", "あんこ大福"]  # リスト
+product_tuple = tuple(product_list)  # タプルに変換
+print(f"タプル: {product_tuple}")  # ('いちご大福', '抹茶大福', 'あんこ大福')
+print(type(product_tuple))  # <class 'tuple'>
+
+# タプルからリストへ
+product_list2 = list(product_tuple)  # リストに変換
+print(f"リスト: {product_list2}")  # ['いちご大福', '抹茶大福', 'あんこ大福']
+print(type(product_list2))  # <class 'list'>
+print()
+
+
+# === タプルの用途 ===
+
+# 用途1: 固定データを保持
+STORE_INFO = ("ふわふわ大福店", "03-1234-5678", "東京都")  # 定数として使用
+print(f"店舗情報: {STORE_INFO}")  # ('ふわふわ大福店', '03-1234-5678', '東京都')
+
+# 用途2: 複数の値を返す
+def calculate_stats(prices):
+    """統計情報を返す関数"""
+    return min(prices), max(prices), sum(prices) / len(prices)  # タプルを返す
+
+prices = [250, 230, 200, 280]  # 価格リスト
+min_price, max_price, avg_price = calculate_stats(prices)  # アンパックして受け取る
+print(f"最安: ¥{min_price}, 最高: ¥{max_price}, 平均: ¥{avg_price:.0f}")  # 最安: ¥200, 最高: ¥280, 平均: ¥240
+
+# 用途3: 辞書のキーとして使用（リストは使えない）
+menu_prices = {
+    ("いちご大福", "レギュラー"): 250,  # タプルをキーに使用
+    ("いちご大福", "ラージ"): 300,
+    ("抹茶大福", "レギュラー"): 230
+}
+price = menu_prices[("いちご大福", "レギュラー")]  # タプルで検索
+print(f"価格: ¥{price}")  # 価格: ¥250
+```
+
+---
+
+## 3️⃣ dict（辞書）- 波括弧 {}（キーと値のペア）
+
+```python
+"""
+dict = キーと値のペアのコレクション
+- 波括弧 {} で作成
+- キー:値 の形式
+- キーで値にアクセス
+- 順序あり（Python 3.7+）
+- キーの重複不可
+- 変更可能（mutable）
+"""
+
+# === 基本的な作成 ===
+
+# 空の辞書
+menu = {}  # 空の辞書を作成
+print(menu)  # {}
+print(type(menu))  # <class 'dict'>
+
+# キーと値のペアを持つ辞書
+prices = {
+    "いちご大福": 250,  # キー: 値
+    "抹茶大福": 230,  # カンマで区切る
+    "あんこ大福": 200
+}
+print(prices)  # {'いちご大福': 250, '抹茶大福': 230, 'あんこ大福': 200}
+
+# 異なる型のキーと値
+product_info = {
+    "name": "いちご大福",  # 文字列: 文字列
+    "price": 250,  # 文字列: 整数
+    "weight": 48,  # 文字列: 整数
+    "in_stock": True  # 文字列: 真偽値
+}
+print(product_info)  # {'name': 'いちご大福', 'price': 250, 'weight': 48, 'in_stock': True}
+
+# dict()関数で作成
+prices2 = dict(いちご大福=250, 抹茶大福=230, あんこ大福=200)  # キーワード引数で作成
+print(prices2)  # {'いちご大福': 250, '抹茶大福': 230, 'あんこ大福': 200}
+print()
+
+
+# === 要素へのアクセス ===
+
+prices = {
+    "いちご大福": 250,
+    "抹茶大福": 230,
+    "あんこ大福": 200
+}
+
+# キーで値を取得
+ichigo_price = prices["いちご大福"]  # キーで値にアクセス
+print(f"いちご大福の価格: ¥{ichigo_price}")  # 250
+
+# キーが存在しない場合はエラー
+# unknown = prices["チョコ大福"]  # KeyError: 'チョコ大福'
+
+# get()メソッド - 安全なアクセス
+matcha_price = prices.get("抹茶大福")  # キーで値を取得
+print(f"抹茶大福の価格: ¥{matcha_price}")  # 230
+
+choco_price = prices.get("チョコ大福")  # キーがない場合はNone
+print(f"チョコ大福の価格: {choco_price}")  # None
+
+# get()にデフォルト値を指定
+choco_price = prices.get("チョコ大福", 0)  # キーがない場合は0を返す
+print(f"チョコ大福の価格: ¥{choco_price}")  # 0
+print()
+
+
+# === 要素の追加・変更 ===
+
+prices = {
+    "いちご大福": 250,
+    "抹茶大福": 230
+}
+
+# 新しいキーと値を追加
+prices["あんこ大福"] = 200  # 新しいキーを追加
+print(prices)  # {'いちご大福': 250, '抹茶大福': 230, 'あんこ大福': 200}
+
+prices["チョコ大福"] = 280  # さらに追加
+print(prices)  # {'いちご大福': 250, '抹茶大福': 230, 'あんこ大福': 200, 'チョコ大福': 280}
+
+# 既存のキーの値を変更
+prices["いちご大福"] = 260  # 既存のキーの値を更新
+print(prices)  # {'いちご大福': 260, '抹茶大福': 230, 'あんこ大福': 200, 'チョコ大福': 280}
+
+# update()で複数追加・更新
+new_prices = {"きなこ大福": 220, "豆大福": 210}  # 追加する辞書
+prices.update(new_prices)  # 辞書を結合
+print(prices)  # {'いちご大福': 260, '抹茶大福': 230, 'あんこ大福': 200, 'チョコ大福': 280, 'きなこ大福': 220, '豆大福': 210}
+
+prices.update({"いちご大福": 250, "みかん大福": 240})  # 更新と追加を同時に
+print(prices)  # いちご大福が250に戻り、みかん大福が追加される
+print()
+
+
+# === 要素の削除 ===
+
+```python
+prices = {
+    "いちご大福": 250,
+    "抹茶大福": 230,
+    "あんこ大福": 200,
+    "チョコ大福": 280
+}
+
+# del文でキーを指定して削除
+del prices["あんこ大福"]  # キーを指定して削除
+print(prices)  # {'いちご大福': 250, '抹茶大福': 230, 'チョコ大福': 280}
+
+# pop()で削除して値を取得
+removed_price = prices.pop("抹茶大福")  # キーを削除して値を取得
+print(f"削除した価格: ¥{removed_price}")  # 230
+print(prices)  # {'いちご大福': 250, 'チョコ大福': 280}
+
+# pop()でキーがない場合のデフォルト値
+safe_remove = prices.pop("豆大福", None)  # キーがない場合はNoneを返す
+print(f"削除結果: {safe_remove}")  # None
+
+# popitem()で最後のペアを削除
+last_item = prices.popitem()  # 最後のキー・値ペアを削除して取得
+print(f"削除したペア: {last_item}")  # ('チョコ大福', 280) - タプルで返される
+print(prices)  # {'いちご大福': 250}
+
+# clear()で全削除
+prices.clear()  # 辞書を空にする
+print(prices)  # {}
+print()
+
+
+# === 辞書の操作 ===
+
+prices = {
+    "いちご大福": 250,
+    "抹茶大福": 230,
+    "あんこ大福": 200,
+    "チョコ大福": 280
+}
+
+# 長さを取得
+length = len(prices)  # キー・値ペアの数
+print(f"商品数: {length}個")  # 4個
+
+# キーの存在チェック
+exists = "いちご大福" in prices  # キーが存在するか
+print(f"いちご大福はある? {exists}")  # True
+
+not_exists = "豆大福" not in prices  # キーが存在しないか
+print(f"豆大福はない? {not_exists}")  # True
+
+# すべてのキーを取得
+keys = prices.keys()  # 全キーを取得（dict_keysオブジェクト）
+print(f"キー: {keys}")  # dict_keys(['いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福'])
+print(f"キーのリスト: {list(keys)}")  # ['いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福']
+
+# すべての値を取得
+values = prices.values()  # 全値を取得（dict_valuesオブジェクト）
+print(f"値: {values}")  # dict_values([250, 230, 200, 280])
+print(f"値のリスト: {list(values)}")  # [250, 230, 200, 280]
+
+# すべてのキー・値ペアを取得
+items = prices.items()  # 全ペアを取得（dict_itemsオブジェクト）
+print(f"ペア: {items}")  # dict_items([('いちご大福', 250), ('抹茶大福', 230), ('あんこ大福', 200), ('チョコ大福', 280)])
+print(f"ペアのリスト: {list(items)}")  # [('いちご大福', 250), ('抹茶大福', 230), ('あんこ大福', 200), ('チョコ大福', 280)]
+print()
+
+
+# === ループ処理 ===
+
+prices = {
+    "いちご大福": 250,
+    "抹茶大福": 230,
+    "あんこ大福": 200
+}
+
+# キーだけでループ
+print("--- キーだけ ---")
+for product in prices:  # デフォルトではキーでループ
+    print(product)  # いちご大福、抹茶大福、あんこ大福
+
+print("\n--- キーだけ（明示的） ---")
+for product in prices.keys():  # keys()を明示的に指定
+    print(product)  # いちご大福、抹茶大福、あんこ大福
+
+# 値だけでループ
+print("\n--- 値だけ ---")
+for price in prices.values():  # 値だけでループ
+    print(f"¥{price}")  # 250、230、200
+
+# キーと値の両方でループ
+print("\n--- キーと値 ---")
+for product, price in prices.items():  # キーと値をアンパック
+    print(f"{product}: ¥{price}")  # いちご大福: ¥250 など
+print()
+
+
+# === 辞書内包表記 ===
+
+# 通常のfor文
+products = ["いちご大福", "抹茶大福", "あんこ大福"]  # 商品リスト
+base_price = 200  # 基本価格
+prices = {}  # 空の辞書
+for i, product in enumerate(products):  # インデックス付きでループ
+    prices[product] = base_price + (i * 30)  # 価格を計算して追加
+print(f"価格表: {prices}")  # {'いちご大福': 200, '抹茶大福': 230, 'あんこ大福': 260}
+
+# 辞書内包表記（簡潔に書ける）
+prices2 = {product: base_price + (i * 30) for i, product in enumerate(products)}  # 1行で書ける
+print(f"価格表: {prices2}")  # {'いちご大福': 200, '抹茶大福': 230, 'あんこ大福': 260}
+
+# 条件付き辞書内包表記
+prices = {
+    "いちご大福": 250,
+    "抹茶大福": 230,
+    "あんこ大福": 200,
+    "チョコ大福": 280,
+    "きなこ大福": 150
+}
+premium = {k: v for k, v in prices.items() if v >= 250}  # 250円以上だけ抽出
+print(f"プレミアム商品: {premium}")  # {'いちご大福': 250, 'チョコ大福': 280}
+
+# 値を変換
+discounted = {k: int(v * 0.9) for k, v in prices.items()}  # 全商品10%割引
+print(f"割引後: {discounted}")  # 全価格が0.9倍される
+print()
+
+
+# === 辞書のコピー ===
+
+original = {
+    "いちご大福": 250,
+    "抹茶大福": 230
+}
+
+# 浅いコピー（方法1）
+copy1 = original.copy()  # copyメソッドでコピー
+copy1["あんこ大福"] = 200  # コピーに追加
+print(f"元: {original}")  # {'いちご大福': 250, '抹茶大福': 230} - 変わらない
+print(f"コピー: {copy1}")  # {'いちご大福': 250, '抹茶大福': 230, 'あんこ大福': 200}
+
+# 浅いコピー（方法2）
+copy2 = dict(original)  # dict()でコピー
+copy2["チョコ大福"] = 280  # コピーに追加
+print(f"元: {original}")  # {'いちご大福': 250, '抹茶大福': 230} - 変わらない
+print(f"コピー: {copy2}")  # {'いちご大福': 250, '抹茶大福': 230, 'チョコ大福': 280}
+
+# 参照のコピー（注意！）
+reference = original  # 参照をコピー（同じ辞書を指す）
+reference["豆大福"] = 210  # 参照に追加
+print(f"元: {original}")  # {'いちご大福': 250, '抹茶大福': 230, '豆大福': 210} - 変わってしまう！
+print(f"参照: {reference}")  # {'いちご大福': 250, '抹茶大福': 230, '豆大福': 210} - 同じ辞書
+print()
+
+
+# === ネストした辞書 ===
+
+# 辞書の中に辞書を入れる
+menu = {
+    "いちご大福": {  # キー: 値（辞書）
+        "price": 250,  # 価格
+        "weight": 48,  # 重さ
+        "filling": "いちご餡",  # 餡
+        "stock": 10  # 在庫
+    },
+    "抹茶大福": {
+        "price": 230,
+        "weight": 45,
+        "filling": "白あん",
+        "stock": 15
+    }
+}
+
+# ネストした辞書にアクセス
+ichigo_price = menu["いちご大福"]["price"]  # 2段階でアクセス
+print(f"いちご大福の価格: ¥{ichigo_price}")  # 250
+
+matcha_filling = menu["抹茶大福"]["filling"]  # 餡の種類を取得
+print(f"抹茶大福の餡: {matcha_filling}")  # 白あん
+
+# ネストした辞書のループ
+print("\n--- 全商品の情報 ---")
+for product, info in menu.items():  # 外側の辞書をループ
+    print(f"\n{product}:")  # 商品名
+    for key, value in info.items():  # 内側の辞書をループ
+        print(f"  {key}: {value}")  # 各情報を表示
+print()
+
+
+# === setdefault()とget()の違い ===
+
+inventory = {
+    "いちご大福": 10,
+    "抹茶大福": 15
+}
+
+# get() - 値を取得（辞書は変更しない）
+stock1 = inventory.get("あんこ大福", 0)  # キーがない場合は0を返す
+print(f"在庫: {stock1}")  # 0
+print(f"辞書: {inventory}")  # {'いちご大福': 10, '抹茶大福': 15} - 変わらない
+
+# setdefault() - 値を取得（キーがなければ追加）
+stock2 = inventory.setdefault("チョコ大福", 5)  # キーがなければ追加して返す
+print(f"在庫: {stock2}")  # 5
+print(f"辞書: {inventory}")  # {'いちご大福': 10, '抹茶大福': 15, 'チョコ大福': 5} - 追加される
+
+# 既存のキーの場合
+stock3 = inventory.setdefault("いちご大福", 20)  # 既存キーは値を変更しない
+print(f"在庫: {stock3}")  # 10（元の値）
+print(f"辞書: {inventory}")  # {'いちご大福': 10, '抹茶大福': 15, 'チョコ大福': 5} - 変わらない
+```
+
+---
+
+## 4️⃣ set（セット）- 波括弧 {}（値のみ）
+
+```python
+"""
+set = 重複のないコレクション
+- 波括弧 {} で作成（値のみ）
+- 順序なし
+- 重複不可（自動で削除）
+- 変更可能（mutable）
+- インデックスでアクセス不可
+- 高速な存在チェック
+- 集合演算が可能
+"""
+
+# === 基本的な作成 ===
+
+# 空のセット（注意！）
+empty = set()  # set()で作成（{}は辞書になる）
+print(empty)  # set()
+print(type(empty))  # <class 'set'>
+
+wrong_empty = {}  # これは辞書！
+print(type(wrong_empty))  # <class 'dict'>
+
+# 要素を持つセット
+products = {"いちご大福", "抹茶大福", "あんこ大福"}  # 波括弧で作成
+print(products)  # {'いちご大福', '抹茶大福', 'あんこ大福'} - 順序はバラバラ
+print(type(products))  # <class 'set'>
+
+# 重複は自動で削除される
+products_dup = {"いちご大福", "抹茶大福", "いちご大福", "あんこ大福"}  # いちご大福が2つ
+print(products_dup)  # {'いちご大福', '抹茶大福', 'あんこ大福'} - 重複が消える
+
+# set()関数でリストから作成
+product_list = ["いちご大福", "抹茶大福", "いちご大福", "あんこ大福"]  # 重複あり
+product_set = set(product_list)  # リストをセットに変換
+print(product_set)  # {'いちご大福', '抹茶大福', 'あんこ大福'} - 重複が消える
+
+# 文字列からセット作成
+chars = set("hello")  # 文字列の各文字をセットに
+print(chars)  # {'h', 'e', 'l', 'o'} - 'l'が1つだけ
+print()
+
+
+# === 要素の追加 ===
+
+products = {"いちご大福", "抹茶大福"}  # セット
+
+# add()で1つ追加
+products.add("あんこ大福")  # 要素を追加
+print(products)  # {'いちご大福', '抹茶大福', 'あんこ大福'}
+
+products.add("いちご大福")  # 既にある要素を追加（無視される）
+print(products)  # {'いちご大福', '抹茶大福', 'あんこ大福'} - 変わらない
+
+# update()で複数追加
+new_products = {"チョコ大福", "きなこ大福"}  # 追加するセット
+products.update(new_products)  # セットを結合
+print(products)  # {'いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福', 'きなこ大福'}
+
+# update()にリストも使える
+products.update(["豆大福", "みかん大福"])  # リストを追加
+print(products)  # 豆大福とみかん大福が追加される
+print()
+
+
+# === 要素の削除 ===
+
+products = {"いちご大福", "抹茶大福", "あんこ大福", "チョコ大福"}  # セット
+
+# remove()で削除（要素がないとエラー）
+products.remove("抹茶大福")  # 要素を削除
+print(products)  # {'いちご大福', 'あんこ大福', 'チョコ大福'}
+
+# products.remove("豆大福")  # KeyError: '豆大福' - 要素がないとエラー
+
+# discard()で削除（要素がなくてもエラーにならない）
+products.discard("あんこ大福")  # 要素を削除
+print(products)  # {'いちご大福', 'チョコ大福'}
+
+products.discard("豆大福")  # 要素がなくても大丈夫
+print(products)  # {'いちご大福', 'チョコ大福'} - エラーにならない
+
+# pop()でランダムに削除（順序がないので不定）
+removed = products.pop()  # ランダムな要素を削除して取得
+print(f"削除: {removed}")  # いちご大福 または チョコ大福
+print(products)  # 残った要素
+
+# clear()で全削除
+products.clear()  # セットを空にする
+print(products)  # set()
+print()
+
+
+# === セットの操作 ===
+
+products = {"いちご大福", "抹茶大福", "あんこ大福"}  # セット
+
+# 長さを取得
+length = len(products)  # 要素数
+print(f"商品数: {length}個")  # 3個
+
+# 要素の存在チェック（高速！）
+exists = "いちご大福" in products  # 存在するか
+print(f"いちご大福はある? {exists}")  # True
+
+not_exists = "豆大福" not in products  # 存在しないか
+print(f"豆大福はない? {not_exists}")  # True
+print()
+
+
+# === ループ処理 ===
+
+products = {"いちご大福", "抹茶大福", "あんこ大福"}  # セット
+
+# 要素を順番に取得（順序は不定）
+print("--- セットのループ ---")
+for product in products:  # 各要素でループ
+    print(product)  # 順序はバラバラ
+print()
+
+
+# === 集合演算 ===
+
+# A店とB店の商品
+store_a = {"いちご大福", "抹茶大福", "あんこ大福"}  # A店の商品
+store_b = {"抹茶大福", "チョコ大福", "きなこ大福"}  # B店の商品
+
+# 和集合（union）- どちらかにある商品
+union = store_a | store_b  # | 演算子で和集合
+print(f"和集合: {union}")  # {'いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福', 'きなこ大福'}
+
+union2 = store_a.union(store_b)  # union()メソッドでも同じ
+print(f"和集合: {union2}")  # {'いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福', 'きなこ大福'}
+
+# 積集合（intersection）- 両方にある商品
+intersection = store_a & store_b  # & 演算子で積集合
+print(f"積集合: {intersection}")  # {'抹茶大福'} - 両店にある商品
+
+intersection2 = store_a.intersection(store_b)  # intersection()メソッドでも同じ
+print(f"積集合: {intersection2}")  # {'抹茶大福'}
+
+# 差集合（difference）- A店だけにある商品
+difference = store_a - store_b  # - 演算子で差集合
+print(f"差集合: {difference}")  # {'いちご大福', 'あんこ大福'} - A店限定
+
+difference2 = store_a.difference(store_b)  # difference()メソッドでも同じ
+print(f"差集合: {difference2}")  # {'いちご大福', 'あんこ大福'}
+
+# 対称差（symmetric_difference）- どちらか一方だけにある商品
+sym_diff = store_a ^ store_b  # ^ 演算子で対称差
+print(f"対称差: {sym_diff}")  # {'いちご大福', 'あんこ大福', 'チョコ大福', 'きなこ大福'} - 片方だけ
+
+sym_diff2 = store_a.symmetric_difference(store_b)  # symmetric_difference()メソッドでも同じ
+print(f"対称差: {sym_diff2}")  # {'いちご大福', 'あんこ大福', 'チョコ大福', 'きなこ大福'}
+print()
+
+
+# === 部分集合・上位集合 ===
+
+all_products = {"いちご大福", "抹茶大福", "あんこ大福", "チョコ大福"}  # 全商品
+popular = {"いちご大福", "抹茶大福"}  # 人気商品
+
+# 部分集合（subset）- popularがall_productsに含まれるか
+is_subset = popular <= all_products  # <= 演算子で部分集合チェック
+print(f"人気商品は全商品の部分集合? {is_subset}")  # True
+
+is_subset2 = popular.issubset(all_products)  # issubset()メソッドでも同じ
+print(f"人気商品は全商品の部分集合? {is_subset2}")  # True
+
+# 真部分集合（proper subset）- 等しくない部分集合
+is_proper_subset = popular < all_products  # < 演算子で真部分集合チェック
+print(f"人気商品は全商品の真部分集合? {is_proper_subset}")  # True
+
+# 上位集合（superset）- all_productsがpopularを含むか
+is_superset = all_products >= popular  # >= 演算子で上位集合チェック
+print(f"全商品は人気商品の上位集合? {is_superset}")  # True
+
+is_superset2 = all_products.issuperset(popular)  # issuperset()メソッドでも同じ
+print(f"全商品は人気商品の上位集合? {is_superset2}")  # True
+
+# 共通要素がないか
+store_a = {"いちご大福", "抹茶大福"}  # A店
+store_b = {"チョコ大福", "きなこ大福"}  # B店
+is_disjoint = store_a.isdisjoint(store_b)  # 共通要素がないか
+print(f"A店とB店に共通商品なし? {is_disjoint}")  # True
+print()
+
+
+# === リストの重複削除に使用 ===
+
+# リストから重複を削除
+products_list = ["いちご大福", "抹茶大福", "いちご大福", "あんこ大福", "抹茶大福"]  # 重複あり
+print(f"元のリスト: {products_list}")  # ['いちご大福', '抹茶大福', 'いちご大福', 'あんこ大福', '抹茶大福']
+
+unique_set = set(products_list)  # セットに変換（重複削除）
+print(f"セット: {unique_set}")  # {'いちご大福', '抹茶大福', 'あんこ大福'}
+
+unique_list = list(unique_set)  # リストに戻す
+print(f"重複削除後: {unique_list}")  # ['いちご大福', '抹茶大福', 'あんこ大福'] - 順序は不定
+print()
+
+
+# === frozenset - 変更不可能なセット ===
+
+# frozensetは変更できない
+frozen = frozenset(["いちご大福", "抹茶大福", "あんこ大福"])  # frozenset作成
+print(frozen)  # frozenset({'いちご大福', '抹茶大福', 'あんこ大福'})
+print(type(frozen))  # <class 'frozenset'>
+
+# 要素の追加はできない
+# frozen.add("チョコ大福")  # AttributeError: 'frozenset' object has no attribute 'add'
+
+# 集合演算は可能
+other = frozenset(["抹茶大福", "チョコ大福"])  # 別のfrozenset
+union = frozen | other  # 和集合
+print(f"和集合: {union}")  # frozenset({'いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福'})
+
+# frozensetは辞書のキーにできる（setは不可）
+menu = {
+    frozen: "基本セット",  # frozensetをキーに使用
+    other: "特別セット"
+}
+print(menu)  # {frozenset({'いちご大福', '抹茶大福', 'あんこ大福'}): '基本セット', ...}
+```
+
+---
+
+## 5️⃣ 比較表
+
+```python
+"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+データ型の比較
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+特徴         list    tuple   dict    set
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+記号         []      ()      {}      {}
+順序         ✅      ✅      ✅*     ❌
+重複         ✅      ✅      キー❌  ❌
+変更可能     ✅      ❌      ✅      ✅
+インデックス ✅      ✅      キー    ❌
+用途         汎用    固定    検索    重複排除
+
+* Python 3.7以降は順序が保証されます
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+# === 作成方法の比較 ===
+
+# list - 角括弧
+my_list = ["いちご大福", "抹茶大福", "あんこ大福"]  # リスト作成
+print(f"list: {my_list}")  # ['いちご大福', '抹茶大福', 'あんこ大福']
+
+# tuple - 丸括弧（省略可）
+my_tuple = ("いちご大福", "抹茶大福", "あんこ大福")  # タプル作成
+print(f"tuple: {my_tuple}")  # ('いちご大福', '抹茶大福', 'あんこ大福')
+
+# dict - 波括弧（キー:値）
+my_dict = {"いちご大福": 250, "抹茶大福": 230, "あんこ大福": 200}  # 辞書作成
+print(f"dict: {my_dict}")  # {'いちご大福': 250, '抹茶大福': 230, 'あんこ大福': 200}
+
+# set - 波括弧（値のみ）
+my_set = {"いちご大福", "抹茶大福", "あんこ大福"}  # セット作成
+print(f"set: {my_set}")  # {'いちご大福', '抹茶大福', 'あんこ大福'}
+print()
+
+
+# === アクセス方法の比較 ===
+
+my_list = ["いちご大福", "抹茶大福", "あんこ大福"]  # リスト
+my_tuple = ("いちご大福", "抹茶大福", "あんこ大福")  # タプル
+my_dict = {"いちご大福": 250, "抹茶大福": 230}  # 辞書
+my_set = {"いちご大福", "抹茶大福", "あんこ大福"}  # セット
+
+# listとtupleはインデックスでアクセス
+print(f"list[0]: {my_list[0]}")  # いちご大福
+print(f"tuple[0]: {my_tuple[0]}")  # いちご大福
+
+# dictはキーでアクセス
+print(f"dict['いちご大福']: {my_dict['いちご大福']}")  # 250
+
+# setはインデックスでアクセス不可（inで存在チェックのみ）
+print(f"'いちご大福' in set: {'いちご大福' in my_set}")  # True
+# print(my_set[0])  # TypeError: 'set' object is not subscriptable
+print()
+
+
+# === 変更可能性の比較 ===
+
+# list - 変更可能
+my_list = ["いちご大福", "抹茶大福"]  # リスト
+my_list[0] = "特大いちご大福"  # 変更できる
+my_list.append("あんこ大福")  # 追加できる
+print(f"list変更後: {my_list}")  # ['特大いちご大福', '抹茶大福', 'あんこ大福']
+
+# tuple - 変更不可
+my_tuple = ("いちご大福", "抹茶大福")  # タプル
+# my_tuple[0] = "特大いちご大福"  # TypeError: 変更不可
+# my_tuple.append("あんこ大福")  # AttributeError: 追加不可
+print(f"tuple: {my_tuple}")  # ('いちご大福', '抹茶大福') - 変わらない
+
+# dict - 変更可能
+my_dict = {"いちご大福": 250}  # 辞書
+my_dict["いちご大福"] = 260  # 値を変更できる
+my_dict["抹茶大福"] = 230  # キーを追加できる
+print(f"dict変更後: {my_dict}")  # {'いちご大福': 260, '抹茶大福': 230}
+
+# set - 変更可能
+my_set = {"いちご大福", "抹茶大福"}  # セット
+my_set.add("あんこ大福")  # 追加できる
+my_set.remove("抹茶大福")  # 削除できる
+
+```python
+print(f"set変更後: {my_set}")  # {'いちご大福', 'あんこ大福'}
+print()
+
+
+# === 重複の扱いの比較 ===
+
+# list - 重複OK
+list_dup = ["いちご大福", "抹茶大福", "いちご大福"]  # 重複あり
+print(f"list: {list_dup}")  # ['いちご大福', '抹茶大福', 'いちご大福'] - 重複が保持される
+
+# tuple - 重複OK
+tuple_dup = ("いちご大福", "抹茶大福", "いちご大福")  # 重複あり
+print(f"tuple: {tuple_dup}")  # ('いちご大福', '抹茶大福', 'いちご大福') - 重複が保持される
+
+# dict - キーの重複不可（後の値で上書き）
+dict_dup = {"いちご大福": 250, "抹茶大福": 230, "いちご大福": 260}  # キー重複
+print(f"dict: {dict_dup}")  # {'いちご大福': 260, '抹茶大福': 230} - 最後の値が残る
+
+# set - 重複不可（自動削除）
+set_dup = {"いちご大福", "抹茶大福", "いちご大福"}  # 重複あり
+print(f"set: {set_dup}")  # {'いちご大福', '抹茶大福'} - 重複が削除される
+print()
+
+
+# === 速度の比較（大まかな傾向） ===
+
+import time  # 時間計測用モジュール
+
+# テストデータ
+test_data = list(range(10000))  # 0から9999までのリスト
+
+# list - 要素の存在チェック
+start = time.time()  # 開始時刻
+result = 9999 in test_data  # リストで検索（遅い）
+list_time = time.time() - start  # 経過時間
+print(f"list存在チェック: {list_time:.6f}秒")
+
+# set - 要素の存在チェック
+test_set = set(test_data)  # セットに変換
+start = time.time()  # 開始時刻
+result = 9999 in test_set  # セットで検索（速い）
+set_time = time.time() - start  # 経過時間
+print(f"set存在チェック: {set_time:.6f}秒")
+
+# dict - キーの存在チェック
+test_dict = {i: i for i in test_data}  # 辞書に変換
+start = time.time()  # 開始時刻
+result = 9999 in test_dict  # 辞書で検索（速い）
+dict_time = time.time() - start  # 経過時間
+print(f"dict存在チェック: {dict_time:.6f}秒")
+
+print(f"\n速度比較: setとdictはlistの約{list_time/set_time:.0f}倍速い")
+print()
+```
+
+---
+
+## 6️⃣ 実践例：ふわふわ大福店システム
+
+```python
+# === うさうさ店長の在庫管理システム ===
+
+print("="*60)
+print("🏪 ふわふわ大福店 在庫管理システム")
+print("="*60)
+print()
+
+# === list - 入荷順序を保持 ===
+print("--- 📦 入荷リスト（順序重要） ---")
+
+# 入荷順にリストで管理
+arrival_list = []  # 空の入荷リスト
+
+# 商品を入荷順に追加
+arrival_list.append("いちご大福")  # 最初に入荷
+print(f"入荷: いちご大福")
+
+arrival_list.append("抹茶大福")  # 2番目に入荷
+print(f"入荷: 抹茶大福")
+
+arrival_list.append("あんこ大福")  # 3番目に入荷
+print(f"入荷: あんこ大福")
+
+# 入荷順を確認
+print(f"\n入荷順: {arrival_list}")  # ['いちご大福', '抹茶大福', 'あんこ大福']
+
+# 最初に入荷した商品
+first_arrival = arrival_list[0]  # インデックス0
+print(f"最初の入荷: {first_arrival}")  # いちご大福
+
+# 最後に入荷した商品
+last_arrival = arrival_list[-1]  # インデックス-1
+print(f"最後の入荷: {last_arrival}")  # あんこ大福
+print()
+
+
+# === tuple - 店舗情報（変更不可） ===
+print("--- 🏪 店舗情報（固定データ） ---")
+
+# 店舗の基本情報（変更しない）
+store_info = (
+    "ふわふわ大福店",  # 店名
+    "東京都渋谷区",  # 所在地
+    "03-1234-5678",  # 電話番号
+    "09:00-18:00",  # 営業時間
+    2020  # 開店年
+)
+
+# 情報を展開
+name, location, phone, hours, year = store_info  # アンパック
+print(f"店名: {name}")  # ふわふわ大福店
+print(f"所在地: {location}")  # 東京都渋谷区
+print(f"電話: {phone}")  # 03-1234-5678
+print(f"営業時間: {hours}")  # 09:00-18:00
+print(f"開店: {year}年")  # 2020年
+
+# 変更しようとするとエラー
+# store_info[0] = "新店名"  # TypeError: 'tuple' object does not support item assignment
+print()
+
+
+# === dict - 価格表（キーで検索） ===
+print("--- 💰 価格表（高速検索） ---")
+
+# 商品名：価格の辞書
+price_table = {}  # 空の辞書
+
+# 商品と価格を登録
+price_table["いちご大福"] = 250  # キー：値のペアを追加
+print(f"登録: いちご大福 ¥{price_table['いちご大福']}")
+
+price_table["抹茶大福"] = 230  # 追加
+print(f"登録: 抹茶大福 ¥{price_table['抹茶大福']}")
+
+price_table["あんこ大福"] = 200  # 追加
+print(f"登録: あんこ大福 ¥{price_table['あんこ大福']}")
+
+price_table["チョコ大福"] = 280  # 追加
+print(f"登録: チョコ大福 ¥{price_table['チョコ大福']}")
+
+# 価格表を表示
+print(f"\n💰 価格表:")
+for product, price in price_table.items():  # キーと値をループ
+    print(f"  {product}: ¥{price}")  # 各商品の価格を表示
+
+# 特定の商品の価格を検索（高速）
+search_product = "いちご大福"  # 検索したい商品
+if search_product in price_table:  # キーの存在チェック
+    price = price_table[search_product]  # 価格を取得
+    print(f"\n{search_product}の価格: ¥{price}")  # 250
+print()
+
+
+# === set - アレルゲン管理（重複排除） ===
+print("--- ⚠️  アレルゲン管理（重複なし） ---")
+
+# 各商品のアレルゲン
+ichigo_allergens = {"乳", "大豆"}  # いちご大福のアレルゲン
+matcha_allergens = {"乳", "大豆"}  # 抹茶大福のアレルゲン
+anko_allergens = {"大豆"}  # あんこ大福のアレルゲン
+choco_allergens = {"乳", "大豆", "カカオ"}  # チョコ大福のアレルゲン
+
+# すべてのアレルゲンを収集（和集合）
+all_allergens = ichigo_allergens | matcha_allergens | anko_allergens | choco_allergens  # 和集合
+print(f"全アレルゲン: {all_allergens}")  # {'乳', '大豆', 'カカオ'} - 重複なし
+
+# 乳アレルギー対応商品を探す
+print("\n乳アレルギー対応商品:")
+if "乳" not in anko_allergens:  # 乳が含まれていない
+    print("  ・あんこ大福")  # あんこ大福
+
+# 共通のアレルゲン（積集合）
+common = ichigo_allergens & matcha_allergens  # 積集合
+print(f"\nいちご大福と抹茶大福の共通アレルゲン: {common}")  # {'乳', '大豆'}
+
+# いちご大福だけのアレルゲン（差集合）
+only_ichigo = ichigo_allergens - matcha_allergens  # 差集合
+print(f"いちご大福だけのアレルゲン: {only_ichigo}")  # set() - 空（共通）
+print()
+
+
+# === 総合例：注文システム ===
+print("--- 📝 注文システム ---")
+
+# 在庫管理（dict）
+inventory = {
+    "いちご大福": 10,  # 商品名: 在庫数
+    "抹茶大福": 15,
+    "あんこ大福": 20,
+    "チョコ大福": 5
+}
+
+# 価格表（dict）
+prices = {
+    "いちご大福": 250,  # 商品名: 価格
+    "抹茶大福": 230,
+    "あんこ大福": 200,
+    "チョコ大福": 280
+}
+
+# 注文リスト（list - 順序重要）
+order_list = []  # 空の注文リスト
+
+# 注文を追加
+def add_order(product, quantity):
+    """注文を追加する関数"""
+    # 在庫チェック
+    if product not in inventory:  # 商品が存在しない
+        print(f"❌ {product}は取り扱っていません")
+        return False
+    
+    if inventory[product] < quantity:  # 在庫不足
+        print(f"❌ {product}の在庫が不足しています（在庫: {inventory[product]}個）")
+        return False
+    
+    # 注文を追加
+    order_list.append({  # 辞書を作成してリストに追加
+        "product": product,  # 商品名
+        "quantity": quantity,  # 数量
+        "price": prices[product]  # 単価
+    })
+    
+    # 在庫を減らす
+    inventory[product] -= quantity  # 在庫を減らす
+    
+    print(f"✅ {product} × {quantity}個を注文に追加")
+    return True
+
+# 注文を入力
+add_order("いちご大福", 3)  # いちご大福を3個
+add_order("抹茶大福", 2)  # 抹茶大福を2個
+add_order("チョコ大福", 1)  # チョコ大福を1個
+add_order("豆大福", 1)  # 存在しない商品
+add_order("チョコ大福", 10)  # 在庫不足
+
+# 注文内容を表示
+print(f"\n📋 注文内容:")
+total = 0  # 合計金額
+for i, order in enumerate(order_list, 1):  # 番号付きでループ
+    product = order["product"]  # 商品名を取得
+    quantity = order["quantity"]  # 数量を取得
+    price = order["price"]  # 単価を取得
+    subtotal = price * quantity  # 小計を計算
+    total += subtotal  # 合計に加算
+    
+    print(f"{i}. {product} × {quantity}個 = ¥{subtotal:,}")  # 各注文を表示
+
+# 合計金額
+print(f"\n💰 合計: ¥{total:,}")
+
+# 残りの在庫を表示
+print(f"\n📦 残り在庫:")
+for product, stock in inventory.items():  # 在庫をループ
+    print(f"  {product}: {stock}個")
+print()
+
+
+# === 重複注文の検出（set使用） ===
+print("--- 🔍 重複チェック ---")
+
+# 今日の注文履歴（重複あり）
+today_orders = [
+    "いちご大福",
+    "抹茶大福",
+    "いちご大福",  # 重複
+    "あんこ大福",
+    "抹茶大福",  # 重複
+    "いちご大福"  # 重複
+]
+
+print(f"注文履歴（{len(today_orders)}件）: {today_orders}")
+
+# ユニークな商品を抽出（setで重複削除）
+unique_products = set(today_orders)  # セットに変換
+print(f"注文された商品の種類: {unique_products}")  # {'いちご大福', '抹茶大福', 'あんこ大福'}
+
+# 各商品の注文回数
+print(f"\n注文回数:")
+for product in unique_products:  # ユニークな商品でループ
+    count = today_orders.count(product)  # リストで個数をカウント
+    print(f"  {product}: {count}回")
+print()
+
+
+# === データ構造の組み合わせ ===
+print("--- 🎯 顧客管理（複合データ構造） ---")
+
+# 顧客情報（dict + list + tuple）
+customers = {
+    "田中太郎": {  # 顧客名（キー）
+        "phone": "090-1234-5678",  # 電話番号
+        "address": ("東京都", "渋谷区", "1-2-3"),  # 住所（tuple）
+        "purchase_history": [  # 購入履歴（list）
+            {"product": "いちご大福", "quantity": 3, "date": "2025-10-01"},  # 購入1
+            {"product": "抹茶大福", "quantity": 2, "date": "2025-10-02"}  # 購入2
+        ],
+        "favorite_products": {"いちご大福", "抹茶大福"}  # お気に入り（set）
+    },
+    "佐藤花子": {
+        "phone": "090-8765-4321",
+        "address": ("神奈川県", "横浜市", "4-5-6"),
+        "purchase_history": [
+            {"product": "あんこ大福", "quantity": 5, "date": "2025-09-30"}
+        ],
+        "favorite_products": {"あんこ大福", "チョコ大福"}
+    }
+}
+
+# 顧客情報を表示
+for name, info in customers.items():  # 各顧客でループ
+    print(f"\n👤 {name}様")  # 顧客名
+    print(f"  電話: {info['phone']}")  # 電話番号
+    
+    # 住所（tupleをアンパック）
+    prefecture, city, street = info['address']  # 住所を展開
+    print(f"  住所: {prefecture}{city}{street}")  # 住所を表示
+    
+    # 購入履歴（listをループ）
+    print(f"  購入履歴:")
+    for purchase in info['purchase_history']:  # 各購入でループ
+        print(f"    - {purchase['date']}: {purchase['product']} × {purchase['quantity']}個")
+    
+    # お気に入り（setを表示）
+    print(f"  お気に入り: {', '.join(info['favorite_products'])}")
+
+# 全顧客の共通お気に入り（set演算）
+all_favorites = set()  # 空のセット
+for info in customers.values():  # 各顧客情報でループ
+    all_favorites |= info['favorite_products']  # 和集合で結合
+
+print(f"\n全顧客のお気に入り商品: {all_favorites}")  # {'いちご大福', '抹茶大福', 'あんこ大福', 'チョコ大福'}
+
+# 田中さんと佐藤さんの共通お気に入り（積集合）
+tanaka_fav = customers["田中太郎"]["favorite_products"]  # 田中さんのお気に入り
+sato_fav = customers["佐藤花子"]["favorite_products"]  # 佐藤さんのお気に入り
+common_fav = tanaka_fav & sato_fav  # 積集合
+print(f"共通のお気に入り: {common_fav}")  # set() - 空（共通なし）
+
+print()
+print("="*60)
+```
+
+---
+
+## 🎯 チートシート
+
+```python
+"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+クイックリファレンス
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+### list（リスト）- []
+作成:    lst = [1, 2, 3]
+追加:    lst.append(4)          # 最後に追加
+        lst.insert(0, 0)        # 位置指定
+削除:    lst.remove(2)           # 値で削除
+        del lst[0]              # インデックスで削除
+        lst.pop()               # 最後を削除して取得
+アクセス: lst[0]                 # インデックス
+        lst[-1]                 # 最後
+        lst[1:3]                # スライス
+変更:    lst[0] = 100            # 値を変更
+ソート:   lst.sort()              # 昇順
+        lst.sort(reverse=True)  # 降順
+その他:   len(lst)                # 長さ
+        2 in lst                # 存在チェック
+        lst.count(2)            # 個数
+
+### tuple（タプル）- ()
+作成:    tpl = (1, 2, 3)
+        tpl = 1, 2, 3           # 括弧省略可
+        tpl = (1,)              # 1要素（カンマ必須）
+アクセス: tpl[0]                 # インデックス
+        tpl[-1]                 # 最後
+展開:    a, b, c = tpl           # アンパック
+変更:    不可（immutable）
+その他:   len(tpl)                # 長さ
+        2 in tpl                # 存在チェック
+
+### dict（辞書）- {}（キー:値）
+作成:    dct = {"a": 1, "b": 2}
+追加:    dct["c"] = 3            # キーで追加
+削除:    del dct["a"]            # キーで削除
+        dct.pop("b")            # 削除して取得
+アクセス: dct["a"]                # キーでアクセス
+        dct.get("a", 0)         # 安全なアクセス
+変更:    dct["a"] = 100          # 値を変更
+取得:    dct.keys()              # 全キー
+        dct.values()            # 全値
+        dct.items()             # 全ペア
+ループ:   for k, v in dct.items() # キーと値
+その他:   len(dct)                # ペア数
+        "a" in dct              # キーの存在
+
+### set（セット）- {}（値のみ）
+作成:    st = {1, 2, 3}
+        st = set()              # 空セット
+        st = set([1, 2, 2])     # リストから（重複削除）
+追加:    st.add(4)               # 要素追加
+削除:    st.remove(2)            # 削除（エラーあり）
+        st.discard(2)           # 削除（エラーなし）
+演算:    st1 | st2               # 和集合
+        st1 & st2               # 積集合
+        st1 - st2               # 差集合
+        st1 ^ st2               # 対称差
+その他:   len(st)                 # 要素数
+        2 in st                 # 存在チェック
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+
+# === 使い分けガイド ===
+"""
+📌 いつ使う？
+
+list:
+  - 順序が重要
+  - 重複が必要
+  - 頻繁に変更する
+  例: 注文リスト、履歴
+
+tuple:
+  - 固定データ
+  - 変更しない
+  - 関数の戻り値
+  例: 座標、設定値
+
+dict:
+  - キーで検索
+  - 関連付けが必要
+  - 高速アクセス
+  例: 価格表、設定
+
+set:
+  - 重複排除
+  - 存在チェック
+  - 集合演算
+  例: タグ、アレルゲン
+"""
+
+# === メモリと速度 ===
+"""
+メモリ使用量:
+  tuple < list < dict < set
+
+アクセス速度:
+  dict[key] ≈ set.in > list[index] = tuple[index]
+
+検索速度（in演算子）:
+  dict/set: O(1) - 超高速
+  list/tuple: O(n) - 遅い
+"""
+```
+
+---
+
+## 🌟 まとめ
+
+```python
+"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+重要ポイント
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ list []
+   - 最も汎用的
+   - 順序あり、重複OK、変更可能
+   - インデックスでアクセス
+
+✅ tuple ()
+   - listの変更不可版
+   - 安全、高速、省メモリ
+   - 固定データに最適
+
+✅ dict {}（キー:値）
+   - キーと値のペア
+   - 超高速検索
+   - 関連付けに最適
+
+✅ set {}（値のみ）
+   - 重複なしコレクション
+   - 超高速存在チェック
+   - 集合演算が強力
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+```
+
+これでlist、tuple、dict、setは完璧です！🐰✨
