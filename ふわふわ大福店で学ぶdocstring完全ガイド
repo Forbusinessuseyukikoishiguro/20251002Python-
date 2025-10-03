@@ -1,0 +1,1960 @@
+# 🐰 ふわふわ大福店で学ぶdocstring完全ガイド
+
+## 📚 目次
+1. docstringとは？
+2. docstringの種類
+3. 書き方のスタイル
+4. 実践例：ふわふわ大福店
+5. チートシート
+6. 注意点とベストプラクティス
+
+---
+
+## 1️⃣ docstringとは？
+
+```python
+"""
+docstring = Documentation String（ドキュメント文字列）
+- コードの説明を書く特別な文字列
+- 三重クォート（''' または """）で囲む
+- 関数、クラス、モジュールの直後に書く
+- help()で表示される
+- 自動ドキュメント生成に使える
+
+目的：
+- コードの使い方を説明
+- 他の人（未来の自分）が理解しやすく
+- 保守性の向上
+"""
+
+# === 基本構造 ===
+
+def function_name():
+    """
+    ここにdocstringを書く
+    関数の説明、引数、戻り値などを記述
+    """
+    pass
+
+class ClassName:
+    """
+    クラスの説明をここに書く
+    """
+    
+    def method_name(self):
+        """
+        メソッドの説明をここに書く
+        """
+        pass
+
+# === docstringの確認方法 ===
+
+def greet(name):
+    """挨拶する関数"""
+    return f"こんにちは、{name}さん！"
+
+# 方法1: help()関数
+help(greet)
+
+# 方法2: __doc__属性
+print(greet.__doc__)  # 挨拶する関数
+
+# 方法3: IDEのツールチップ
+# greet(  ← カーソルを合わせると表示される
+```
+
+---
+
+## 2️⃣ docstringの種類
+
+### 📝 1行docstring
+
+```python
+# === 1行docstring（シンプルな説明） ===
+
+def add(a, b):
+    """2つの数を足す"""
+    return a + b
+
+def sell_daifuku():
+    """大福を販売する"""
+    pass
+
+class Daifuku:
+    """大福クラス"""
+    pass
+
+# ルール：
+# - 1行で完結
+# - ピリオドで終わる
+# - 何をするかを簡潔に
+# - 前後に空行なし
+```
+
+---
+
+### 📋 複数行docstring
+
+```python
+# === 複数行docstring（詳細な説明） ===
+
+def calculate_total(price, quantity, discount=0):
+    """
+    合計金額を計算する
+    
+    価格、数量、割引率から最終的な合計金額を計算します。
+    
+    Parameters
+    ----------
+    price : int
+        商品の単価（円）
+    quantity : int
+        購入数量
+    discount : float, optional
+        割引率（0.0〜1.0）、デフォルトは0
+    
+    Returns
+    -------
+    int
+        合計金額（円）
+    
+    Examples
+    --------
+    >>> calculate_total(250, 3)
+    750
+    >>> calculate_total(250, 3, 0.1)
+    675
+    """
+    subtotal = price * quantity
+    total = int(subtotal * (1 - discount))
+    return total
+
+# 構造：
+# 1. 概要（1行）
+# 2. 空行
+# 3. 詳細説明
+# 4. 空行
+# 5. パラメータ説明
+# 6. 空行
+# 7. 戻り値説明
+# 8. 空行
+# 9. 使用例（任意）
+```
+
+---
+
+## 3️⃣ 書き方のスタイル
+
+### 🎨 Google Style
+
+```python
+"""
+Google Styleは読みやすく、Googleが推奨
+"""
+
+def sell_product(product_name, quantity, customer_name=None):
+    """商品を販売する
+    
+    指定された商品を指定数量販売し、販売記録を作成します。
+    顧客名が指定された場合は、顧客情報も記録します。
+    
+    Args:
+        product_name (str): 販売する商品の名前
+        quantity (int): 販売数量（1以上）
+        customer_name (str, optional): 顧客名。デフォルトはNone
+    
+    Returns:
+        dict: 販売情報を含む辞書
+            - success (bool): 販売成功フラグ
+            - total (int): 合計金額
+            - message (str): 結果メッセージ
+    
+    Raises:
+        ValueError: quantityが1未満の場合
+        KeyError: product_nameが在庫にない場合
+    
+    Examples:
+        >>> sell_product("いちご大福", 3)
+        {'success': True, 'total': 750, 'message': '販売完了'}
+        
+        >>> sell_product("いちご大福", 3, "田中さん")
+        {'success': True, 'total': 750, 'message': '田中さんに販売完了'}
+    
+    Note:
+        在庫が不足している場合は、success=Falseが返されます。
+    """
+    pass
+```
+
+---
+
+### 🎨 NumPy/SciPy Style
+
+```python
+"""
+NumPy Styleは科学計算でよく使われる
+"""
+
+def calculate_discount(price, rate, max_discount=None):
+    """
+    割引後の価格を計算する
+    
+    指定された価格と割引率から、割引後の価格を計算します。
+    最大割引額を指定することもできます。
+    
+    Parameters
+    ----------
+    price : int or float
+        元の価格（円）
+    rate : float
+        割引率（0.0〜1.0の範囲）
+    max_discount : int or float, optional
+        最大割引額（円）、デフォルトはNone（制限なし）
+    
+    Returns
+    -------
+    int
+        割引後の価格（円、整数に丸められる）
+    
+    Raises
+    ------
+    ValueError
+        rateが0〜1の範囲外の場合
+    TypeError
+        priceが数値でない場合
+    
+    See Also
+    --------
+    calculate_tax : 消費税を計算する関数
+    calculate_total : 合計金額を計算する関数
+    
+    Notes
+    -----
+    割引額は整数に丸められます（小数点以下切り捨て）。
+    最大割引額を超える場合は、最大割引額が適用されます。
+    
+    Examples
+    --------
+    基本的な使用例
+    
+    >>> calculate_discount(1000, 0.1)
+    900
+    
+    最大割引額を指定
+    
+    >>> calculate_discount(1000, 0.5, max_discount=300)
+    700
+    """
+    pass
+```
+
+---
+
+### 🎨 reStructuredText (Sphinx) Style
+
+```python
+"""
+Sphinx Styleは公式ドキュメント生成で使われる
+"""
+
+def add_to_inventory(product, quantity):
+    """
+    商品を在庫に追加する
+    
+    指定された商品を在庫リストに追加し、数量を設定します。
+    既に在庫に存在する場合は、数量を加算します。
+    
+    :param product: 追加する商品オブジェクト
+    :type product: Daifuku
+    :param quantity: 追加する数量
+    :type quantity: int
+    :return: 追加後の在庫数
+    :rtype: int
+    :raises ValueError: quantityが負の値の場合
+    :raises TypeError: productがDaifukuオブジェクトでない場合
+    
+    .. note::
+       在庫数が0になった商品は自動的に削除されません。
+    
+    .. warning::
+       大量の在庫追加は処理時間がかかる場合があります。
+    
+    例::
+    
+        >>> daifuku = Daifuku("いちご大福", 250)
+        >>> add_to_inventory(daifuku, 10)
+        10
+    """
+    pass
+```
+
+---
+
+## 4️⃣ 実践例：ふわふわ大福店
+
+### 📄 モジュールレベルのdocstring
+
+```python
+# daifuku_shop.py
+"""
+ふわふわ大福店管理システム
+
+このモジュールは大福店の在庫管理、販売管理、顧客管理を行うための
+クラスと関数を提供します。
+
+Classes
+-------
+Daifuku
+    大福商品を表すクラス
+StoreManager
+    店長の業務を管理するクラス
+Customer
+    顧客情報を管理するクラス
+
+Functions
+---------
+calculate_tax
+    消費税を計算する
+format_price
+    価格を見やすくフォーマットする
+
+Examples
+--------
+基本的な使用例:
+
+>>> from daifuku_shop import Daifuku, StoreManager
+>>> manager = StoreManager("うさうさ")
+>>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+>>> manager.add_product(daifuku, 10)
+
+Notes
+-----
+このモジュールはPython 3.7以上で動作します。
+
+Author
+------
+うさうさ店長
+
+Version
+-------
+1.0.0
+
+See Also
+--------
+customer_management : 顧客管理モジュール
+sales_analytics : 販売分析モジュール
+"""
+```
+
+---
+
+### 📦 クラスのdocstring
+
+```python
+class Daifuku:
+    """
+    大福商品を表すクラス
+    
+    大福の基本情報（名前、価格、重さ、餡の種類）を管理し、
+    商品情報の表示、在庫管理、販売処理などの機能を提供します。
+    
+    Attributes
+    ----------
+    id : int
+        商品の一意な識別番号（自動採番）
+    name : str
+        商品名
+    price : int
+        価格（円）
+    weight : int
+        重さ（グラム）
+    filling : str
+        餡の種類
+    stock : int
+        在庫数（デフォルト: 0）
+    is_sold : bool
+        販売済みフラグ（デフォルト: False）
+    
+    Class Attributes
+    ----------------
+    count : int
+        作成された大福の総数
+    store_name : str
+        店舗名（デフォルト: "ふわふわ大福店"）
+    
+    Methods
+    -------
+    show_info()
+        商品情報を表示する
+    sell(quantity=1)
+        大福を販売する
+    add_stock(quantity)
+        在庫を追加する
+    calculate_price_per_gram()
+        グラム単価を計算する
+    
+    Examples
+    --------
+    大福を作成して情報を表示:
+    
+    >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+    >>> daifuku.show_info()
+    商品: いちご大福
+    価格: ¥250
+    重さ: 48g
+    餡: いちご餡
+    
+    在庫を追加して販売:
+    
+    >>> daifuku.add_stock(10)
+    >>> daifuku.sell(3)
+    True
+    >>> print(daifuku.stock)
+    7
+    
+    Notes
+    -----
+    - IDは自動的に採番されます
+    - 在庫がない状態で販売しようとするとFalseが返されます
+    - 価格は整数値（円）で管理されます
+    
+    See Also
+    --------
+    PremiumDaifuku : プレミアム大福クラス
+    IceDaifuku : アイス大福クラス
+    """
+    
+    count = 0
+    store_name = "ふわふわ大福店"
+    
+    def __init__(self, name, price, weight, filling):
+        """
+        大福オブジェクトを初期化する
+        
+        Parameters
+        ----------
+        name : str
+            商品名（例: "いちご大福"）
+        price : int
+            価格（円）。0以上の整数
+        weight : int
+            重さ（グラム）。0より大きい整数
+        filling : str
+            餡の種類（例: "いちご餡", "粒あん"）
+        
+        Raises
+        ------
+        ValueError
+            priceまたはweightが不正な値の場合
+        TypeError
+            引数の型が不正な場合
+        
+        Examples
+        --------
+        >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+        >>> print(daifuku.name)
+        いちご大福
+        """
+        if not isinstance(price, int) or price < 0:
+            raise ValueError("価格は0以上の整数である必要があります")
+        if not isinstance(weight, int) or weight <= 0:
+            raise ValueError("重さは0より大きい整数である必要があります")
+        
+        Daifuku.count += 1
+        self.id = Daifuku.count
+        self.name = name
+        self.price = price
+        self.weight = weight
+        self.filling = filling
+        self.stock = 0
+        self.is_sold = False
+    
+    def show_info(self):
+        """
+        商品情報を標準出力に表示する
+        
+        商品のID、名前、価格、重さ、餡の種類、在庫数を
+        見やすい形式で出力します。
+        
+        Returns
+        -------
+        None
+        
+        Examples
+        --------
+        >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+        >>> daifuku.show_info()
+        [001] いちご大福
+        価格: ¥250
+        重さ: 48g
+        餡: いちご餡
+        在庫: 0個
+        """
+        print(f"[{self.id:03d}] {self.name}")
+        print(f"価格: ¥{self.price:,}")
+        print(f"重さ: {self.weight}g")
+        print(f"餡: {self.filling}")
+        print(f"在庫: {self.stock}個")
+    
+    def sell(self, quantity=1):
+        """
+        大福を販売する
+        
+        指定された数量を在庫から減らします。
+        在庫が不足している場合は販売できません。
+        
+        Parameters
+        ----------
+        quantity : int, optional
+            販売数量（デフォルト: 1）
+        
+        Returns
+        -------
+        bool
+            販売成功した場合True、失敗した場合False
+        
+        Raises
+        ------
+        ValueError
+            quantityが1未満の場合
+        
+        Examples
+        --------
+        >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+        >>> daifuku.add_stock(10)
+        >>> daifuku.sell(3)
+        True
+        >>> daifuku.stock
+        7
+        >>> daifuku.sell(10)
+        False
+        
+        Notes
+        -----
+        販売時に在庫が自動的に減少します。
+        在庫が0の場合、Falseが返されます。
+        """
+        if quantity < 1:
+            raise ValueError("販売数量は1以上である必要があります")
+        
+        if self.stock < quantity:
+            return False
+        
+        self.stock -= quantity
+        return True
+    
+    def add_stock(self, quantity):
+        """
+        在庫を追加する
+        
+        指定された数量を現在の在庫に加算します。
+        
+        Parameters
+        ----------
+        quantity : int
+            追加する数量（正の整数）
+        
+        Returns
+        -------
+        int
+            追加後の在庫数
+        
+        Raises
+        ------
+        ValueError
+            quantityが1未満の場合
+        
+        Examples
+        --------
+        >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+        >>> daifuku.add_stock(10)
+        10
+        >>> daifuku.add_stock(5)
+        15
+        """
+        if quantity < 1:
+            raise ValueError("追加数量は1以上である必要があります")
+        
+        self.stock += quantity
+        return self.stock
+    
+    def calculate_price_per_gram(self):
+        """
+        グラム単価を計算する
+        
+        価格を重さで割ってグラムあたりの単価を算出します。
+        
+        Returns
+        -------
+        float
+            グラム単価（円/g）
+        
+        Examples
+        --------
+        >>> daifuku = Daifuku("いちご大福", 250, 50, "いちご餡")
+        >>> daifuku.calculate_price_per_gram()
+        5.0
+        
+        Notes
+        -----
+        重さが0の場合はZeroDivisionErrorが発生します。
+        """
+        return self.price / self.weight
+    
+    @classmethod
+    def create_popular_set(cls):
+        """
+        人気セットを作成する
+        
+        店の人気商品セット（いちご大福と抹茶大福）を
+        自動的に作成して返します。
+        
+        Returns
+        -------
+        list of Daifuku
+            人気商品2つのリスト
+        
+        Examples
+        --------
+        >>> popular_set = Daifuku.create_popular_set()
+        >>> len(popular_set)
+        2
+        >>> popular_set[0].name
+        'いちご大福'
+        
+        Notes
+        -----
+        このメソッドはクラスメソッドなので、
+        インスタンスを作らずに呼び出せます。
+        """
+        ichigo = cls("いちご大福", 250, 48, "いちご餡")
+        matcha = cls("抹茶大福", 230, 45, "白あん")
+        return [ichigo, matcha]
+    
+    @staticmethod
+    def calculate_tax(price, tax_rate=0.10):
+        """
+        消費税を計算する
+        
+        指定された価格に対する消費税額を計算します。
+        
+        Parameters
+        ----------
+        price : int or float
+            税抜き価格（円）
+        tax_rate : float, optional
+            消費税率（デフォルト: 0.10）
+        
+        Returns
+        -------
+        int
+            消費税額（円、整数に丸められる）
+        
+        Examples
+        --------
+        >>> Daifuku.calculate_tax(250)
+        25
+        >>> Daifuku.calculate_tax(250, 0.08)
+        20
+        
+        Notes
+        -----
+        税額は整数に丸められます（小数点以下切り捨て）。
+        """
+        return int(price * tax_rate)
+    
+    def __str__(self):
+        """
+        文字列表現を返す
+        
+        print()などで使用される人間が読みやすい形式の文字列を返します。
+        
+        Returns
+        -------
+        str
+            商品の簡潔な文字列表現
+        
+        Examples
+        --------
+        >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+        >>> print(daifuku)
+        [001] いちご大福 ¥250
+        """
+        return f"[{self.id:03d}] {self.name} ¥{self.price}"
+    
+    def __repr__(self):
+        """
+        公式な文字列表現を返す
+        
+        開発者向けの詳細な文字列表現を返します。
+        この文字列を使ってオブジェクトを再作成できます。
+        
+        Returns
+        -------
+        str
+            オブジェクトの公式表現
+        
+        Examples
+        --------
+        >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+        >>> repr(daifuku)
+        "Daifuku('いちご大福', 250, 48, 'いちご餡')"
+        """
+        return f"Daifuku('{self.name}', {self.price}, {self.weight}, '{self.filling}')"
+```
+
+---
+
+### 👤 店長クラスのdocstring
+
+```python
+class StoreManager:
+    """
+    店長の業務を管理するクラス
+    
+    店舗の在庫管理、販売管理、顧客対応などの
+    店長業務全般を扱います。
+    
+    Attributes
+    ----------
+    name : str
+        店長の名前
+    inventory : list of Daifuku
+        在庫商品のリスト
+    sales_history : list of dict
+        販売履歴のリスト
+    
+    Examples
+    --------
+    >>> manager = StoreManager("うさうさ")
+    >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+    >>> manager.add_product(daifuku, 10)
+    >>> manager.sell_product(daifuku.id, 3)
+    True
+    """
+    
+    def __init__(self, name):
+        """
+        店長オブジェクトを初期化する
+        
+        Parameters
+        ----------
+        name : str
+            店長の名前
+        
+        Examples
+        --------
+        >>> manager = StoreManager("うさうさ")
+        >>> print(manager.name)
+        うさうさ
+        """
+        self.name = name
+        self.inventory = []
+        self.sales_history = []
+    
+    def add_product(self, product, quantity=10):
+        """
+        商品を在庫に追加する
+        
+        指定された商品を在庫リストに追加し、
+        初期在庫数を設定します。
+        
+        Parameters
+        ----------
+        product : Daifuku
+            追加する商品オブジェクト
+        quantity : int, optional
+            初期在庫数（デフォルト: 10）
+        
+        Returns
+        -------
+        None
+        
+        Raises
+        ------
+        TypeError
+            productがDaifukuオブジェクトでない場合
+        ValueError
+            quantityが負の値の場合
+        
+        Examples
+        --------
+        >>> manager = StoreManager("うさうさ")
+        >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+        >>> manager.add_product(daifuku, 20)
+        >>> daifuku.stock
+        20
+        """
+        if not isinstance(product, Daifuku):
+            raise TypeError("productはDaifukuオブジェクトである必要があります")
+        if quantity < 0:
+            raise ValueError("quantityは0以上である必要があります")
+        
+        self.inventory.append(product)
+        product.stock = quantity
+        print(f"📦 {product.name}を{quantity}個入荷しました")
+    
+    def sell_product(self, product_id, quantity=1, customer_name=""):
+        """
+        商品を販売する
+        
+        指定されたIDの商品を販売し、販売履歴に記録します。
+        
+        Parameters
+        ----------
+        product_id : int
+            販売する商品のID
+        quantity : int, optional
+            販売数量（デフォルト: 1）
+        customer_name : str, optional
+            顧客名（デフォルト: ""）
+        
+        Returns
+        -------
+        bool
+            販売成功した場合True、失敗した場合False
+        
+        Examples
+        --------
+        >>> manager = StoreManager("うさうさ")
+        >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+        >>> manager.add_product(daifuku, 10)
+        >>> manager.sell_product(daifuku.id, 3, "田中さん")
+        True
+        
+        Notes
+        -----
+        - 在庫不足の場合はFalseが返されます
+        - 販売履歴には自動的に記録されます
+        - 商品が見つからない場合もFalseが返されます
+        """
+        # 商品を検索
+        product = None
+        for p in self.inventory:
+            if p.id == product_id:
+                product = p
+                break
+        
+        if not product:
+            print(f"❌ ID:{product_id}の商品が見つかりません")
+            return False
+        
+        # 販売処理
+        if product.sell(quantity):
+            total = product.price * quantity
+            self.sales_history.append({
+                "product_id": product_id,
+                "product_name": product.name,
+                "quantity": quantity,
+                "total": total,
+                "customer": customer_name
+            })
+            
+            customer_info = f" ({customer_name}様)" if customer_name else ""
+            print(f"💰 {product.name} × {quantity}個を販売{customer_info}")
+            return True
+        else:
+            print(f"❌ {product.name}の在庫が不足しています")
+            return False
+```
+
+---
+
+## 5️⃣ チートシート
+
+### 📋 docstring基本テンプレート
+
+```python
+# === 関数のdocstring ===
+def function_name(param1, param2, param3=None):
+    """
+    関数の簡潔な説明（1行）
+    
+    より詳しい説明がここに入ります。
+    複数行で書いても構いません。
+    
+    Parameters
+    ----------
+    param1 : type
+        パラメータ1の説明
+    param2 : type
+        パラメータ2の説明
+    param3 : type, optional
+        パラメータ3の説明（デフォルト: None）
+    
+    Returns
+    -------
+    return_type
+        戻り値の説明
+    
+    Raises
+    ------
+    ExceptionType
+        例外が発生する条件
+    
+    Examples
+    --------
+    >>> function_name(値1, 値2)
+    期待される出力
+    
+    Notes
+    -----
+    追加の注意事項や補足情報
+    
+    See Also
+    --------
+    関連する関数や
+
+クラス
+    """
+    pass
+
+
+# === クラスのdocstring ===
+class ClassName:
+    """
+    クラスの簡潔な説明（1行）
+    
+    より詳しい説明。
+    
+    Attributes
+    ----------
+    attr1 : type
+        属性1の説明
+    attr2 : type
+        属性2の説明
+    
+    Methods
+    -------
+    method1(arg1, arg2)
+        メソッド1の簡単な説明
+    method2()
+        メソッド2の簡単な説明
+    
+    Examples
+    --------
+    >>> obj = ClassName()
+    >>> obj.method1(値1, 値2)
+    
+    Notes
+    -----
+    追加情報
+    """
+    
+    def __init__(self, param1, param2):
+        """
+        初期化メソッド
+        
+        Parameters
+        ----------
+        param1 : type
+            説明
+        param2 : type
+            説明
+        """
+        pass
+    
+    def method_name(self, arg1):
+        """
+        メソッドの説明
+        
+        Parameters
+        ----------
+        arg1 : type
+            引数の説明
+        
+        Returns
+        -------
+        type
+            戻り値の説明
+        """
+        pass
+
+
+# === モジュールのdocstring ===
+"""
+モジュール名
+
+モジュールの概要説明。
+
+このモジュールが提供する機能の説明。
+
+Classes
+-------
+Class1
+    クラス1の説明
+Class2
+    クラス2の説明
+
+Functions
+---------
+function1
+    関数1の説明
+function2
+    関数2の説明
+
+Examples
+--------
+>>> import module_name
+>>> obj = module_name.Class1()
+
+Notes
+-----
+追加情報
+
+Author
+------
+作者名
+
+Version
+-------
+1.0.0
+"""
+```
+
+---
+
+### 🎯 Google Style クイックリファレンス
+
+```python
+def function(arg1, arg2, arg3=None):
+    """関数の簡潔な説明
+    
+    詳細な説明（任意）
+    
+    Args:
+        arg1 (type): 引数1の説明
+        arg2 (type): 引数2の説明
+        arg3 (type, optional): 引数3の説明。デフォルトはNone
+    
+    Returns:
+        type: 戻り値の説明
+        
+        または複数の戻り値の場合:
+        tuple: (value1, value2)の説明
+            - value1 (type): 値1の説明
+            - value2 (type): 値2の説明
+    
+    Raises:
+        ValueError: エラーの条件
+        TypeError: エラーの条件
+    
+    Examples:
+        >>> function(1, 2)
+        3
+        
+        >>> function(1, 2, arg3=4)
+        7
+    
+    Note:
+        追加の注意事項
+    """
+    pass
+```
+
+---
+
+### 📝 よく使うセクション
+
+```python
+"""
+Parameters / Args
+    引数の説明
+
+Returns
+    戻り値の説明
+
+Raises / Raises
+    発生する例外
+
+Yields
+    ジェネレータが生成する値
+
+Attributes
+    クラスの属性
+
+Examples
+    使用例
+
+Notes
+    補足情報
+
+Warning / Warnings
+    警告事項
+
+See Also
+    関連項目
+
+References
+    参考文献
+
+Todo
+    将来の実装予定
+"""
+```
+
+---
+
+## 6️⃣ 注意点とベストプラクティス
+
+### ✅ やるべき
+
+
+こと
+
+```python
+# === 1. 簡潔で明確な説明 ===
+
+# ✅ 良い例
+def calculate_total(price, quantity):
+    """価格と数量から合計金額を計算する"""
+    return price * quantity
+
+# ❌ 悪い例
+def calculate_total(price, quantity):
+    """
+    この関数は、ユーザーが入力した価格と数量という
+    2つのパラメータを受け取って、それらを掛け算することによって
+    合計金額を算出するための機能を提供します。
+    """
+    return price * quantity
+
+
+# === 2. 型情報を明記 ===
+
+# ✅ 良い例
+def add_stock(product, quantity):
+    """
+    商品の在庫を追加する
+    
+    Parameters
+    ----------
+    product : Daifuku
+        対象商品
+    quantity : int
+        追加数量（正の整数）
+    
+    Returns
+    -------
+    int
+        追加後の在庫数
+    """
+    pass
+
+# ❌ 悪い例
+def add_stock(product, quantity):
+    """在庫を追加する"""
+    pass
+
+
+# === 3. 使用例を含める ===
+
+# ✅ 良い例
+def format_price(price):
+    """
+    価格を見やすくフォーマットする
+    
+    Parameters
+    ----------
+    price : int
+        価格（円）
+    
+    Returns
+    -------
+    str
+        カンマ区切りの価格文字列
+    
+    Examples
+    --------
+    >>> format_price(1000)
+    '¥1,000'
+    >>> format_price(1234567)
+    '¥1,234,567'
+    """
+    return f"¥{price:,}"
+
+# ❌ 悪い例
+def format_price(price):
+    """価格をフォーマットする"""
+    return f"¥{price:,}"
+
+
+# === 4. エラー条件を明記 ===
+
+# ✅ 良い例
+def sell(product, quantity):
+    """
+    商品を販売する
+    
+    Parameters
+    ----------
+    product : Daifuku
+        販売する商品
+    quantity : int
+        販売数量
+    
+    Returns
+    -------
+    bool
+        販売成功した場合True
+    
+    Raises
+    ------
+    ValueError
+        quantityが1未満の場合
+    TypeError
+        productがDaifukuでない場合
+    
+    Notes
+    -----
+    在庫が不足している場合はFalseを返し、
+    例外は発生させません。
+    """
+    pass
+
+# ❌ 悪い例
+def sell(product, quantity):
+    """商品を販売する"""
+    pass
+
+
+# === 5. デフォルト値を説明 ===
+
+# ✅ 良い例
+def create_daifuku(name, price, weight=45, filling="あんこ"):
+    """
+    大福を作成する
+    
+    Parameters
+    ----------
+    name : str
+        商品名
+    price : int
+        価格（円）
+    weight : int, optional
+        重さ（グラム）。デフォルトは45
+    filling : str, optional
+        餡の種類。デフォルトは"あんこ"
+    
+    Returns
+    -------
+    Daifuku
+        作成された大福オブジェクト
+    """
+    pass
+
+# ❌ 悪い例
+def create_daifuku(name, price, weight=45, filling="あんこ"):
+    """大福を作成する"""
+    pass
+
+
+# === 6. 複雑なロジックには詳細説明 ===
+
+# ✅ 良い例
+def calculate_discount(price, customer_type, purchase_count):
+    """
+    顧客タイプと購入回数に応じた割引を計算する
+    
+    割引率の計算ルール:
+    1. 通常顧客: 購入回数 × 1%（最大10%）
+    2. VIP顧客: 購入回数 × 2%（最大20%）
+    3. プレミアム顧客: 一律30%
+    
+    Parameters
+    ----------
+    price : int
+        元の価格
+    customer_type : str
+        顧客タイプ（"normal", "vip", "premium"）
+    purchase_count : int
+        これまでの購入回数
+    
+    Returns
+    -------
+    int
+        割引後の価格
+    
+    Examples
+    --------
+    >>> calculate_discount(1000, "normal", 5)
+    950
+    >>> calculate_discount(1000, "vip", 5)
+    900
+    >>> calculate_discount(1000, "premium", 5)
+    700
+    """
+    pass
+
+
+# === 7. クラス属性とインスタンス属性を区別 ===
+
+# ✅ 良い例
+class Daifuku:
+    """
+    大福クラス
+    
+    Attributes
+    ----------
+    id : int
+        商品ID（インスタンス属性）
+    name : str
+        商品名（インスタンス属性）
+    price : int
+        価格（インスタンス属性）
+    
+    Class Attributes
+    ----------------
+    count : int
+        作成された大福の総数（クラス属性）
+    store_name : str
+        店舗名（クラス属性）
+    """
+    
+    count = 0
+    store_name = "ふわふわ大福店"
+    
+    def __init__(self, name, price):
+        Daifuku.count += 1
+        self.id = Daifuku.count
+        self.name = name
+        self.price = price
+```
+
+---
+
+### ❌ 避けるべきこと
+
+```python
+# === 1. コードと同じことを繰り返さない ===
+
+# ❌ 悪い例
+def add(a, b):
+    """aとbを足す"""
+    return a + b
+
+# ✅ 良い例
+def add(a, b):
+    """2つの数値の合計を計算する"""
+    return a + b
+
+
+# === 2. 曖昧な説明 ===
+
+# ❌ 悪い例
+def process_data(data):
+    """データを処理する"""
+    pass
+
+# ✅ 良い例
+def process_data(data):
+    """
+    商品データをフォーマットして保存する
+    
+    生の商品データを受け取り、価格を整数に変換し、
+    在庫数を初期化してからデータベースに保存します。
+    """
+    pass
+
+
+# === 3. 古い情報を残す ===
+
+# ❌ 悪い例
+def calculate_total(price, quantity, tax_rate=0.08):
+    """
+    合計金額を計算する
+    
+    Parameters
+    ----------
+    tax_rate : float, optional
+        消費税率。デフォルトは8%
+    """
+    return int(price * quantity * (1 + tax_rate))
+
+# ✅ 良い例
+def calculate_total(price, quantity, tax_rate=0.10):
+    """
+    合計金額を計算する
+    
+    Parameters
+    ----------
+    tax_rate : float, optional
+        消費税率。デフォルトは10%（2019年10月改定）
+    """
+    return int(price * quantity * (1 + tax_rate))
+
+
+# === 4. 実装の詳細を書きすぎる ===
+
+# ❌ 悪い例
+def get_products():
+    """
+    商品リストを取得する
+    
+    まずデータベースに接続し、SELECT文を実行して
+    全商品を取得し、結果をリストに変換してから
+    接続を閉じて返します。
+    """
+    pass
+
+# ✅ 良い例
+def get_products():
+    """
+    データベースから全商品を取得する
+    
+    Returns
+    -------
+    list of Daifuku
+        商品リスト
+    """
+    pass
+
+
+# === 5. 不要なdocstringを書く ===
+
+# ❌ 悪い例
+class Daifuku:
+    def __init__(self, name, price):
+        """初期化メソッド"""  # 当たり前すぎる
+        self.name = name
+        self.price = price
+    
+    def get_name(self):
+        """名前を取得する"""  # メソッド名から自明
+        return self.name
+
+# ✅ 良い例
+class Daifuku:
+    def __init__(self, name, price):
+        """
+        大福オブジェクトを初期化する
+        
+        商品IDを自動採番し、初期在庫を0に設定します。
+        """
+        Daifuku.count += 1
+        self.id = Daifuku.count
+        self.name = name
+        self.price = price
+        self.stock = 0
+    
+    # シンプルなgetterにはdocstringは不要
+
+
+# === 6. TODOをdocstringに書く ===
+
+# ❌ 悪い例
+def process_order(order):
+    """
+    注文を処理する
+    
+    TODO: エラーハンドリングを追加
+    TODO: ログ出力を実装
+    TODO: メール通知機能
+    """
+    pass
+
+# ✅ 良い例
+def process_order(order):
+    """
+    注文を処理してデータベースに保存する
+    
+    Parameters
+    ----------
+    order : dict
+        注文情報
+    
+    Returns
+    -------
+    bool
+        処理成功した場合True
+    """
+    # TODO: エラーハンドリングを追加
+    # TODO: ログ出力を実装
+    pass
+```
+
+---
+
+### 🎨 スタイルガイド
+
+```python
+"""
+docstringのスタイルガイド
+
+1. 文法
+   - 命令形を使う（「計算する」「返す」）
+   - 現在形を使う
+   - 簡潔に書く
+
+2. フォーマット
+   - 三重クォート（"""）を使う
+   - インデントを揃える
+   - 空行を適切に使う
+
+3. 内容
+   - 「何をするか」を書く
+   - 「なぜ」や「どのように」は必要に応じて
+   - 使用例を含める（複雑な関数）
+
+4. 長さ
+   - 1行docstring: 簡単な関数
+   - 複数行docstring: 複雑な関数、クラス
+   - 79文字以内に収める（推奨）
+"""
+
+# === 1行docstringの例 ===
+def add(a, b):
+    """2つの数を足す"""
+    return a + b
+
+def is_sold_out(product):
+    """商品が売り切れかチェックする"""
+    return product.stock == 0
+
+
+# === 複数行docstringの例 ===
+def calculate_discount(price, rate, max_amount=None):
+    """
+    割引価格を計算する
+    
+    指定された割引率を適用し、最大割引額の
+    制限がある場合はそれを考慮します。
+    
+    Parameters
+    ----------
+    price : int
+        元の価格
+    rate : float
+        割引率（0.0〜1.0）
+    max_amount : int, optional
+        最大割引額。Noneの場合は制限なし
+    
+    Returns
+    -------
+    int
+        割引後の価格
+    
+    Examples
+    --------
+    >>> calculate_discount(1000, 0.2)
+    800
+    >>> calculate_discount(1000, 0.5, max_amount=300)
+    700
+    """
+    discount = int(price * rate)
+    if max_amount and discount > max_amount:
+        discount = max_amount
+    return price - discount
+
+
+# === クラスのdocstring例 ===
+class Product:
+    """
+    商品の基底クラス
+    
+    すべての商品タイプの共通機能を提供します。
+    
+    Attributes
+    ----------
+    name : str
+        商品名
+    price : int
+        価格（円）
+    """
+    
+    def __init__(self, name, price):
+        """商品を初期化する"""
+        self.name = name
+        self.price = price
+```
+
+---
+
+### 📚 実践的なチートシート
+
+```python
+# ═══════════════════════════════════════════════════
+# docstring クイックリファレンス
+# ═══════════════════════════════════════════════════
+
+# --- 関数（シンプル） ---
+def function_name(arg1, arg2):
+    """動詞で始まる簡潔な説明"""
+    pass
+
+# --- 関数（詳細） ---
+def function_name(arg1, arg2, arg3=None):
+    """
+    1行の要約
+    
+    詳細説明（任意）
+    
+    Parameters
+    ----------
+    arg1 : type
+        説明
+    arg2 : type
+        説明
+    arg3 : type, optional
+        説明（デフォルト: None）
+    
+    Returns
+    -------
+    type
+        説明
+    
+    Raises
+    ------
+    ExceptionType
+        発生条件
+    
+    Examples
+    --------
+    >>> function_name(1, 2)
+    結果
+    """
+    pass
+
+# --- クラス ---
+class ClassName:
+    """
+    クラスの要約
+    
+    詳細説明
+    
+    Attributes
+    ----------
+    attr1 : type
+        説明
+    
+    Methods
+    -------
+    method1()
+        説明
+    """
+    
+    def __init__(self, param):
+        """初期化の説明"""
+        pass
+    
+    def method(self, arg):
+        """メソッドの説明"""
+        pass
+
+# --- モジュール ---
+"""
+モジュール名
+
+モジュールの説明
+
+Classes
+-------
+ClassName
+    説明
+
+Functions
+---------
+function_name
+    説明
+"""
+
+# --- プロパティ ---
+@property
+def attribute(self):
+    """属性の説明（Getterの説明）"""
+    return self._attribute
+
+@attribute.setter
+def attribute(self, value):
+    """属性の設定（Setterの説明）"""
+    self._attribute = value
+
+# --- よく使うセクション ---
+"""
+Parameters / Args      : 引数
+Returns               : 戻り値
+Yields                : 生成される値（ジェネレータ）
+Raises                : 発生する例外
+Attributes            : クラス属性
+Examples              : 使用例
+Notes                 : 補足情報
+Warnings              : 警告
+See Also              : 関連項目
+References            : 参考文献
+"""
+```
+
+---
+
+### 🔍 docstringの確認方法
+
+```python
+# === 方法1: help()関数 ===
+def greet(name):
+    """挨拶メッセージを返す"""
+    return f"こんにちは、{name}さん！"
+
+help(greet)
+# 出力:
+# Help on function greet in module __main__:
+# 
+# greet(name)
+#     挨拶メッセージを返す
+
+
+# === 方法2: __doc__属性 ===
+print(greet.__doc__)
+# 出力: 挨拶メッセージを返す
+
+
+# === 方法3: inspect モジュール ===
+import inspect
+
+def calculate_total(price, quantity):
+    """
+    合計金額を計算する
+    
+    Parameters
+    ----------
+    price : int
+        単価
+    quantity : int
+        数量
+    """
+    return price * quantity
+
+print(inspect.getdoc(calculate_total))
+# きれいにフォーマットされたdocstringを表示
+
+
+# === 方法4: pydoc（ドキュメント生成） ===
+# コマンドライン:
+# python -m pydoc module_name
+# python -m pydoc -w module_name  # HTML生成
+
+
+# === 方法5: IDEのツールチップ ===
+# VSCode, PyCharm などのIDEでは
+# 関数名にカーソルを合わせるとdocstringが表示される
+```
+
+---
+
+### 💡 実践Tips
+
+```python
+# === Tip 1: テンプレートを使う ===
+# VSCodeのスニペット例
+# "docstring": {
+#     "prefix": "doc",
+#     "body": [
+#         "\"\"\"",
+#         "$1",
+#         "",
+#         "Parameters",
+#         "----------",
+#         "$2",
+#         "",
+#         "Returns",
+#         "-------",
+#         "$3",
+#         "\"\"\""
+#     ]
+# }
+
+
+# === Tip 2: 自動生成ツールを使う ===
+# autoDocstring（VSCode拡張機能）
+# - 関数定義から自動でdocstringの雛形を生成
+# - NumPy, Google, Sphinx スタイルに対応
+
+
+# === Tip 3: docstringのテスト ===
+import doctest
+
+def add(a, b):
+    """
+    2つの数を足す
+    
+    Examples
+    --------
+    >>> add(2, 3)
+    5
+    >>> add(10, 20)
+    30
+    """
+    return a + b
+
+# doctestを実行
+if __name__ == "__main__":
+    doctest.testmod()
+
+
+# === Tip 4: 型ヒントと組み合わせる ===
+def calculate_total(price: int, quantity: int) -> int:
+    """
+    合計金額を計算する
+    
+    型ヒントがあるので、Parameters の型宣言は
+    簡略化できます。
+    
+    Parameters
+    ----------
+    price
+        単価（円）
+    quantity
+        数量
+    
+    Returns
+    -------
+    int
+        合計金額
+    """
+    return price * quantity
+
+
+# === Tip 5: TODO と FIXME ===
+def process_order(order):
+    """
+    注文を処理する
+    
+    .. todo::
+       エラーハンドリングを改善する必要がある
+    
+    .. warning::
+       現在、並行処理には対応していません
+    """
+    # TODO: バリデーションを追加
+    # FIXME: タイムアウト処理のバグを修正
+    pass
+```
+
+---
+
+### 🎯 チェックリスト
+
+```python
+"""
+docstring チェックリスト
+
+□ 1行目に簡潔な要約がある
+□ 動詞で始まっている（〜する）
+□ すべての引数が説明されている
+□ 戻り値が説明されている
+□ 例外が説明されている（発生する場合）
+□ 使用例がある（複雑な関数の場合）
+□ 型情報が明記されている
+□ デフォルト値が説明されている
+□ スペルミスがない
+□ コードと内容が一致している
+□ 79文字以内に収まっている（推奨）
+"""
+
+# === 良いdocstringの例 ===
+class Daifuku:
+    """
+    大福商品を管理するクラス
+    
+    商品情報の保持、在庫管理、販売処理などの
+    機能を提供します。
+    
+    Attributes
+    ----------
+    id : int
+        商品ID（自動採番）
+    name : str
+        商品名
+    price : int
+        価格（円）
+    weight : int
+        重さ（グラム）
+    filling : str
+        餡の種類
+    stock : int
+        在庫数
+    
+    Examples
+    --------
+    >>> daifuku = Daifuku("いちご大福", 250, 48, "いちご餡")
+    >>> daifuku.add_stock(10)
+    >>> daifuku.sell(3)
+    True
+    """
+    
+    def __init__(self, name, price, weight, filling):
+        """
+        大福オブジェクトを初期化する
+        
+        Parameters
+        ----------
+        name : str
+            商品名
+        price : int
+            価格（円、0以上）
+        weight : int
+            重さ（グラム、0より大きい）
+        filling : str
+            餡の種類
+        
+        Raises
+        ------
+        ValueError
+            priceまたはweightが不正な値の場合
+        """
+        if price < 0:
+            raise ValueError("価格は0以上である必要があります")
+        if weight <= 0:
+            raise ValueError("重さは0より大きい必要があります")
+        
+        self.name = name
+        self.price = price
+        self.weight = weight
+        self.filling = filling
+        self.stock = 0
+```
+
+---
+
+## 🌟 まとめ
+
+```python
+"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+docstring 重要ポイント
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ 必ず書くべき場所
+   - モジュール（ファイルの先頭）
+   - クラス
+   - 公開関数・メソッド
+   
+✅ 必ず含めるべき情報
+   - 簡潔な要約（1行目）
+   - すべての引数の説明
+   - 戻り値の説明
+   - 発生する例外
+   
+✅ あると良い情報
+   - 使用例
+   - 型情報
+   - 注意事項
+   - 関連項目
+   
+❌ 避けるべきこと
+   - コードと同じことを繰り返す
+   - 実装の詳細を書きすぎる
+   - 古い情報を残す
+   - 当たり前のことを書く
+   
+🎯 ベストプラクティス
+   - 簡潔で明確に
+   - 動詞で始める
+   - 例を含める
+   - 型を明記する
+   - スタイルを統一する
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+"""
+```
+
+これでdocstringは完璧です！🐰✨
