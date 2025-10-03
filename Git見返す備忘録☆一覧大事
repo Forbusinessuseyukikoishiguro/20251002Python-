@@ -613,6 +613,79 @@ git revert <commitID>               # 安全に取り消し
 git merge feature_x                 # マージ
 git rebase main                     # リベース（上級者）
 git reflog                          # 消えた履歴を探す
+
+
+＃＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+Gitの基本操作をVSCodeとターミナルでMECEに整理した一覧です。新人エンジニア向けチートシートとして、GitHub連携も含めて丁寧に解説します。
+
+🧭 Gitでできること（MECEに分類）
+
+分類機能説明 🔧 初期設定Gitのインストール・ユーザー設定git config --global user.name などで名前・メールを登録 📁 リポジトリ管理作成・削除・クローンgit init / git clone / rm -rf 📄 ファイル操作ステージング・コミットgit add / git commit -m "message" 🔍 状態確認変更確認・履歴確認git status / git log 🌿 ブランチ操作作成・切替・削除git branch / git checkout / git merge 🔁 リモート連携プッシュ・プル・フェッチgit push / git pull / git fetch 🧩 GitHub連携リモート設定・PR作成git remote add origin / GitHub上でPull Request作成 ⚠️ コンフリクト対応競合解消・マージgit merge時の競合を手動で解決 🧪 その他便利機能stash・タグ・resetgit stash / git tag / git reset
+
+💻 VSCodeでのGit操作（GUI中心）
+
+VSCodeでは「ソース管理パネル」でGit操作が可能。以下の流れで使えます：
+
+変更確認：左のGitアイコンをクリック → 変更ファイル一覧表示
+
+ステージング：変更ファイルの「+」をクリック
+
+コミット：メッセージ入力 → 「✓」でコミット
+
+プッシュ：右上の「…」→「Push」
+
+ブランチ切替：左下のブランチ名をクリック → 選択
+
+🔌 GitHub連携には「GitHub Pull Requests and Issues」拡張機能が便利です
+
+🖥️ ターミナルでのGit操作（CLI中心）
+
+以下は新人向けチートコマンド一覧：
+
+# 初期設定
+git config --global user.name "Your Name"
+git config --global user.email "your@email.com"
+
+# リポジトリ作成・クローン
+git init
+git clone https://github.com/username/repo.git
+
+# ファイル操作
+git status
+git add .
+git commit -m "Initial commit"
+
+# ブランチ操作
+git branch feature-xyz
+git checkout feature-xyz
+git merge feature-xyz
+
+# GitHub連携
+git remote add origin https://github.com/username/repo.git
+git push -u origin main
+git pull origin main
+
+
+📌 新人エンジニア向けポイント
+
+コミットメッセージは意味のある英語で（例：fix: typo in README）
+
+main/masterの違いを理解（最近はmainが主流）
+
+GitHubは履歴書になる：定期的にPushして公開リポジトリを育てよう
+
+VSCodeで始めて、慣れたらCLIへ移行：GUIは直感的、CLIは高速
+
+🧠 MECEで覚えるGitの構造
+
+Git = バージョン管理 + チーム連携
+├── ローカル操作（init, add, commit, branch）
+└── リモート操作（push, pull, fetch, merge）
+
+
+もっと実践的なチートシートが欲しい場合は、こちらの記事が図解付きでわかりやすいです。さらに深く学びたいなら、QiitaのGit完全ガイドもおすすめです。
+
+次は「Gitのトラブル対応」や「GitHubでのチーム開発の流れ」もまとめましょうか？
 ```
 
 ---
