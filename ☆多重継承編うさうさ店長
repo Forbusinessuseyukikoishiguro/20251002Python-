@@ -1,0 +1,266 @@
+よっしゃ〜😊
+次は「ふわふわ大福店のうさうさ店長」が、新人エンジニアさん向けに **⑬ 多重継承（複数のレシピを合体する技）** を **MECEで整理**して授業します！
+
+---
+
+# 🐰 うさうさ店長の授業：多重継承（複数のレシピを合体）
+
+---
+
+## 🔹 多重継承とは？
+
+* **定義**：
+  子クラスが **複数の親クラスを同時に継承**できる仕組み。
+* **イメージ**：
+
+  * 親A → 「大福の基本レシピ」
+  * 親B → 「チョコのレシピ」
+  * 子   → 「チョコ大福」
+
+---
+
+## 🔹 MECEで整理
+
+1. **メリット**
+
+   * 複数の機能をまとめて引き継げる
+   * 共通処理を組み合わせて、新しいクラスを簡単に作れる
+
+2. **デメリット（注意点）**
+
+   * 親クラスが多いと「どの親を優先するか」が曖昧になりやすい
+   * Pythonでは「MRO（メソッド解決順序）」で解決
+
+3. **MRO（Method Resolution Order）**
+
+   * 多重継承時に「メソッドを探す順番」を決めるルール
+   * `クラス名.__mro__` または `クラス名.mro()` で確認できる
+
+4. **使いどころ**
+
+   * 共通の小さい機能をモジュール化して合体させたいとき
+   * 例：ログ機能、保存機能、通知機能など
+
+---
+
+## 🔹 実例：ふわふわ大福店の多重継承
+
+```python
+# 親クラス1：大福の基本
+class Daifuku:
+    def introduce(self):
+        print("私は大福です！")
+
+# 親クラス2：チョコのレシピ
+class Choco:
+    def taste(self):
+        print("チョコ風味です🍫")
+
+# 子クラス：チョコ大福（大福＋チョコ）
+class ChocoDaifuku(Daifuku, Choco):
+    pass
+```
+
+---
+
+## 🔹 実行例
+
+```python
+choco_d = ChocoDaifuku()
+choco_d.introduce()  # Daifukuから継承
+choco_d.taste()      # Chocoから継承
+
+print(ChocoDaifuku.mro())  # MROを確認
+```
+
+---
+
+## 🔹 実行結果
+
+```
+私は大福です！
+チョコ風味です🍫
+[<class '__main__.ChocoDaifuku'>, <class '__main__.Daifuku'>, <class '__main__.Choco'>, <class 'object'>]
+```
+
+👉 順番は **ChocoDaifuku → Daifuku → Choco → object**
+
+---
+
+## 🔹 複雑な例（オーバーライドの競合）
+
+```python
+class A:
+    def show(self):
+        print("Aのshow")
+
+class B:
+    def show(self):
+        print("Bのshow")
+
+# CはAとBを両方継承
+class C(A, B):
+    pass
+
+c = C()
+c.show()  # どっち？
+print(C.mro())
+```
+
+---
+
+## 🔹 実行結果（MROの働き）
+
+```
+Aのshow
+[<class '__main__.C'>, <class '__main__.A'>, <class '__main__.B'>, <class 'object'>]
+```
+
+👉 MROにより、`A.show()` が優先される。
+
+---
+
+## 🐇 まとめ（うさうさ店長の格言）
+
+* **多重継承** = 「複数のレシピを合体」
+* **MRO** = 「どのレシピを優先するかのルール」
+* 実務では **シンプルな継承が基本**、多重継承は「小さい機能の組み合わせ」に使うと吉。
+
+---
+
+👉 次はどうしましょうか？
+
+* ⑭ **特殊メソッド**（`__str__`, `__len__`, `__add__` など魔法メソッド）
+* ⑮ **スレッド & プロセス入門**（並列処理の入口）
+
+どちらに進みたいですか？
+
+
+おっ！✨ もう一歩深く **多重継承** に行きたいのですね！
+新人エンジニアさん向けに、ふわふわ大福店の **うさうさ店長** が「多重継承の実務ポイントと応用」をさらに掘り下げて教えますね。
+
+---
+
+# 🐰 うさうさ店長の授業：多重継承をもう少し詳しく！
+
+---
+
+## 🔹 1. 多重継承の本質
+
+* **1つの子クラスが複数の親クラスを持つ仕組み**
+* 「大福の基本」＋「チョコ」＋「クリーム」＝「チョコクリーム大福」みたいな感じ
+* PythonはC++と同じく多重継承OK（JavaはNG、C#も制限あり）
+
+---
+
+## 🔹 2. 実務でよくある使い方
+
+### ✅ 機能の組み合わせ（Mixinパターン）
+
+* 多重継承は「機能を小さく分けて合体させる」ためによく使う
+* 小さい部品（Mixinクラス）を作って、必要なときにだけ継承する
+
+---
+
+## 🔹 3. 実例：Mixinを使った大福店
+
+```python
+# 親クラス：基本の大福
+class Daifuku:
+    def introduce(self):
+        print("私は大福です！")
+
+# Mixin1：チョコ味機能
+class ChocoMixin:
+    def taste_choco(self):
+        print("チョコ風味です🍫")
+
+# Mixin2：クリーム味機能
+class CreamMixin:
+    def taste_cream(self):
+        print("クリーム入りです🍦")
+
+# 子クラス：チョコクリーム大福
+class ChocoCreamDaifuku(Daifuku, ChocoMixin, CreamMixin):
+    pass
+```
+
+---
+
+## 🔹 実行例
+
+```python
+d = ChocoCreamDaifuku()
+d.introduce()     # Daifukuから継承
+d.taste_choco()   # ChocoMixinから継承
+d.taste_cream()   # CreamMixinから継承
+
+print(ChocoCreamDaifuku.mro())  # 継承の順序確認
+```
+
+---
+
+## 🔹 実行結果
+
+```
+私は大福です！
+チョコ風味です🍫
+クリーム入りです🍦
+[<class '__main__.ChocoCreamDaifuku'>, <class '__main__.Daifuku'>, <class '__main__.ChocoMixin'>, <class '__main__.CreamMixin'>, <class 'object'>]
+```
+
+👉 これで「大福の基本」＋「チョコ」＋「クリーム」を合体できた！
+
+---
+
+## 🔹 4. MRO（Method Resolution Order）
+
+* Pythonではメソッド解決順序（MRO）がきっちり決まっている
+* **左から順番に親クラスを探す**
+* 例：`class C(A, B)` なら `C → A → B → object`
+
+```python
+class A:
+    def show(self): print("A")
+
+class B:
+    def show(self): print("B")
+
+class C(A, B):  # Aが先
+    pass
+
+c = C()
+c.show()  # "A" が出る
+print(C.mro())
+```
+
+---
+
+## 🔹 5. 実務での注意点
+
+1. **多重継承を使いすぎると複雑になりがち**
+
+   * 読む人が「どの親から来てるの？」と迷子になる
+2. **Mixinを使って小さく分けるのがベストプラクティス**
+
+   * 「チョコ機能」「クリーム機能」みたいに細かい役割で分ける
+3. **MROを意識する**
+
+   * `ClassName.mro()` を確認すれば「どの順番で親を見るか」が一目でわかる
+
+---
+
+## 🐇 まとめ（うさうさ店長の格言）
+
+* **多重継承** = 「複数のレシピを合体させて新しい大福を作る」
+* **MRO** = 「どのレシピを先に読むかの順番表」
+* 実務では **小さいMixinを組み合わせる** のが安全でおすすめ
+
+---
+
+👉 次に進める選択肢です！
+
+* ⑭ **特殊メソッド（魔法メソッド）** → `__str__`, `__len__`, `__add__` など
+* ⑮ **スレッド & プロセス入門** → 並列処理の入口
+
+どちらから行きますか？
