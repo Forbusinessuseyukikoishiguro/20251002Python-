@@ -1,0 +1,990 @@
+# 🐰 うさうさ店長の大福店で学ぶ `self` と `__init__` 完全ガイド
+
+## 📚 全体像
+
+```python
+"""
+クラスの必須要素
+
+1. self      = 自分自身を指す
+2. __init__  = 初期化メソッド（生まれる瞬間）
+"""
+```
+
+---
+
+## 1️⃣ `self` とは？
+
+### 📝 基本概念
+
+```python
+"""
+self = 自分自身
+
+・メソッドの第一引数
+・そのインスタンス自身を指す
+・自動的に渡される
+・呼び出し時には書かない
+"""
+
+class Daifuku:
+    def show(self):  # selfが必須
+        # self = このメソッドを呼んだインスタンス
+        print(f"私は{self}です")
+
+# 使用例
+d = Daifuku()  # インスタンス作成
+d.show()  # selfは自動で渡される（d.show(d)と同じ意味）
+```
+
+---
+
+### 🔍 `self` の詳細
+
+```python
+class Daifuku:
+    def __init__(self, name):
+        # self = 今作っているインスタンス
+        self.name = name  # selfに属性を追加
+    
+    def show(self):
+        # self = このメソッドを呼んだインスタンス
+        print(f"商品名: {self.name}")  # selfから属性を取得
+    
+    def change_name(self, new_name):
+        # self = このメソッドを呼んだインスタンス
+        self.name = new_name  # selfの属性を変更
+
+# ============================================
+# 実行例
+# ============================================
+
+# インスタンス作成
+ichigo = Daifuku("いちご大福")  # self = ichigo
+matcha = Daifuku("抹茶大福")   # self = matcha
+
+# メソッド呼び出し
+ichigo.show()  # self = ichigo → 「商品名: いちご大福」
+matcha.show()  # self = matcha → 「商品名: 抹茶大福」
+
+# 各インスタンスは独立
+ichigo.change_name("特大いちご大福")  # ichigoだけ変更
+ichigo.show()  # 商品名: 特大いちご大福
+matcha.show()  # 商品名: 抹茶大福（変わらない）
+```
+
+**ポイント：**
+- `self` = 「この大福」を指す代名詞
+- `ichigo.show()` → `self` は `ichigo`
+- `matcha.show()` → `self` は `matcha`
+
+---
+
+### 💡 `self` がないとどうなる？
+
+```python
+# ❌ 間違い：selfがない
+class Daifuku:
+    def __init__(name, price):  # selfがない！
+        name = name  # ただのローカル変数
+        price = price  # インスタンスに保存されない
+
+d = Daifuku("いちご大福", 250)  # TypeError: 引数の数が合わない
+
+# ✅ 正しい：selfがある
+class Daifuku:
+    def __init__(self, name, price):  # selfが必須
+        self.name = name  # インスタンスに保存される
+        self.price = price
+
+d = Daifuku("いちご大福", 250)  # 正常に動く
+print(d.name)  # いちご大福
+```
+
+---
+
+## 2️⃣ `__init__` とは？
+
+### 📝 基本概念
+
+```python
+"""
+__init__ = 初期化メソッド
+
+・インスタンス作成時に自動で呼ばれる
+・初期設定を行う
+・コンストラクタとも呼ばれる
+・必ず __init__ というスペル（アンダースコア2つずつ）
+"""
+
+class Daifuku:
+    def __init__(self, name, price):  # 初期化メソッド
+        # インスタンス作成時に自動実行
+        print(f"✨ {name}を作ります")
+        self.name = name  # 属性を設定
+        self.price = price  # 属性を設定
+
+# インスタンス作成
+d = Daifuku("いちご大福", 250)  # __init__が自動で呼ばれる
+# 出力: ✨ いちご大福を作ります
+```
+
+---
+
+### 🔍 `__init__` の詳細
+
+```python
+class Daifuku:
+    # クラス変数（全インスタンスで共有）
+    count = 0  # 作った大福の総数
+    
+    def __init__(self, name, price, filling):
+        """
+        初期化メソッド
+        
+        役割：
+        1. インスタンス変数を設定
+        2. 初期処理を実行
+        3. IDを付与
+        """
+        # クラス変数を更新
+        Daifuku.count += 1  # 総数を増やす
+        
+        # インスタンス変数を設定
+        self.id = Daifuku.count  # ID付与
+        self.name = name  # 商品名
+        self.price = price  # 価格
+        self.filling = filling  # 餡
+        self.stock = 0  # 在庫（初期値）
+        self.is_sold = False  # 販売済みフラグ（初期値）
+        
+        # 初期処理
+        print(f"[{self.id:03d}] {name}を作成しました")
+
+# ============================================
+# 実行例
+# ============================================
+
+d1 = Daifuku("いちご大福", 250, "いちご餡")
+# 出力: [001] いちご大福を作成しました
+
+d2 = Daifuku("抹茶大福", 230, "白あん")
+# 出力: [002] 抹茶大福を作成しました
+
+print(f"作った大福: {Daifuku.count}個")  # 2個
+print(f"d1のID: {d1.id}")  # 1
+print(f"d2のID: {d2.id}")  # 2
+```
+
+---
+
+### 💡 `__init__` の引数パターン
+
+```python
+# パターン1: 必須引数のみ
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+d = Daifuku("いちご大福", 250)  # すべて指定が必要
+
+# ----------------------------------------
+
+# パターン2: デフォルト引数あり
+class Daifuku:
+    def __init__(self, name, price, weight=45):
+        self.name = name
+        self.price = price
+        self.weight = weight  # 省略可能
+
+d1 = Daifuku("いちご大福", 250)  # weightは45
+d2 = Daifuku("抹茶大福", 230, 50)  # weightは50
+
+# ----------------------------------------
+
+# パターン3: キーワード引数
+class Daifuku:
+    def __init__(self, name, price, filling="あんこ", weight=45):
+        self.name = name
+        self.price = price
+        self.filling = filling
+        self.weight = weight
+
+d = Daifuku("いちご大福", 250, filling="いちご餡")  # 順番を気にしない
+
+# ----------------------------------------
+
+# パターン4: 可変長引数
+class Daifuku:
+    def __init__(self, name, price, *toppings):
+        self.name = name
+        self.price = price
+        self.toppings = toppings  # タプルで受け取る
+
+d1 = Daifuku("いちご大福", 250)  # トッピングなし
+d2 = Daifuku("特製大福", 300, "金箔", "抹茶パウダー")  # 複数OK
+```
+
+---
+
+## 3️⃣ `self` と `__init__` の関係
+
+### 🔗 組み合わせ例
+
+```python
+class Daifuku:
+    """大福クラス"""
+    
+    def __init__(self, name, price):
+        """
+        初期化メソッド
+        ・selfに属性を設定
+        ・初期値を設定
+        """
+        self.name = name  # selfに名前を設定
+        self.price = price  # selfに価格を設定
+        self.stock = 0  # selfに在庫を設定（初期値）
+    
+    def add_stock(self, quantity):
+        """
+        在庫追加メソッド
+        ・selfから属性を取得
+        ・selfの属性を変更
+        """
+        self.stock += quantity  # selfの在庫を増やす
+        print(f"{self.name}の在庫: {self.stock}個")
+    
+    def show(self):
+        """
+        表示メソッド
+        ・selfから属性を取得
+        """
+        print(f"商品: {self.name}")
+        print(f"価格: ¥{self.price}")
+        print(f"在庫: {self.stock}個")
+
+# ============================================
+# 実行の流れ
+# ============================================
+
+# 1. インスタンス作成 → __init__が自動実行
+d = Daifuku("いちご大福", 250)
+#   ↓
+# __init__(self=d, name="いちご大福", price=250)
+#   ↓
+# d.name = "いちご大福"
+# d.price = 250
+# d.stock = 0
+
+# 2. メソッド呼び出し → selfにdが渡される
+d.add_stock(10)
+#   ↓
+# add_stock(self=d, quantity=10)
+#   ↓
+# d.stock += 10  # d.stock = 10
+
+# 3. 別のメソッド呼び出し
+d.show()
+#   ↓
+# show(self=d)
+#   ↓
+# print(d.name)  # "いちご大福"
+# print(d.price)  # 250
+# print(d.stock)  # 10
+```
+
+---
+
+## 4️⃣ よくある間違い
+
+```python
+# ============================================
+# 間違い1: selfを書き忘れる
+# ============================================
+
+# ❌ 間違い
+class Daifuku:
+    def __init__(name, price):  # selfがない
+        name = name  # ただのローカル変数
+        price = price
+
+# ✅ 正しい
+class Daifuku:
+    def __init__(self, name, price):  # selfが必須
+        self.name = name
+        self.price = price
+
+
+# ============================================
+# 間違い2: self.を付け忘れる
+# ============================================
+
+# ❌ 間違い
+class Daifuku:
+    def __init__(self, name, price):
+        name = name  # selfがないのでインスタンスに保存されない
+        price = price
+    
+    def show(self):
+        print(name)  # NameError: nameが見つからない
+
+# ✅ 正しい
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name  # self.を付ける
+        self.price = price
+    
+    def show(self):
+        print(self.name)  # self.を付ける
+
+
+# ============================================
+# 間違い3: __init__のスペルミス
+# ============================================
+
+# ❌ 間違い
+class Daifuku:
+    def _init_(self, name):  # アンダースコアが1つ
+        self.name = name
+
+d = Daifuku("いちご大福")  # TypeError: 引数を受け取れない
+
+# ✅ 正しい
+class Daifuku:
+    def __init__(self, name):  # アンダースコア2つずつ
+        self.name = name
+
+
+# ============================================
+# 間違い4: メソッド呼び出し時にselfを渡す
+# ============================================
+
+# ❌ 間違い
+d = Daifuku("いちご大福", 250)
+d.show(d)  # selfを渡してしまう（二重に渡される）
+
+# ✅ 正しい
+d = Daifuku("いちご大福", 250)
+d.show()  # selfは自動で渡される
+```
+
+---
+
+## 5️⃣ 実践例：うさうさ店長システム
+
+```python
+class Daifuku:
+    """大福クラス"""
+    
+    # クラス変数
+    count = 0  # 総数
+    
+    def __init__(self, name, price, filling):
+        """
+        初期化メソッド
+        ・selfにIDを付与
+        ・selfに基本情報を設定
+        ・selfに初期値を設定
+        """
+        # ID付与
+        Daifuku.count += 1  # クラス変数を更新
+        self.id = Daifuku.count  # selfにID設定
+        
+        # 基本情報
+        self.name = name  # selfに名前設定
+        self.price = price  # selfに価格設定
+        self.filling = filling  # selfに餡設定
+        
+        # 初期値
+        self.stock = 0  # selfに在庫設定（0から始める）
+        self.is_sold = False  # selfに販売フラグ設定
+        
+        print(f"[{self.id:03d}] {self.name}を作成")
+    
+    def __str__(self):
+        """文字列表現（selfの情報を使う）"""
+        return f"[{self.id:03d}] {self.name} ¥{self.price}"
+    
+    def add_stock(self, quantity):
+        """在庫追加（selfの属性を変更）"""
+        self.stock += quantity  # selfの在庫を増やす
+        print(f"✅ {self.name}を{quantity}個入荷（在庫: {self.stock}）")
+    
+    def sell(self, quantity=1):
+        """販売（selfの属性を参照・変更）"""
+        # selfの在庫をチェック
+        if self.stock < quantity:
+            print(f"❌ {self.name}の在庫不足")
+            return False
+        
+        # selfの在庫を減らす
+        self.stock -= quantity
+        print(f"💰 {self.name} × {quantity}個を販売（残: {self.stock}）")
+        return True
+    
+    def show_info(self):
+        """詳細表示（selfの全属性を表示）"""
+        print(f"--- {self.name} ---")
+        print(f"  ID: {self.id}")
+        print(f"  価格: ¥{self.price}")
+        print(f"  餡: {self.filling}")
+        print(f"  在庫: {self.stock}個")
+
+
+class Manager:
+    """店長クラス"""
+    
+    def __init__(self, name):
+        """
+        店長の初期化
+        ・selfに名前を設定
+        ・selfに在庫リストを設定
+        """
+        self.name = name  # selfに店長名設定
+        self.products = []  # selfに空リスト設定
+        print(f"🐰 {self.name}が店長に就任\n")
+    
+    def add_product(self, product, quantity=10):
+        """
+        商品追加
+        ・selfのリストに追加
+        """
+        self.products.append(product)  # selfのリストに追加
+        product.add_stock(quantity)  # 商品の在庫を設定
+    
+    def show_inventory(self):
+        """
+        在庫表示
+        ・selfのリストから情報取得
+        """
+        print(f"\n📦 {self.name}の在庫")
+        print("="*40)
+        
+        for product in self.products:  # selfのリストをループ
+            print(product)  # 各商品を表示
+
+
+# ============================================
+# 実行
+# ============================================
+
+print("="*50)
+print("🏪 ふわふわ大福店")
+print("="*50)
+print()
+
+# 店長を作成（__init__が自動実行）
+usausa = Manager("うさうさ")
+#   ↓
+# Manager.__init__(self=usausa, name="うさうさ")
+#   ↓
+# usausa.name = "うさうさ"
+# usausa.products = []
+
+# 商品を作成（__init__が自動実行）
+d1 = Daifuku("いちご大福", 250, "いちご餡")
+#   ↓
+# Daifuku.__init__(self=d1, name="いちご大福", price=250, filling="いちご餡")
+#   ↓
+# d1.id = 1
+# d1.name = "いちご大福"
+# d1.price = 250
+# d1.filling = "いちご餡"
+# d1.stock = 0
+
+d2 = Daifuku("抹茶大福", 230, "白あん")
+d3 = Daifuku("あんこ大福", 200, "粒あん")
+
+print()
+
+# 商品を追加（selfのメソッド呼び出し）
+usausa.add_product(d1, 20)  # Manager.add_product(self=usausa, product=d1, quantity=20)
+usausa.add_product(d2, 15)
+usausa.add_product(d3, 25)
+
+# 在庫表示
+usausa.show_inventory()  # Manager.show_inventory(self=usausa)
+
+# 販売
+print("\n--- 販売処理 ---")
+d1.sell(3)  # Daifuku.sell(self=d1, quantity=3)
+d2.sell(5)  # Daifuku.sell(self=d2, quantity=5)
+
+# 詳細表示
+print()
+d1.show_info()  # Daifuku.show_info(self=d1)
+```
+
+**出力：**
+```
+==================================================
+🏪 ふわふわ大福店
+==================================================
+
+🐰 うさうさが店長に就任
+
+[001] いちご大福を作成
+[002] 抹茶大福を作成
+[003] あんこ大福を作成
+
+✅ いちご大福を20個入荷（在庫: 20）
+✅ 抹茶大福を15個入荷（在庫: 15）
+✅ あんこ大福を25個入荷（在庫: 25）
+
+📦 うさうさの在庫
+========================================
+[001] いちご大福 ¥250
+[002] 抹茶大福 ¥230
+[003] あんこ大福 ¥200
+
+--- 販売処理 ---
+💰 いちご大福 × 3個を販売（残: 17）
+💰 抹茶大福 × 5個を販売（残: 10）
+
+--- いちご大福 ---
+  ID: 1
+  価格: ¥250
+  餡: いちご餡
+  在庫: 17個
+```
+
+---
+
+## 📋 比較表（MECE）
+
+| 項目 | `self` | `__init__` |
+|------|--------|-----------|
+| **意味** | 自分自身 | 初期化メソッド |
+| **位置** | メソッドの第一引数 | クラス内のメソッド |
+| **呼び出し** | 自動（書かない） | 自動（インスタンス作成時） |
+| **役割** | インスタンスを指す | 属性を設定する |
+| **必須度** | 必須 | ほぼ必須 |
+
+---
+
+## 🎯 チートシート
+
+```python
+# ============================================
+# 基本テンプレート
+# ============================================
+
+class ClassName:
+    # クラス変数（全インスタンスで共有）
+    class_var = 0
+    
+    def __init__(self, param1, param2):
+        """初期化メソッド（自動実行）"""
+        # インスタンス変数（各インスタンスで独立）
+        self.attr1 = param1  # self.属性名 = 値
+        self.attr2 = param2
+        self.attr3 = 初期値  # 初期値を設定
+    
+    def method(self, arg):
+        """通常のメソッド"""
+        # selfで属性にアクセス
+        print(self.attr1)  # 取得
+        self.attr2 = 新しい値  # 変更
+
+# 使用例
+obj = ClassName(値1, 値2)  # __init__が自動実行
+obj.method(引数)  # selfは自動で渡される
+```
+
+---
+
+## 🌟 まとめ（5秒で理解）
+
+```python
+"""
+self      → 自分自身を指す代名詞
+__init__  → 生まれる瞬間に実行される
+
+・selfは第一引数（必須）
+・__init__は自動実行（ほぼ必須）
+・selfで属性を設定・取得・変更
+"""
+```
+
+これで完璧です！🐰✨
+
+# 🐰 うさうさ店長の大福店で学ぶオブジェクト指向 完結版
+
+## 📚 全体像（MECE構造）
+
+```python
+"""
+オブジェクト指向の5大要素（MECE）
+
+1. クラス        = 設計図
+2. インスタンス   = 実物
+3. 継承         = 親子関係
+4. オーバーライド = メソッド上書き
+5. ポリモーフィズム = 同名・異動作
+"""
+```
+
+---
+
+## 1️⃣ クラス = 設計図
+
+```python
+class Daifuku:  # クラス定義（設計図を作る）
+    """大福の設計図"""
+    
+    def __init__(self, name, price):  # 初期化メソッド（必須）
+        self.name = name  # 属性1：名前
+        self.price = price  # 属性2：価格
+    
+    def show(self):  # メソッド（できること）
+        print(f"{self.name}: ¥{self.price}")  # 情報表示
+
+# 意味：「大福とは何か」を定義する
+```
+
+---
+
+## 2️⃣ インスタンス = 実物
+
+```python
+class Daifuku:  # 設計図
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+# インスタンス作成（設計図から実物を作る）
+ichigo = Daifuku("いちご大福", 250)  # 1つ目の実物
+matcha = Daifuku("抹茶大福", 230)  # 2つ目の実物
+
+# 各インスタンスは独立
+print(ichigo.name)  # いちご大福
+print(matcha.name)  # 抹茶大福
+```
+
+**ポイント：**
+- クラス = 1つ（設計図）
+- インスタンス = 何個でも作れる（実物）
+
+---
+
+## 3️⃣ 継承 = 親子関係
+
+```python
+# 親クラス（基本の大福）
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def show(self):
+        print(f"{self.name}: ¥{self.price}")
+
+# 子クラス（いちご大福）
+class IchigoDaifuku(Daifuku):  # Daifukuを継承
+    def __init__(self, name, price, strawberry_size):
+        super().__init__(name, price)  # 親の初期化を呼ぶ
+        self.strawberry_size = strawberry_size  # 子独自の属性
+
+# 使用例
+ichigo = IchigoDaifuku("いちご大福", 250, "大")
+ichigo.show()  # 親のメソッドが使える
+```
+
+**継承の理由：**
+- コードの再利用
+- 共通部分を親に、違いを子に
+
+---
+
+## 4️⃣ オーバーライド = メソッド上書き
+
+```python
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    def serve(self):  # 親のメソッド
+        return f"{self.name}をお出しします"
+
+class IchigoDaifuku(Daifuku):
+    def serve(self):  # 親と同じ名前で上書き
+        return f"🍓 {self.name}を小皿と爪楊枝でお出しします"  # 子独自の動作
+
+# 使用例
+normal = Daifuku("あんこ大福", 200)
+ichigo = IchigoDaifuku("いちご大福", 250, "大")
+
+print(normal.serve())  # あんこ大福をお出しします
+print(ichigo.serve())  # 🍓 いちご大福を小皿と爪楊枝でお出しします
+```
+
+**オーバーライドの理由：**
+- 親の動作を変更したい時
+- 子クラス独自の動作を実装
+
+---
+
+## 5️⃣ ポリモーフィズム = 同名・異動作
+
+```python
+class Daifuku:
+    def serve(self):
+        return "お出しします"
+
+class IchigoDaifuku(Daifuku):
+    def serve(self):
+        return "🍓 特別にお出しします"
+
+class IceDaifuku(Daifuku):
+    def serve(self):
+        return "🧊 冷凍でお出しします"
+
+# ポイント：型が違っても同じメソッド名で呼べる
+products = [
+    Daifuku("あんこ大福", 200),
+    IchigoDaifuku("いちご大福", 250, "大"),
+    IceDaifuku("アイス大福", 300, "カスタード", 60, "バニラ")
+]
+
+for product in products:  # 型を気にせずループ
+    print(product.serve())  # 自動的に正しいメソッドが呼ばれる
+```
+
+**ポリモーフィズムの理由：**
+- 型に関係なく統一的に扱える
+- コードがシンプルになる
+
+---
+
+## 6️⃣ オーバーロード（Pythonの場合）
+
+```python
+"""
+オーバーロード = 同名メソッドで引数違い
+→ Pythonには厳密なオーバーロードは無い
+→ デフォルト引数で代用
+"""
+
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+    
+    # デフォルト引数で「オーバーロード風」に
+    def sell(self, quantity=1, discount=0):
+        total = self.price * quantity
+        if discount > 0:
+            total = int(total * (1 - discount))
+        print(f"{self.name} × {quantity}個 = ¥{total}")
+
+# 使い方（引数の数を変えて呼べる）
+daifuku = Daifuku("いちご大福", 250)
+daifuku.sell()  # 1個、割引なし
+daifuku.sell(3)  # 3個、割引なし
+daifuku.sell(3, 0.1)  # 3個、10%割引
+```
+
+---
+
+## 🎯 完全実践例
+
+```python
+# ============================================
+# うさうさ店長の大福店システム（完結版）
+# ============================================
+
+# --- 1. 親クラス ---
+class Daifuku:
+    """大福の基本クラス"""
+    
+    def __init__(self, name, price):
+        self.name = name  # 商品名
+        self.price = price  # 価格
+    
+    def show(self):
+        """情報表示"""
+        print(f"{self.name}: ¥{self.price}")
+    
+    def serve(self):
+        """提供方法"""
+        return f"{self.name}をお出しします"
+
+
+# --- 2. 子クラス1 ---
+class IchigoDaifuku(Daifuku):
+    """いちご大福クラス（継承）"""
+    
+    def __init__(self, name, price, strawberry_size):
+        super().__init__(name, price)  # 親の初期化
+        self.strawberry_size = strawberry_size  # 子独自
+    
+    def serve(self):  # オーバーライド
+        """いちご大福の提供"""
+        return f"🍓 {self.name}を小皿と爪楊枝でお出しします"
+
+
+# --- 3. 子クラス2 ---
+class IceDaifuku(Daifuku):
+    """アイス大福クラス（継承）"""
+    
+    def __init__(self, name, price, ice_flavor):
+        super().__init__(name, price)  # 親の初期化
+        self.ice_flavor = ice_flavor  # 子独自
+    
+    def serve(self):  # オーバーライド
+        """アイス大福の提供"""
+        return f"🧊 {self.name}を冷凍状態でお出しします"
+
+
+# --- 4. 店長クラス ---
+class Manager:
+    """うさうさ店長クラス"""
+    
+    def __init__(self, name):
+        self.name = name  # 店長名
+    
+    def serve_customer(self, product):
+        """お客様に提供（ポリモーフィズム）"""
+        print(f"🐰 {self.name}: いらっしゃいませ！")
+        print(f"   {product.serve()}")  # 型によって異なる動作
+
+
+# ============================================
+# 実行
+# ============================================
+
+print("="*50)
+print("🏪 ふわふわ大福店")
+print("="*50)
+print()
+
+# 店長を作成
+usausa = Manager("うさうさ")
+
+# 商品を作成
+products = [
+    Daifuku("あんこ大福", 200),  # 親クラス
+    IchigoDaifuku("いちご大福", 250, "大"),  # 子クラス1
+    IceDaifuku("バニラアイス大福", 300, "バニラ")  # 子クラス2
+]
+
+# お客様対応（ポリモーフィズム）
+for product in products:
+    usausa.serve_customer(product)  # 型を気にせず統一処理
+    print()
+```
+
+**出力：**
+```
+==================================================
+🏪 ふわふわ大福店
+==================================================
+
+🐰 うさうさ: いらっしゃいませ！
+   あんこ大福をお出しします
+
+🐰 うさうさ: いらっしゃいませ！
+   🍓 いちご大福を小皿と爪楊枝でお出しします
+
+🐰 うさうさ: いらっしゃいませ！
+   🧊 バニラアイス大福を冷凍状態でお出しします
+```
+
+---
+
+## 📋 比較表（MECE）
+
+| 要素 | 意味 | 記号 | 例 |
+|------|------|------|-----|
+| **クラス** | 設計図 | `class 名:` | `class Daifuku:` |
+| **インスタンス** | 実物 | `変数 = クラス名()` | `d = Daifuku("いちご", 250)` |
+| **継承** | 親子関係 | `class 子(親):` | `class IchigoDaifuku(Daifuku):` |
+| **オーバーライド** | メソッド上書き | 同名メソッド定義 | `def serve(self):` |
+| **ポリモーフィズム** | 同名・異動作 | 統一的な呼び出し | `product.serve()` |
+
+---
+
+## 🎓 理解チェック
+
+```python
+"""
+Q1. クラスとインスタンスの違いは？
+A1. クラス=設計図（1つ）、インスタンス=実物（複数）
+
+Q2. 継承の目的は？
+A2. コードの再利用、共通部分をまとめる
+
+Q3. オーバーライドとは？
+A3. 親のメソッドを子で上書きすること
+
+Q4. ポリモーフィズムのメリットは？
+A4. 型を気にせず統一的に扱える
+
+Q5. Pythonにオーバーロードはある？
+A5. 厳密にはない。デフォルト引数で代用
+"""
+```
+
+---
+
+## 🔑 最重要3行コード
+
+```python
+# 1. クラス定義
+class Daifuku:
+    def __init__(self, name, price):
+        self.name = name
+
+# 2. 継承
+class IchigoDaifuku(Daifuku):
+    pass
+
+# 3. ポリモーフィズム
+for product in products:
+    product.serve()  # 型によって異なる動作
+```
+
+---
+
+## 💡 実用パターン
+
+```python
+# パターン1: 基本のクラス
+class Product:
+    def __init__(self, name, price):
+        self.name = name
+        self.price = price
+
+# パターン2: 継承
+class Daifuku(Product):
+    def __init__(self, name, price, filling):
+        super().__init__(name, price)
+        self.filling = filling
+
+# パターン3: オーバーライド
+class PremiumDaifuku(Daifuku):
+    def show(self):  # 親のメソッドを上書き
+        print(f"✨ {self.name}")
+
+# パターン4: ポリモーフィズム
+def process(product):  # どんな型でも受け取れる
+    product.show()  # 自動的に正しいメソッドが呼ばれる
+```
+
+---
+
+## 🌟 まとめ（5秒で理解）
+
+```python
+"""
+クラス      → 設計図
+インスタンス → 実物
+継承       → 親から引き継ぐ
+オーバーライド → 親のメソッドを変更
+ポリモーフィズム → 同じ名前、違う動作
+"""
+```
+
+これで完璧です！🐰✨
