@@ -1,0 +1,65 @@
+class DaifukuShop:
+    """大福店クラス"""
+    
+    def __init__(self, owner_name, stock=10):
+        """
+        コンストラクタ
+        
+        Parameters:
+            owner_name: 店長名（必須）
+            stock: 初期在庫（デフォルト10）
+        """
+        self.owner_name = owner_name
+        self.stock = stock
+        self.sold = 0
+    
+    def sell(self, quantity, price=150, message=""):
+        """
+        販売メソッド
+        
+        Parameters:
+            quantity: 販売個数（必須・位置引数）
+            price: 単価（デフォルト150円）
+            message: メッセージ（デフォルト空文字）
+        """
+        if quantity > self.stock:
+            return False
+        
+        self.stock -= quantity
+        self.sold += quantity
+        total = quantity * price
+        
+        print(f" {quantity}個販売（¥{total}）")
+        if message:
+            print(f"メッセージ: {message}")
+        
+        return True
+
+# 様々な呼び出し方
+shop = DaifukuShop("うさうさ", 20)    # stock=20を指定
+shop2 = DaifukuShop("もちもち")       # stockはデフォルト値10
+
+# 位置引数だけ
+shop.sell(5)
+
+# キーワード引数で指定
+shop.sell(quantity=3, price=200)
+
+# 一部をデフォルト値のまま
+shop.sell(2, message="ありがとうございます！")
+
+# すべて指定
+shop.sell(quantity=1, price=180, message="VIP価格です")
+
+#結果
+#以下のように出力されることを確認
+
+#  5個販売（¥750）
+#  3個販売（¥600）
+#  2個販売（¥300）
+#    メッセージ: ありがとうございます！
+#  1個販売（¥180）
+#    メッセージ: VIP価格です
+
+
+
