@@ -1,0 +1,124 @@
+# 🐰 ふわふわ大福店のうさうさ店長が教えるPythonクラス講座！
+
+こんにちは！ふわふわ大福店のうさうさ店長だよ🐰✨
+Pythonのクラスについて、お店の例で説明するね！
+
+## 📚 クラスとインスタンス変数の種類
+
+```python
+class FuwafuwaDaifukuShop:
+    """ふわふわ大福店のクラス"""
+    
+    # ①クラス変数（全店舗共通）
+    shop_chain_name = "ふわふわ大福チェーン"
+    total_shops = 0
+    menu_items = ["いちご大福", "抹茶大福", "黒ゴマ大福"]
+    
+    def __init__(self, shop_name, manager_name):
+        # ②インスタンス変数（各店舗固有）
+        self.shop_name = shop_name           # 店舗名
+        self.manager_name = manager_name     # 店長名
+        self.daily_sales = 0                 # 本日の売上
+        self.inventory = {                   # 在庫
+            "いちご大福": 50,
+            "抹茶大福": 40,
+            "黒ゴマ大福": 30
+        }
+        
+        # クラス変数を更新
+        FuwafuwaDaifukuShop.total_shops += 1
+    
+    # ③インスタンスメソッド
+    def sell_daifuku(self, daifuku_type, quantity):
+        """大福を販売するメソッド"""
+        if daifuku_type in self.inventory:
+            if self.inventory[daifuku_type] >= quantity:
+                self.inventory[daifuku_type] -= quantity
+                self.daily_sales += quantity * 150  # 1個150円
+                return f"🎉 {daifuku_type}を{quantity}個販売しました！"
+            else:
+                return f"😢 在庫不足です。残り{self.inventory[daifuku_type]}個です。"
+        return "❌ そのメニューはありません。"
+    
+    def greet(self):
+        """店長の挨拶"""
+        return f"🐰 こんにちは！{self.shop_name}の{self.manager_name}です！"
+    
+    # ④クラスメソッド
+    @classmethod
+    def get_total_shops(cls):
+        """全店舗数を取得"""
+        return f"📊 {cls.shop_chain_name}の総店舗数: {cls.total_shops}店"
+    
+    @classmethod
+    def add_new_menu(cls, new_item):
+        """新メニューを追加（全店舗共通）"""
+        cls.menu_items.append(new_item)
+        return f"✨ 新メニュー「{new_item}」を追加しました！"
+    
+    # ⑤静的メソッド
+    @staticmethod
+    def calculate_discount(price, discount_rate):
+        """割引計算（店舗に依存しない汎用的な機能）"""
+        return price * (1 - discount_rate)
+    
+    # ⑥プロパティ（ゲッター・セッター）
+    @property
+    def total_inventory(self):
+        """総在庫数を計算"""
+        return sum(self.inventory.values())
+    
+    def __str__(self):
+        """オブジェクトの文字列表現"""
+        return f"🏪 {self.shop_name}（店長: {self.manager_name}）"
+
+
+# 🐰 使用例
+print("=" * 50)
+print("🌸 ふわふわ大福店 開店！ 🌸")
+print("=" * 50)
+
+# 店舗インスタンスを作成
+usausa_shop = FuwafuwaDaifukuShop("渋谷店", "うさうさ店長")
+mochimochi_shop = FuwafuwaDaifukuShop("新宿店", "もちもち店長")
+
+# 挨拶
+print(usausa_shop.greet())
+print(mochimochi_shop.greet())
+print()
+
+# 販売
+print(usausa_shop.sell_daifuku("いちご大福", 10))
+print(f"💰 本日の売上: {usausa_shop.daily_sales}円")
+print(f"📦 残り在庫数: {usausa_shop.total_inventory}個")
+print()
+
+# クラスメソッドの使用
+print(FuwafuwaDaifukuShop.get_total_shops())
+print(FuwafuwaDaifukuShop.add_new_menu("きなこ大福"))
+print(f"📋 メニュー一覧: {FuwafuwaDaifukuShop.menu_items}")
+print()
+
+# 静的メソッドの使用
+original_price = 1500
+discounted = FuwafuwaDaifukuShop.calculate_discount(original_price, 0.2)
+print(f"🎁 特別セール: {original_price}円 → {discounted}円（20%OFF）")
+print()
+
+# インスタンス変数の独立性を確認
+print(f"🏪 {usausa_shop.shop_name}の在庫: {usausa_shop.inventory['いちご大福']}個")
+print(f"🏪 {mochimochi_shop.shop_name}の在庫: {mochimochi_shop.inventory['いちご大福']}個")
+```
+
+## 📝 まとめ
+
+| 種類 | 説明 | アクセス方法 |
+|------|------|------------|
+| **クラス変数** | 全インスタンスで共有 | `クラス名.変数名` |
+| **インスタンス変数** | 各インスタンス固有 | `self.変数名` |
+| **インスタンスメソッド** | インスタンスの操作 | `self`が必要 |
+| **クラスメソッド** | クラス全体の操作 | `@classmethod`, `cls`使用 |
+| **静的メソッド** | 汎用的な関数 | `@staticmethod` |
+| **プロパティ** | 計算された属性 | `@property` |
+
+うさうさ店長より🐰💕
