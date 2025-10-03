@@ -1,0 +1,1078 @@
+# 🐰 Pythonクラスの基本用語 完全ガイド
+
+**ふわふわ大福店のうさうさ店長で学ぶ、実際に動くコードで理解する7つの重要概念**
+
+---
+
+## 📚 目次
+
+1. [クラス（Class）](#1-クラスclass)
+2. [オブジェクト（Object）](#2-オブジェクトobject)
+3. [コンストラクタ（Constructor）](#3-コンストラクタconstructor)
+4. [メソッド（Method）](#4-メソッドmethod)
+5. [引数（Arguments）](#5-引数arguments)
+6. [self](#6-self)
+7. [デコレーター（Decorator）](#7-デコレーターdecorator)
+
+---
+
+## 1. クラス（Class）
+
+### 📖 定義
+**クラス = オブジェクトの設計図・型**
+
+たい焼きの型のようなもの。型があれば、同じ形のたい焼きを何個でも作れる。
+
+### 🎯 特徴
+- `class` キーワードで定義
+- 名前は大文字で始める（PascalCase）
+- データ（変数）と処理（メソッド）をまとめる
+
+### ⚠️ 注意点
+- クラス名は単数形にする（`Shop` ○、`Shops` ×）
+- 1つの責務だけを持たせる（単一責任の原則）
+
+### 💻 実際のコード
+
+```python
+# クラスの定義
+class DaifukuShop:
+    """ふわふわ大福店のクラス（設計図）"""
+    pass  # まだ中身は空
+
+# クラスはただの設計図なので、これだけでは何もできない
+print(type(DaifukuShop))  # <class 'type'>
+```
+
+### 📊 比較表
+
+| 項目 | 説明 | 例 |
+|------|------|-----|
+| **役割** | 設計図・型 | たい焼きの型 |
+| **作れる数** | 1つだけ | 型は1つ |
+| **実体** | なし（概念） | 型そのものは食べられない |
+
+---
+
+## 2. オブジェクト（Object）
+
+### 📖 定義
+**オブジェクト = クラスから作られた実体（インスタンス）**
+
+たい焼きの型から作られた、実際のたい焼き。
+
+### 🎯 特徴
+- クラスを `()` で呼び出して作る
+- 何個でも作れる
+- 各オブジェクトは独立している
+
+### ⚠️ 注意点
+- オブジェクトとインスタンスは同じ意味
+- 各オブジェクトは別々のメモリ領域を持つ
+- 1つを変更しても、他には影響しない
+
+### 💻 実際のコード
+
+```python
+class DaifukuShop:
+    """大福店クラス"""
+    pass
+
+# クラスからオブジェクトを作る（インスタンス化）
+usagi_shop = DaifukuShop()  # うさうさ店長の店
+mochi_shop = DaifukuShop()  # もちもち店長の店
+piyo_shop = DaifukuShop()   # ぴよぴよ店長の店
+
+# 3つの独立したオブジェクト
+print(usagi_shop)  # <__main__.DaifukuShop object at 0x...>
+print(mochi_shop)  # <__main__.DaifukuShop object at 0x...>（違うアドレス）
+print(piyo_shop)   # <__main__.DaifukuShop object at 0x...>（違うアドレス）
+
+# 型チェック
+print(type(usagi_shop))  # <class '__main__.DaifukuShop'>
+```
+
+### 📊 比較表
+
+| 項目 | クラス | オブジェクト |
+|------|--------|-------------|
+| **本質** | 設計図 | 実体 |
+| **数** | 1つ | 何個でも |
+| **例** | たい焼きの型 | 実際のたい焼き |
+| **メモリ** | 使わない | 使う |
+
+---
+
+## 3. コンストラクタ（Constructor）
+
+### 📖 定義
+**コンストラクタ = オブジェクト作成時に自動実行される初期化メソッド**
+
+`__init__` という特殊な名前のメソッド。オブジェクトが生まれる瞬間に実行される。
+
+### 🎯 特徴
+- `__init__` という名前（前後にアンダースコア2つ）
+- オブジェクト作成時に自動的に呼ばれる
+- 初期値を設定するために使う
+
+### ⚠️ 注意点
+- 必ず `self` を第一引数に取る
+- 返り値は書かない（自動的に `None`）
+- 1クラスに1つだけ（オーバーロードできない）
+
+### 💻 実際のコード
+
+```python
+class DaifukuShop:
+    """大福店クラス"""
+    
+    def __init__(self, owner_name, stock):
+        """
+        コンストラクタ: オブジェクト作成時に実行
+        
+        Parameters:
+            owner_name: 店長の名前
+            stock: 初期在庫数
+        """
+        # オブジェクトの初期状態を設定
+        self.owner_name = owner_name  # 店長名
+        self.stock = stock            # 在庫数
+        self.sold = 0                 # 販売数（初期値0）
+        
+        # 開店メッセージ
+        print(f"🐰 {self.owner_name}店長の店が開店しました！在庫: {self.stock}個")
+
+# オブジェクト作成 = __init__が自動実行される
+usagi_shop = DaifukuShop("うさうさ", 20)
+# 出力: 🐰 うさうさ店長の店が開店しました！在庫: 20個
+
+mochi_shop = DaifukuShop("もちもち", 15)
+# 出力: 🐰 もちもち店長の店が開店しました！在庫: 15個
+
+# 各オブジェクトは独立したデータを持つ
+print(usagi_shop.owner_name)  # うさうさ
+print(mochi_shop.owner_name)  # もちもち
+```
+
+### 📊 比較表
+
+| 項目 | 説明 |
+|------|------|
+| **名前** | `__init__` （固定） |
+| **実行タイミング** | オブジェクト作成時に自動 |
+| **目的** | 初期値の設定 |
+| **返り値** | なし（None） |
+
+---
+
+## 4. メソッド（Method）
+
+### 📖 定義
+**メソッド = クラス内で定義された関数**
+
+オブジェクトが実行できる「動作」や「処理」。
+
+### 🎯 特徴
+- `def` キーワードで定義
+- 必ず `self` を第一引数に取る（インスタンスメソッドの場合）
+- オブジェクトから呼び出す
+
+### ⚠️ 注意点
+- 第一引数の `self` は自動で渡される（呼び出し時に書かない）
+- メソッド名は動詞にする（`sell`, `calculate`, `show`）
+- 1つのメソッドは1つの処理だけ行う
+
+### 💻 実際のコード
+
+```python
+class DaifukuShop:
+    """大福店クラス"""
+    
+    def __init__(self, owner_name, stock):
+        """コンストラクタ"""
+        self.owner_name = owner_name
+        self.stock = stock
+        self.sold = 0
+    
+    # メソッド1: 販売
+    def sell(self, quantity):
+        """
+        大福を販売するメソッド
+        
+        Parameters:
+            quantity: 販売個数
+        """
+        # 在庫チェック
+        if quantity > self.stock:
+            print(f"❌ 在庫不足！残り{self.stock}個です")
+            return False
+        
+        # 販売処理
+        self.stock -= quantity  # 在庫を減らす
+        self.sold += quantity   # 販売数を増やす
+        print(f"✅ {quantity}個販売しました！残り在庫: {self.stock}個")
+        return True
+    
+    # メソッド2: 補充
+    def restock(self, quantity):
+        """
+        在庫を補充するメソッド
+        
+        Parameters:
+            quantity: 補充個数
+        """
+        self.stock += quantity
+        print(f"📦 {quantity}個補充しました！現在の在庫: {self.stock}個")
+    
+    # メソッド3: 状態表示
+    def show_status(self):
+        """店舗の状態を表示するメソッド"""
+        print(f"\n{'='*40}")
+        print(f"🏪 {self.owner_name}店長の店")
+        print(f"📦 在庫: {self.stock}個")
+        print(f"💰 累計販売: {self.sold}個")
+        print(f"{'='*40}\n")
+
+# オブジェクト作成
+shop = DaifukuShop("うさうさ", 20)
+
+# メソッドの呼び出し
+shop.sell(5)         # 5個販売
+shop.restock(10)     # 10個補充
+shop.sell(3)         # 3個販売
+shop.show_status()   # 状態表示
+```
+
+### 📊 メソッドの種類
+
+| 種類 | 第一引数 | 用途 | 例 |
+|------|---------|------|-----|
+| **インスタンスメソッド** | `self` | 個別の処理 | `def sell(self):` |
+| **クラスメソッド** | `cls` | クラス全体の処理 | `@classmethod def total():` |
+| **スタティックメソッド** | なし | 補助関数 | `@staticmethod def validate():` |
+
+---
+
+## 5. 引数（Arguments）
+
+### 📖 定義
+**引数 = 関数やメソッドに渡すデータ**
+
+処理に必要な情報を外から受け取るための「入れ物」。
+
+### 🎯 特徴
+- 位置引数: 順番で指定
+- キーワード引数: 名前で指定
+- デフォルト引数: 省略可能な引数
+
+### ⚠️ 注意点
+- デフォルト引数は後ろに書く
+- 可変長引数（`*args`, `**kwargs`）は慎重に使う
+- 引数は4個以内が理想
+
+### 💻 実際のコード
+
+```python
+class DaifukuShop:
+    """大福店クラス"""
+    
+    def __init__(self, owner_name, stock=10):
+        """
+        コンストラクタ
+        
+        Parameters:
+            owner_name: 店長名（必須）
+            stock: 初期在庫（デフォルト10）
+        """
+        self.owner_name = owner_name
+        self.stock = stock
+        self.sold = 0
+    
+    def sell(self, quantity, price=150, message=""):
+        """
+        販売メソッド
+        
+        Parameters:
+            quantity: 販売個数（必須・位置引数）
+            price: 単価（デフォルト150円）
+            message: メッセージ（デフォルト空文字）
+        """
+        if quantity > self.stock:
+            return False
+        
+        self.stock -= quantity
+        self.sold += quantity
+        total = quantity * price
+        
+        print(f"💰 {quantity}個販売（¥{total}）")
+        if message:
+            print(f"   メッセージ: {message}")
+        
+        return True
+
+# 様々な呼び出し方
+shop = DaifukuShop("うさうさ", 20)    # stock=20を指定
+shop2 = DaifukuShop("もちもち")       # stockはデフォルト値10
+
+# 位置引数だけ
+shop.sell(5)
+
+# キーワード引数で指定
+shop.sell(quantity=3, price=200)
+
+# 一部をデフォルト値のまま
+shop.sell(2, message="ありがとうございます！")
+
+# すべて指定
+shop.sell(quantity=1, price=180, message="VIP価格です")
+```
+
+### 📊 引数の種類
+
+| 種類 | 書き方 | 説明 | 例 |
+|------|--------|------|-----|
+| **位置引数** | 普通に書く | 必須、順番重要 | `def sell(quantity):` |
+| **デフォルト引数** | `=値` | 省略可能 | `def sell(quantity=1):` |
+| **キーワード引数** | 呼び出し時 | 名前で指定 | `sell(quantity=5)` |
+| **可変長位置** | `*args` | 任意個数 | `def func(*args):` |
+| **可変長キーワード** | `**kwargs` | 任意個数 | `def func(**kwargs):` |
+
+---
+
+## 6. self
+
+### 📖 定義
+**self = 「自分自身」を指す特別な変数**
+
+メソッド内で、今処理しているオブジェクト自身を参照するための名前。
+
+### 🎯 特徴
+- インスタンスメソッドの第一引数に必須
+- 自動的に渡される（呼び出し時に書かない）
+- 名前は慣習的に `self`（別名でも動くが非推奨）
+
+### ⚠️ 注意点
+- 必ず第一引数に書く
+- メソッド呼び出し時には書かない
+- `self.変数名` でインスタンス変数にアクセス
+
+### 💻 実際のコード
+
+```python
+class DaifukuShop:
+    """大福店クラス"""
+    
+    # クラス変数（全店舗共通）
+    tax_rate = 0.1
+    
+    def __init__(self, owner_name, stock):
+        """
+        self = 今作っているオブジェクト自身
+        """
+        # self.変数名 = インスタンス変数（このオブジェクト固有）
+        self.owner_name = owner_name  # このオブジェクトの店長名
+        self.stock = stock            # このオブジェクトの在庫
+        self.sold = 0                 # このオブジェクトの販売数
+    
+    def sell(self, quantity):
+        """
+        self = このメソッドを呼んだオブジェクト
+        """
+        # self.stock = このオブジェクトの在庫にアクセス
+        if quantity > self.stock:
+            print(f"❌ {self.owner_name}店長: 在庫不足！")
+            return False
+        
+        # このオブジェクトのデータを変更
+        self.stock -= quantity
+        self.sold += quantity
+        
+        # 税込価格を計算（クラス変数を使用）
+        price = int(quantity * 150 * (1 + DaifukuShop.tax_rate))
+        
+        print(f"✅ {self.owner_name}店長: {quantity}個販売（¥{price}）")
+        return True
+    
+    def transfer_stock(self, other_shop, quantity):
+        """
+        他の店舗に在庫を譲渡
+        
+        Parameters:
+            other_shop: 相手の店舗（別のオブジェクト）
+            quantity: 譲渡する個数
+        """
+        if quantity > self.stock:
+            print(f"❌ 在庫が足りません")
+            return False
+        
+        # self = このオブジェクト（譲渡元）
+        self.stock -= quantity
+        
+        # other_shop = 別のオブジェクト（譲渡先）
+        other_shop.stock += quantity
+        
+        print(f"📦 {self.owner_name}店長 → {other_shop.owner_name}店長: {quantity}個譲渡")
+        return True
+
+# 2つのオブジェクトを作る
+usagi_shop = DaifukuShop("うさうさ", 20)
+mochi_shop = DaifukuShop("もちもち", 5)
+
+# usagi_shop.sell(5) の実行時
+# → sell メソッドの self は usagi_shop を指す
+usagi_shop.sell(5)
+
+# mochi_shop.sell(3) の実行時
+# → sell メソッドの self は mochi_shop を指す
+mochi_shop.sell(3)
+
+# 在庫の譲渡
+usagi_shop.transfer_stock(mochi_shop, 10)
+
+print(f"\nうさうさ店: 在庫{usagi_shop.stock}個")
+print(f"もちもち店: 在庫{mochi_shop.stock}個")
+```
+
+### 📊 self の仕組み
+
+```python
+# 実際の呼び出し
+shop.sell(5)
+
+# 内部的には以下のように変換される
+DaifukuShop.sell(shop, 5)
+#                ^^^^--- これがselfに入る
+```
+
+| 書き方 | self の指す先 |
+|--------|--------------|
+| `usagi_shop.sell(5)` | `self = usagi_shop` |
+| `mochi_shop.sell(3)` | `self = mochi_shop` |
+
+---
+
+## 7. デコレーター（Decorator）
+
+### 📖 定義
+**デコレーター = 関数やメソッドに機能を追加する仕組み**
+
+`@` 記号で始まる特別な記述。メソッドの振る舞いを変える。
+
+### 🎯 特徴
+- `@` で始まる
+- メソッドの直前に書く
+- よく使うのは `@classmethod`, `@staticmethod`, `@property`
+
+### ⚠️ 注意点
+- デコレーターを付けると、メソッドの種類が変わる
+- 順番が重要（複数ある場合）
+- 自作デコレーターは上級者向け
+
+### 💻 実際のコード
+
+```python
+class DaifukuShop:
+    """大福店クラス"""
+    
+    # クラス変数
+    shop_count = 0  # 総店舗数
+    
+    def __init__(self, owner_name, stock):
+        """通常のコンストラクタ"""
+        self.owner_name = owner_name
+        self.stock = stock
+        self._price = 150  # プライベート変数（_で始める）
+        
+        # 店舗数をカウント
+        DaifukuShop.shop_count += 1
+    
+    # ========== インスタンスメソッド（通常） ==========
+    def sell(self, quantity):
+        """個別の店舗で販売"""
+        self.stock -= quantity
+        return quantity * self._price
+    
+    # ========== @classmethod ==========
+    @classmethod
+    def get_total_shops(cls):
+        """
+        クラスメソッド: 全店舗数を取得
+        
+        特徴:
+        - 第一引数は cls（クラス自身）
+        - インスタンスを作らずに呼べる
+        - クラス変数にアクセスできる
+        """
+        return f"現在の総店舗数: {cls.shop_count}店"
+    
+    @classmethod
+    def from_dict(cls, data):
+        """
+        クラスメソッド: 辞書からオブジェクトを生成
+        （ファクトリーメソッド）
+        
+        特徴:
+        - 別の方法でオブジェクトを作れる
+        - JSONデータから生成する時などに便利
+        """
+        return cls(
+            owner_name=data["owner"],
+            stock=data["stock"]
+        )
+    
+    # ========== @staticmethod ==========
+    @staticmethod
+    def calculate_tax(price, tax_rate=0.1):
+        """
+        スタティックメソッド: 税込価格を計算
+        
+        特徴:
+        - self も cls も不要
+        - ただの関数だが、クラスに属する
+        - インスタンスやクラスのデータにアクセスしない
+        """
+        return int(price * (1 + tax_rate))
+    
+    @staticmethod
+    def is_valid_stock(stock):
+        """
+        スタティックメソッド: 在庫数が有効かチェック
+        
+        特徴:
+        - バリデーション（検証）に使う
+        - どのオブジェクトのデータも使わない
+        """
+        return isinstance(stock, int) and stock >= 0
+    
+    # ========== @property ==========
+    @property
+    def price(self):
+        """
+        プロパティ: 価格を取得
+        
+        特徴:
+        - メソッドだが、変数のようにアクセスできる
+        - () を付けずに呼べる
+        - 計算結果を返すのに便利
+        """
+        return self._price
+    
+    @price.setter
+    def price(self, value):
+        """
+        プロパティのセッター: 価格を設定
+        
+        特徴:
+        - 値を設定する時のルールを決められる
+        - バリデーションを入れられる
+        """
+        if value < 0:
+            raise ValueError("価格は0以上にしてください")
+        self._price = value
+    
+    @property
+    def total_value(self):
+        """
+        プロパティ: 在庫の総額を計算
+        
+        特徴:
+        - 計算結果を変数のように取得できる
+        - 毎回最新の値が計算される
+        """
+        return self.stock * self._price
+
+
+# ========== 実行例 ==========
+
+# 通常のインスタンス生成
+shop1 = DaifukuShop("うさうさ", 20)
+shop2 = DaifukuShop("もちもち", 15)
+
+# インスタンスメソッド（通常）
+print(f"売上: ¥{shop1.sell(5)}")
+
+# @classmethod の使用
+# インスタンスを作らずに呼べる
+print(DaifukuShop.get_total_shops())
+
+# ファクトリーメソッド（@classmethod）
+data = {"owner": "ぴょんぴょん", "stock": 25}
+shop3 = DaifukuShop.from_dict(data)
+print(f"{shop3.owner_name}店が作成されました")
+
+# @staticmethod の使用
+# インスタンスを作らずに呼べる
+tax_price = DaifukuShop.calculate_tax(1000)
+print(f"税込価格: ¥{tax_price}")
+
+# バリデーション（@staticmethod）
+print(f"在庫20は有効？ {DaifukuShop.is_valid_stock(20)}")
+print(f"在庫-5は有効？ {DaifukuShop.is_valid_stock(-5)}")
+
+# @property の使用
+# メソッドだが () なしで呼べる
+print(f"価格: ¥{shop1.price}")  # () を付けない！
+
+# setter を使った値の設定
+shop1.price = 200  # = で代入できる
+print(f"新価格: ¥{shop1.price}")
+
+# 計算プロパティ
+print(f"在庫総額: ¥{shop1.total_value}")
+```
+
+### 📊 デコレーターの比較
+
+| デコレーター | 第一引数 | 呼び出し方 | 用途 |
+|-------------|---------|-----------|------|
+| なし（通常） | `self` | `obj.method()` | 個別の処理 |
+| `@classmethod` | `cls` | `Class.method()` | クラス全体の処理 |
+| `@staticmethod` | なし | `Class.method()` | 補助関数 |
+| `@property` | `self` | `obj.attribute` | 計算結果を変数風に |
+
+---
+
+## 🎯 完全動作コード（すべてを統合）
+
+```python
+class DaifukuShop:
+    """
+    🐰 ふわふわ大福店 完全版
+    
+    すべての概念を含む実践的なクラス
+    """
+    
+    # ========== クラス変数 ==========
+    shop_count = 0      # 総店舗数
+    tax_rate = 0.1      # 消費税率
+    
+    # ========== コンストラクタ ==========
+    def __init__(self, owner_name, stock=10):
+        """
+        オブジェクト初期化
+        
+        引数:
+            owner_name: 店長名（必須）
+            stock: 初期在庫（デフォルト10）
+        """
+        # インスタンス変数
+        self.owner_name = owner_name
+        self.stock = stock
+        self.sold = 0
+        self._price = 150  # プライベート変数
+        
+        # クラス変数を更新
+        DaifukuShop.shop_count += 1
+        
+        print(f"🐰 {self.owner_name}店長の店が開店！在庫: {self.stock}個")
+    
+    # ========== インスタンスメソッド ==========
+    def sell(self, quantity, discount=0):
+        """
+        販売処理
+        
+        引数:
+            quantity: 販売個数
+            discount: 割引率（0.0-1.0）
+        """
+        if quantity > self.stock:
+            print(f"❌ 在庫不足！")
+            return 0
+        
+        # 在庫と販売数を更新
+        self.stock -= quantity
+        self.sold += quantity
+        
+        # 価格計算
+        price = self._price * (1 - discount)
+        total = int(quantity * price * (1 + self.tax_rate))
+        
+        print(f"💰 {quantity}個販売（¥{total}）")
+        return total
+    
+    def restock(self, quantity):
+        """在庫補充"""
+        self.stock += quantity
+        print(f"📦 {quantity}個補充。在庫: {self.stock}個")
+    
+    def show_status(self):
+        """状態表示"""
+        print(f"\n{'='*40}")
+        print(f"🏪 {self.owner_name}店長の店")
+        print(f"📦 在庫: {self.stock}個")
+        print(f"💰 累計販売: {self.sold}個")
+        print(f"💵 在庫総額: ¥{self.total_value}")
+        print(f"{'='*40}\n")
+    
+    # ========== クラスメソッド ==========
+    @classmethod
+    def get_stats(cls):
+        """全店舗の統計"""
+        return f"📊 総店舗数: {cls.shop_count}店"
+    
+    @classmethod
+    def from_dict(cls, data):
+        """辞書からオブジェクト生成"""
+        return cls(
+            owner_name=data["owner"],
+            stock=data.get("stock", 10)
+        )
+    
+    # ========== スタティックメソッド ==========
+    @staticmethod
+    def calculate_total(quantity, price):
+        """合計金額計算"""
+        return quantity * price
+    
+    @staticmethod
+    def validate_stock(stock):
+        """在庫数の検証"""
+        return isinstance(stock, int) and stock >= 0
+    
+    # ========== プロパティ ==========
+    @property
+    def price(self):
+        """価格取得"""
+        return self._price
+    
+    @price.setter
+    def price(self, value):
+        """価格設定"""
+        if value < 0:
+            raise ValueError("価格は0以上")
+        self._price = value
+    
+    @property
+    def total_value(self):
+        """在庫総額"""
+        return self.stock * self._price
+
+
+# ========================================
+# 実行とデモンストレーション
+# ========================================
+
+def main():
+    """すべての機能を実演"""
+    
+    print("=" * 60)
+    print("🐰 ふわふわ大福店 - 全機能デモ")
+    print("=" * 60)
+    
+    # 1. 通常のオブジェクト作成（コンストラクタ）
+    print("\n【1】オブジェクトの作成")
+    print("-" * 60)
+    usagi = DaifukuShop("うさうさ", 20)
+    mochi = DaifukuShop("もちもち", 15)
+    
+    # 2. インスタンスメソッドの使用
+    print("\n【2】インスタンスメソッド")
+    print("-" * 60)
+    usagi.sell(5)                    # 通常販売
+    usagi.sell(3, discount=0.1)      # 10%割引
+    usagi.restock(10)                # 補充
+    usagi.show_status()              # 状態表示
+    
+    # 3. クラスメソッドの使用
+    print("\n【3】クラスメソッド")
+    print("-" * 60)
+    print(DaifukuShop.get_stats())   # 統計情報
+    
+    # 辞書からオブジェクト生成
+    data = {"owner": "ぴょんぴょん", "stock": 25}
+    piyo = DaifukuShop.from_dict(data)
+    print(DaifukuShop.get_stats())   # 店舗数が増えた
+    
+    # 4. スタティックメソッドの使用
+    print("\n【4】スタティックメソッド")
+    print("-" * 60)
+    total = DaifukuShop.calculate_total(10, 150)
+    print(f"10個 × 150円 = ¥{total}")
+    
+    print(f"在庫20は有効？ {DaifukuShop.validate_stock(20)}")
+    print(f"在庫-5は有効？ {DaifukuShop.validate_stock(-5)}")
+    
+    # 5. プロパティの使用
+    print("\n【5】プロパティ")
+    print("-" * 60)
+    print(f"現在価格: ¥{usagi.price}")       # getter
+    usagi.price = 180                         # setter
+    print(f"新価格: ¥{usagi.price}")
+    print(f"在庫総額: ¥{usagi.total_value}")  # 計算プロパティ
+    
+    # 6. selfの動作確認
+    print("\n【6】selfの動作（各オブジェクトは独立）")
+    print("-" * 60)
+    print(f"うさうさ店: 在庫{usagi.stock}個、販売{usagi.sold}個")
+    print(f"もちもち店: 在庫{mochi.stock}個、販売{mochi.sold}個")
+    print(f"ぴょんぴょん店: 在庫{piyo.stock}個、販売{piyo.sold}個")
+    
+    print("\n" + "=" * 60)
+    print("✅ すべての機能のデモ完了！")
+    print("=" * 60)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+## 📝 7つの概念 - 超まとめ
+
+### 1️⃣ クラス = 設計図
+```python
+class DaifukuShop:  # 大文字で始める
+    pass
+```
+- オブジェクトの型を定義
+- 1つの責務だけ
+
+### 2️⃣ オブジェクト = 実体
+```python
+shop = DaifukuShop()  # () で作る
+```
+- クラスから作られる
+- 何個でも作れる
+- 各オブジェクトは独立
+
+### 3️⃣ コンストラクタ = 初期化
+```python
+def __init__(self, name):  # 自動実行
+    self.name = name
+```
+- `__init__` という名前
+- オブジェクト作成時に実行
+- 初期値を設定
+
+### 4️⃣ メソッド = 動作
+```python
+def sell(self, quantity):  # 必ずselfが第一引数
+    self.stock -= quantity
+```
+- クラス内の関数
+- オブジェクトの動作
+- 動詞で命名
+
+### 5️⃣ 引数 = 入力データ
+```python
+def sell(self, quantity, price=150):
+    #        ^^^^^^^^  ^^^^^^^^^^
+    #        必須引数  デフォルト引数
+```
+- 位置引数: 順番で指定
+- キーワード引数: 名前で指定
+- デフォルト引数: 省略可能
+
+### 6️⃣ self = 自分自身
+```python
+def sell(self, quantity):
+    self.stock -= quantity  # このオブジェクトの在庫
+    #^^^--- このオブジェクト自身
+```
+- 第一引数（自動で渡される）
+- 呼び出し時は書かない
+- インスタンス変数にアクセス
+
+### 7️⃣ デコレーター = 機能追加
+```python
+@classmethod         # クラス全体
+@staticmethod        # 補助関数
+@property           # 変数風アクセス
+```
+- `@` で始まる
+- メソッドの振る舞いを変える
+- メソッドの直前に書く
+
+---
+
+## ⚠️ よくある間違いと対策
+
+### ❌ 間違い1: selfを忘れる
+```python
+class Shop:
+    def sell(quantity):  # ❌ selfがない
+        pass
+```
+**✅ 正解:**
+```python
+class Shop:
+    def sell(self, quantity):  # ✅ selfを第一引数に
+        pass
+```
+
+### ❌ 間違い2: self.を付け忘れる
+```python
+class Shop:
+    def __init__(self, stock):
+        stock = stock  # ❌ ローカル変数になる
+```
+**✅ 正解:**
+```python
+class Shop:
+    def __init__(self, stock):
+        self.stock = stock  # ✅ インスタンス変数
+```
+
+### ❌ 間違い3: メソッド呼び出しでselfを書く
+```python
+shop = Shop()
+shop.sell(self, 5)  # ❌ selfは自動で渡される
+```
+**✅ 正解:**
+```python
+shop = Shop()
+shop.sell(5)  # ✅ selfは書かない
+```
+
+### ❌ 間違い4: クラス変数とインスタンス変数の混同
+```python
+class Shop:
+    stock = 10  # ❌ クラス変数（全体で共有）
+    
+    def sell(self, quantity):
+        stock -= quantity  # ❌ エラー
+```
+**✅ 正解:**
+```python
+class Shop:
+    def __init__(self):
+        self.stock = 10  # ✅ インスタンス変数（個別）
+    
+    def sell(self, quantity):
+        self.stock -= quantity  # ✅ self.を付ける
+```
+
+---
+
+## 🎓 学習のステップ
+
+### 初心者（1週目）
+1. クラスとオブジェクトの違いを理解
+2. コンストラクタで初期化
+3. インスタンスメソッドを作る
+4. selfの意味を理解
+
+### 中級者（2週目）
+5. 引数の種類を使い分ける
+6. クラスメソッドとスタティックメソッド
+7. プロパティで計算結果を返す
+
+### 上級者（3週目以降）
+8. 継承とポリモーフィズム
+9. 多重継承とMRO
+10. カスタムデコレーターの作成
+
+---
+
+## 🔍 使い分けチャート
+
+```
+Q: 個別のオブジェクトに対する処理？
+├─ YES → インスタンスメソッド（selfを使う）
+│
+├─ NO → Q: クラス全体に関わる処理？
+    ├─ YES → @classmethod（clsを使う）
+    │
+    └─ NO → Q: オブジェクトのデータを使わない？
+        ├─ YES → @staticmethod
+        └─ NO → インスタンスメソッドを再検討
+```
+
+---
+
+## 💡 実践的なTips
+
+### Tip 1: 命名規則
+- **クラス名**: `PascalCase` (例: `DaifukuShop`)
+- **メソッド名**: `snake_case` (例: `sell_item`)
+- **定数**: `UPPER_CASE` (例: `MAX_STOCK`)
+- **プライベート**: `_変数名` (例: `_price`)
+
+### Tip 2: docstringを書く
+```python
+def sell(self, quantity):
+    """
+    大福を販売する
+    
+    Args:
+        quantity (int): 販売個数
+        
+    Returns:
+        int: 売上金額
+        
+    Raises:
+        ValueError: 在庫不足の場合
+    """
+```
+
+### Tip 3: 型ヒントを使う
+```python
+def sell(self, quantity: int) -> int:
+    """販売処理"""
+    return quantity * self.price
+```
+
+### Tip 4: 単一責任の原則
+1クラス = 1つの責務
+- ❌ `UserManagerAuthenticatorLogger` (責務が多すぎ)
+- ✅ `UserManager`, `Authenticator`, `Logger` (分離)
+
+---
+
+## 📚 参考：全体構造図
+
+```
+DaifukuShop（クラス = 設計図）
+│
+├─ クラス変数
+│  ├─ shop_count（全店舗共通）
+│  └─ tax_rate（全店舗共通）
+│
+├─ __init__（コンストラクタ）
+│  └─ self.stock, self.sold など初期化
+│
+├─ インスタンスメソッド
+│  ├─ sell(self, quantity)
+│  ├─ restock(self, quantity)
+│  └─ show_status(self)
+│
+├─ @classmethod
+│  ├─ get_stats(cls)
+│  └─ from_dict(cls, data)
+│
+├─ @staticmethod
+│  ├─ calculate_total(quantity, price)
+│  └─ validate_stock(stock)
+│
+└─ @property
+   ├─ price（getter/setter）
+   └─ total_value（計算プロパティ）
+
+↓ インスタンス化
+
+usagi_shop, mochi_shop, piyo_shop（オブジェクト = 実体）
+```
+
+---
+
+## 🎯 最後に
+
+この7つの概念をマスターすれば、Pythonのクラスは自由自在！
+
+**学習の順番:**
+1. まず動かす（コードをコピペして実行）
+2. 少しずつ変更してみる
+3. 自分でゼロから書いてみる
+4. 実際のプロジェクトで使ってみる
+
+**🐰 うさうさ店長からのメッセージ:**
+「最初は難しく感じるかもしれませんが、実際に手を動かせば必ず理解できます！
+一つずつ、焦らず学んでいきましょう！」
+
+---
+
+**📎 関連記事:**
+- [継承とポリモーフィズム完全ガイド](#)
+- [デザインパターン入門](#)
+- [実践的なクラス設計](#)
