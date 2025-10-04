@@ -1,0 +1,116 @@
+おっ！いよいよきましたね ✨
+多重継承を学んだ人が必ずぶつかる「ダイヤモンド継承問題」！
+これは **MRO（Method Resolution Order：メソッド探索順序）** を理解するのにピッタリな題材です。
+
+---
+
+# 🐇 うさうさ店長の授業：ダイヤモンド継承問題とは？
+
+---
+
+## 🔹 問題のイメージ
+
+大福店でこんな「家系図」を考えてみましょう：
+
+```
+        Staff（スタッフ基底クラス）
+        /                      \
+   Cashier（レジ担当）      Baker（製造担当）
+        \                      /
+            SuperStaff（両方担当）
+```
+
+この形が「ダイヤモンド継承」と呼ばれる構造です。
+`SuperStaff` は `Cashier` と `Baker` の両方を継承しているけど、
+どちらも **同じ親（Staff）** を持っているため「親がダブる」問題が出てきます。
+
+---
+
+## 🔹 実際のコード
+
+```python
+class Staff:
+    def report(self):
+        print("🍡 基本業務報告")
+
+class Cashier(Staff):
+    def report(self):
+        print("💰 レジの売上報告")
+        super().report()
+
+class Baker(Staff):
+    def report(self):
+        print("🥮 大福製造数の報告")
+        super().report()
+
+class SuperStaff(Cashier, Baker):
+    def report(self):
+        print("🌟 店全体の最終報告")
+        super().report()
+```
+
+---
+
+## 🔹 実行
+
+```python
+ss = SuperStaff()
+ss.report()
+```
+
+---
+
+## 🔹 結果
+
+```
+🌟 店全体の最終報告
+💰 レジの売上報告
+🥮 大福製造数の報告
+🍡 基本業務報告
+```
+
+---
+
+## 🔹 なぜこうなる？ → MRO のおかげ
+
+Python は「同じ親を二重に呼ばない」ために **MRO** を使います。
+順序を確認してみましょう：
+
+```python
+print(SuperStaff.__mro__)
+```
+
+結果：
+
+```
+(<class '__main__.SuperStaff'>, 
+ <class '__main__.Cashier'>, 
+ <class '__main__.Baker'>, 
+ <class '__main__.Staff'>, 
+ <class 'object'>)
+```
+
+---
+
+## 🔹 ポイント
+
+1. **左から順に探索**する (`Cashier` → `Baker` → `Staff`)
+2. **同じ親クラス（Staff）が重複しても、1回しか呼ばれない**
+3. `super()` を正しく書くと、リレー形式で順番に処理が流れる
+
+---
+
+## 🐰 うさうさ店長の格言
+
+* ダイヤモンド継承は「親クラスの処理が二重で呼ばれちゃうのでは？」という心配から名前がついた
+* でも Python の MRO（C3アルゴリズム）が賢く解決してくれる
+* **super() を忘れずに書くと、みんながきれいにバトンを渡せる**
+
+---
+
+👉 次に知ると理解が深まるのは：
+
+1. **MRO のルール（C3アルゴリズム）の直感的な説明**
+2. **JavaやC++との違い（Pythonの多重継承が安全な理由）**
+
+どっちに進みますか？
