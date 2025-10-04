@@ -1,0 +1,1787 @@
+/workflows/lint.yml
+
+name: Lint and Type Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install ruff black mypy
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    
+    - name: Run Ruff
+      run: |
+        ruff check .
+    
+    - name: Run Black
+      run: |
+        black --check .
+    
+    - name: Run mypy
+      run: |
+        mypy .
+```
+
+---
+
+### ステップ4: README.md にドキュメント化
+
+```markdown
+# 大福店管理システム
+
+## 開発環境のセットアップ
+
+### 1. 仮想環境の作成
+
+```bash
+python -m venv .venv
+
+# アクティベート
+# Windows
+.venv\Scripts\activate
+# Mac/Linux
+source .venv/bin/activate
+```
+
+### 2. 依存パッケージのインストール
+
+```bash
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+### 3. 開発ツールの使い方
+
+#### コードフォーマット
+
+```bash
+# Ruffでフォーマット
+ruff format .
+
+# Blackでフォーマット
+black .
+```
+
+#### コードチェック
+
+```bash
+# Ruffでチェック
+ruff check .
+
+# 自動修正
+ruff check . --fix
+
+# 型チェック
+mypy .
+```
+
+#### すべて実行
+
+```bash
+# makeコマンドがある場合
+make all
+
+# またはスクリプト
+bash run_checks.sh
+```
+
+### 4. PyCharmの設定
+
+1. External Toolsを設定（詳細は CONTRIBUTING.md 参照）
+2. File Watchersで保存時自動フォーマット
+3. pre-commitフックを有効化: `pre-commit install`
+
+## コーディング規約
+
+- PEP 8に準拠
+- 型ヒントを必ず記述
+- docstringはGoogleスタイル
+- 1行は88文字以内
+
+## プルリクエスト前のチェック
+
+```bash
+# これらがすべてパスすること
+ruff check .
+black --check .
+mypy .
+pytest
+```
+```
+
+---
+
+## 9. よくある質問（FAQ）
+
+### Q1: RuffとBlackは両方必要？
+
+**A: 2024年現在は Ruff のみでOK**
+
+```bash
+# Ruffだけで両方できる
+ruff check . --fix   # リンター機能
+ruff format .        # フォーマッター機能
+
+# Blackは不要（ただし併用も可能）
+```
+
+**推奨構成:**
+```
+Ruff（リンター + フォーマッター）+ mypy（型チェック）
+```
+
+---
+
+### Q2: ツールが遅い場合は？
+
+**A: Ruffを使えば爆速**
+
+```bash
+# 速度比較（1000ファイルの場合）
+pylint: 60秒
+flake8: 15秒
+Ruff:   0.5秒  ← 圧倒的に速い！
+```
+
+---
+
+### Q3: 既存プロジェクトに導入するには？
+
+**A: 段階的に導入**
+
+```bash
+# ステップ1: エラーを確認（修正しない）
+ruff check .
+
+# ステップ2: 自動修正できるものだけ修正
+ruff check . --fix
+
+# ステップ3: 手動で残りを修正
+# エラーが出た箇所を1つずつ修正
+
+# ステップ4: フォーマット
+ruff format .
+```
+
+---
+
+### Q4: チーム全員に使わせるには？
+
+**A: pre-commitフックを使う**
+
+```bash
+# pre-commitをインストール
+pip install pre-commit
+
+# .pre-commit-config.yamlを作成（上記参照）
+
+# フックをインストール
+pre-commit install
+
+# これで git commit 時に自動チェック
+```
+
+---
+
+### Q5: PyCharmで保存時に自動整形したい
+
+**A: File Watchersを使う**
+
+1. `Settings → Tools → File Watchers`
+2. Ruff Format Watcherを追加（設定は上記参照）
+3. ファイル保存時に自動でフォーマット
+
+---
+
+### Q6: エラーを無視したい
+
+**A: コメントで無視できる**
+
+```python
+# 特定の行を無視
+result = some_function()  # noqa: F841
+
+# Ruffで特定のルールを無視
+result = some_function()  # ruff: noqa: F841
+
+# mypyで型チェックを無視
+value = get_value()  # type: ignore
+
+# ファイル全体で特定のルールを無視
+# ruff: noqa: E501
+```
+
+---
+
+### Q7: どのエラーから修正すべき？
+
+**A: 優先順位**
+
+```
+1. F（pyflakes）→ バグの可能性が高い
+   例: F841 未使用変数、F821 未定義変数
+
+2. E（pycodestyle errors）→ 文法エラー
+   例: E999 構文エラー
+
+3. W（pycodestyle warnings）→ 警告
+   例: W291 行末の空白
+
+4. その他 → スタイル違反
+   例: I001 import順序、N801 命名規則
+```
+
+---
+
+### Q8: requirements.txt の書き方
+
+```txt
+# requirements.txt（本番環境）
+flask>=3.0.0
+requests>=2.31.0
+
+# requirements-dev.txt（開発環境）
+ruff>=0.1.9
+black>=24.1.0
+mypy>=1.8.0
+pytest>=7.4.0
+pre-commit>=3.6.0
+```
+
+```bash
+# インストール
+pip install -r requirements.txt
+pip install -r requirements-dev.txt
+```
+
+---
+
+## 10. トラブルシューティング
+
+### 問題1: ruffコマンドが見つからない
+
+```bash
+# 原因: Pythonのパスが通っていない
+
+# 解決方法1: フルパスで実行
+python -m ruff check .
+
+# 解決方法2: PyCharmで仮想環境のPythonを使う
+# Settings → Project → Python Interpreter
+# 仮想環境の .venv を選択
+```
+
+---
+
+### 問題2: File Watcherが動かない
+
+```bash
+# 原因: Programのパスが間違っている
+
+# 解決方法: which/whereコマンドで確認
+# Mac/Linux
+which ruff
+# 例: /Users/username/project/.venv/bin/ruff
+
+# Windows
+where ruff
+# 例: C:\Users\username\project\.venv\Scripts\ruff.exe
+
+# PyCharmのFile WatcherのProgramに上記パスを設定
+```
+
+---
+
+### 問題3: mypyでサードパーティライブラリのエラー
+
+```python
+# エラー例
+import numpy as np  # error: Library stubs not installed
+
+# 解決方法1: 型スタブをインストール
+pip install types-numpy
+
+# 解決方法2: pyproject.tomlで無視
+# [tool.mypy]
+# [[tool.mypy.overrides]]
+# module = "numpy.*"
+# ignore_missing_imports = true
+```
+
+---
+
+### 問題4: Blackとの設定が競合
+
+```toml
+# pyproject.tomlで設定を統一
+
+[tool.ruff]
+line-length = 88  # Blackと同じ
+
+[tool.black]
+line-length = 88  # Ruffと同じ
+```
+
+---
+
+### 問題5: 日本語のdocstringでエラー
+
+```python
+# 原因: ファイルのエンコーディング
+
+# 解決方法: ファイルの先頭に追加
+# -*- coding: utf-8 -*-
+
+"""
+大福店クラス
+"""
+```
+
+---
+
+## 11. 実践チェックリスト
+
+### ✅ 初期セットアップ
+
+```
+【インストール】
+□ Ruffをインストールした
+□ mypyをインストールした
+□ （オプション）Blackをインストールした
+□ （オプション）pre-commitをインストールした
+
+【設定ファイル】
+□ pyproject.toml を作成した
+□ .gitignore を作成した
+□ （オプション）.pre-commit-config.yaml を作成した
+
+【PyCharm設定】
+□ External Tools を設定した
+□ （オプション）File Watchers を設定した
+□ （オプション）ショートカットキーを設定した
+
+【チーム設定】
+□ 設定ファイルをGitにコミットした
+□ README.mdに使い方を記載した
+□ （オプション）GitHub Actionsを設定した
+```
+
+---
+
+### ✅ 日常の使い方
+
+```
+【コーディング中】
+□ ファイル保存時に自動フォーマット（File Watcher）
+□ PyCharmの警告（波線）をチェック
+□ 型ヒントを書く
+
+【コミット前】
+□ ruff check . --fix を実行
+□ ruff format . を実行
+□ mypy . を実行
+□ テストを実行: pytest
+
+【プルリクエスト前】
+□ すべてのチェックがパス
+□ CI/CDがグリーン
+□ コードレビューを依頼
+```
+
+---
+
+## 12. まとめ
+
+### 🎯 最小構成（これだけでOK）
+
+```bash
+# 1. インストール
+pip install ruff mypy
+
+# 2. pyproject.toml作成（上記の設定をコピー）
+
+# 3. 実行
+ruff check . --fix   # コードチェック＋自動修正
+ruff format .        # フォーマット
+mypy .               # 型チェック
+```
+
+---
+
+### 🎯 推奨構成（チーム開発）
+
+```bash
+# 1. インストール
+pip install ruff mypy pre-commit
+
+# 2. 設定ファイル作成
+# - pyproject.toml
+# - .pre-commit-config.yaml
+# - .gitignore
+
+# 3. pre-commitフック有効化
+pre-commit install
+
+# 4. PyCharmにExternal Tools設定
+
+# 5. これで開発開始！
+```
+
+---
+
+### 🎯 ツール選択ガイド
+
+```
+【必須】
+✅ Ruff → リンター＋フォーマッター（最優先）
+✅ mypy → 型チェック（バグ予防に必須）
+
+【推奨】
+⭐ pre-commit → コミット前の自動チェック
+⭐ pytest → テスト（品質向上）
+
+【オプション】
+◯ Black → Ruffで代替可能だが併用もOK
+◯ pylint/flake8 → Ruffで代替可能（不要）
+```
+
+---
+
+### 📊 効果測定
+
+```
+静的解析ツールを導入すると...
+
+Before（導入前）:
+❌ タイポに気づかない → 実行時エラー
+❌ 型ミスに気づかない → バグ発生
+❌ スタイルがバラバラ → 読みにくい
+❌ レビューに時間がかかる
+
+After（導入後）:
+✅ タイポを事前検出 → エラー削減90%
+✅ 型チェックで安全 → バグ削減70%
+✅ 自動フォーマット → 統一感UP
+✅ レビュー時間50%削減
+```
+
+---
+
+**🐰 うさうさ店長からのメッセージ:**
+
+「静的解析ツールは**コードの品質を守る番犬**です！
+
+**特に新人エンジニアにとって:**
+
+1. **Ruff** → エラーを教えてくれる優しい先生
+2. **mypy** → 型の間違いを指摘してくれる
+3. **PyCharm** → リアルタイムで警告を表示
+
+最初は設定が大変に感じるかもしれませんが、
+一度設定すれば**ずっと使える**し、
+チーム全体の生産性が劇的に向上します！
+
+**おすすめの始め方:**
+
+1. まずRuffだけ導入（5分で設定完了）
+2. 慣れたらmypy追加（型ヒントを書く習慣）
+3. 余裕があればpre-commit（自動化）
+
+**困ったときは:**
+- Ruff公式ドキュメント: https://docs.astral.sh/ruff/
+- mypy公式ドキュメント: https://mypy.readthedocs.io/
+- PyCharm公式ヘルプ: https://www.jetbrains.com/help/pycharm/
+
+一緒に品質の高いコードを書きましょう！🎉」
+
+---
+
+## 付録A: コマンド一覧表
+
+### 📋 よく使うコマンド
+
+```bash
+# ========================================
+# Ruff
+# ========================================
+
+# チェックのみ
+ruff check .
+
+# チェック＋自動修正
+ruff check . --fix
+
+# フォーマット
+ruff format .
+
+# 特定のファイルのみ
+ruff check your_file.py --fix
+
+# ルールの説明を表示
+ruff rule E501
+
+# ========================================
+# Black
+# ========================================
+
+# フォーマット
+black .
+
+# チェックのみ（変更しない）
+black --check .
+
+# 差分表示
+black --diff .
+
+# ========================================
+# mypy
+# ========================================
+
+# 型チェック
+mypy .
+
+# 詳細表示
+mypy . --show-error-codes --pretty
+
+# HTMLレポート生成
+mypy . --html-report ./mypy_report
+
+# ========================================
+# pre-commit
+# ========================================
+
+# フックをインストール
+pre-commit install
+
+# 手動で全ファイルをチェック
+pre-commit run --all-files
+
+# 特定のフックだけ実行
+pre-commit run ruff
+
+# ========================================
+# pip
+# ========================================
+
+# インストール
+pip install ruff black mypy
+
+# バージョン確認
+pip list | grep ruff
+
+# アップグレード
+pip install --upgrade ruff
+```
+
+---
+
+## 付録B: エラーコード早見表
+
+### 🔍 Ruffのエラーコード
+
+```
+【Eコード】pycodestyle errors
+E101    インデントにタブを使用
+E111    インデントが4の倍数でない
+E201    括弧の後に空白
+E202    括弧の前に空白
+E203    コロンの前に空白
+E231    カンマの後に空白がない
+E251    キーワード引数の=の周りに空白
+E302    関数定義の前に2行の空白が必要
+E303    空白行が多すぎる
+E501    1行が長すぎる（88文字超）
+E999    構文エラー
+
+【Fコード】pyflakes
+F401    importしたが使っていない
+F403    from module import * を使用
+F811    変数の再定義
+F821    未定義の変数を使用
+F841    変数を定義したが使っていない
+
+【Iコード】isort
+I001    import文が正しく並んでいない
+
+【Nコード】pep8-naming
+N801    クラス名がPascalCaseでない
+N802    関数名がsnake_caseでない
+N803    引数名がsnake_caseでない
+N806    変数名がsnake_caseでない
+
+【Bコード】flake8-bugbear
+B002    Pythonの古い機能を使用
+B006    デフォルト引数に可変オブジェクト
+B007    ループ変数が使われていない
+B008    関数呼び出しをデフォルト引数に使用
+
+【Cコード】flake8-comprehensions
+C400    不要なgenerator
+C401    不要なset
+C402    不要なdict
+C403    不要なset comprehension
+
+【SIMコード】flake8-simplify
+SIM102  if文のネストを減らせる
+SIM103  Falseを返さずに直接比較結果を返せる
+SIM108  三項演算子が使える
+SIM117  複数のwithを1つにまとめられる
+```
+
+---
+
+## 付録C: VS Code での設定（参考）
+
+PyCharmではなくVS Codeを使っている場合:
+
+```json
+// .vscode/settings.json
+
+{
+  // Ruffを有効化
+  "ruff.enable": true,
+  "ruff.organizeImports": true,
+  
+  // 保存時に自動フォーマット
+  "[python]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": true,
+      "source.organizeImports.ruff": true
+    }
+  },
+  
+  // mypy
+  "python.linting.mypyEnabled": true,
+  "python.linting.enabled": true
+}
+```
+
+---
+
+**これで完璧！Pythonの静的解析マスターです！** 🎉
+
+# 🐰 PyCharmで使うPython静的解析ツール完全ガイド
+**新人エンジニア向け！Ruff・Black・mypyの初期設定と使い方**
+
+---
+
+## 📚 目次
+
+1. [静的解析ツールとは？](#1-静的解析ツールとは)
+2. [主要ツールの比較](#2-主要ツールの比較)
+3. [Ruff（最新・最速）](#3-ruff最新最速)
+4. [Black（自動フォーマッタ）](#4-black自動フォーマッタ)
+5. [mypy（型チェッカー）](#5-mypy型チェッカー)
+6. [PyCharm統合設定](#6-pycharm統合設定)
+7. [実践：エラーを修正してみよう](#7-実践エラーを修正してみよう)
+8. [チーム開発での設定](#8-チーム開発での設定)
+
+---
+
+## 1. 静的解析ツールとは？
+
+### 📖 簡単に言うと
+
+**コードを実行せずに問題を見つけてくれるツール**
+
+```
+レストランの例で理解しよう：
+
+❌ 実行して問題発見：
+  お客さんに料理を出してから「塩入れ忘れた！」
+
+✅ 静的解析で問題発見：
+  料理を出す前に「塩入れ忘れてますよ」と教えてくれる
+```
+
+---
+
+### 🎯 何をチェックするか？
+
+```python
+# ❌ このコードの問題点は？
+def sell_daifuku(quantity):
+    pric = 150  # ← typo: price のはず
+    totl = quantity * pric  # ← typo: total のはず
+    return totl
+
+result = sell_daifuku("5")  # ← 文字列を渡している
+```
+
+**静的解析ツールが見つけてくれる問題：**
+1. **タイポ（誤字）** → 未使用変数、未定義変数
+2. **型の不一致** → 文字列に数値の演算
+3. **スタイル違反** → インデント、空行、命名規則
+4. **コードの複雑さ** → 長すぎる関数、深すぎるネスト
+
+---
+
+## 2. 主要ツールの比較
+
+### 📋 どれを使えばいい？
+
+| ツール | 用途 | 速度 | 推奨度 | 特徴 |
+|--------|------|------|--------|------|
+| **Ruff** | リンター+フォーマッタ | ★★★★★ | ★★★★★ | 最新・最速・オールインワン |
+| **Black** | フォーマッタ | ★★★★☆ | ★★★★★ | コード整形の定番 |
+| **mypy** | 型チェッカー | ★★★☆☆ | ★★★★★ | 型ヒントのチェック |
+| **pylint** | リンター | ★☆☆☆☆ | ★★☆☆☆ | 詳細だが遅い（旧世代） |
+| **flake8** | リンター | ★★★☆☆ | ★★★☆☆ | 軽量だが機能少ない（旧世代） |
+
+---
+
+### 🎯 2024年の推奨構成
+
+```
+【最強の組み合わせ】
+1. Ruff → リンター（エラー検出）+ フォーマッタ
+2. mypy → 型チェック
+3. PyCharmの組み込みインスペクション
+
+【理由】
+- Ruffは従来のpylint+flake8+isortを1つで代替
+- 10〜100倍速い
+- 設定がシンプル
+```
+
+---
+
+## 3. Ruff（最新・最速）
+
+### 📖 Ruffとは？
+
+**Rust製の超高速Python linter & formatter**
+
+- pylint、flake8、isort、pyupgradeの機能を統合
+- 設定ファイル1つで完結
+- 2023年から急速に普及
+
+---
+
+### 💻 インストール
+
+```bash
+# ターミナル（PyCharm下部のTerminalタブ）で実行
+
+# 方法1: pipでインストール（推奨）
+pip install ruff
+
+# 方法2: 仮想環境にインストール（プロジェクトごと）
+# PyCharmで新規プロジェクト作成時に仮想環境を作成している場合
+pip install ruff
+
+# インストール確認
+ruff --version
+# 出力例: ruff 0.1.9
+```
+
+---
+
+### ⚙️ 初期設定
+
+#### ステップ1: 設定ファイルを作成
+
+プロジェクトのルートディレクトリに `pyproject.toml` を作成
+
+```toml
+# pyproject.toml（プロジェクトのルートに配置）
+
+[tool.ruff]
+# 1行の最大文字数
+line-length = 88  # Blackと同じ
+
+# Pythonバージョン
+target-version = "py310"  # Python 3.10
+
+# 除外するディレクトリ
+exclude = [
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+# チェックするルール
+# https://docs.astral.sh/ruff/rules/
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort (import順序)
+    "N",   # pep8-naming (命名規則)
+    "UP",  # pyupgrade (古い構文の検出)
+    "B",   # flake8-bugbear (バグの元になるコード)
+    "C4",  # flake8-comprehensions (リスト内包表記)
+    "SIM", # flake8-simplify (簡潔化)
+]
+
+# 無視するルール
+ignore = [
+    "E501",  # 行が長すぎる（line-lengthで制御）
+]
+
+[tool.ruff.format]
+# フォーマッタの設定
+quote-style = "double"  # ダブルクォート使用
+indent-style = "space"  # スペースでインデント
+
+[tool.ruff.lint.isort]
+# import文の並び順
+known-first-party = ["myapp"]  # 自分のパッケージ名
+```
+
+---
+
+### 🚀 PyCharmでの使い方
+
+#### 方法1: ターミナルから手動実行
+
+```bash
+# PyCharm下部のTerminalタブで実行
+
+# ① チェックのみ（エラー表示）
+ruff check .
+
+# ② チェック＋自動修正
+ruff check . --fix
+
+# ③ フォーマット（コード整形）
+ruff format .
+
+# ④ 特定のファイルのみ
+ruff check your_file.py
+ruff format your_file.py
+
+# ⑤ まとめて実行（推奨）
+ruff check . --fix && ruff format .
+```
+
+---
+
+#### 方法2: PyCharmの External Tool として設定
+
+**PyCharmにRuffを統合する手順：**
+
+1. **設定を開く**
+   - `File` → `Settings`（Windows/Linux）
+   - `PyCharm` → `Preferences`（Mac）
+
+2. **External Toolsを追加**
+   - `Tools` → `External Tools` → `+`（プラスボタン）
+
+3. **Ruff Check の設定**
+   ```
+   Name: Ruff Check
+   Program: ruff
+   Arguments: check $FilePath$ --fix
+   Working directory: $ProjectFileDir$
+   ```
+
+4. **Ruff Format の設定**
+   ```
+   Name: Ruff Format
+   Program: ruff
+   Arguments: format $FilePath$
+   Working directory: $ProjectFileDir$
+   ```
+
+5. **使い方**
+   - ファイルを右クリック → `External Tools` → `Ruff Check`
+   - または: `Tools` メニューから実行
+
+---
+
+#### 方法3: File Watcher で自動実行（保存時に自動整形）
+
+1. **File Watchersプラグインを有効化**
+   - `Settings` → `Plugins` → `File Watchers`（通常は標準で有効）
+
+2. **File Watcherを追加**
+   - `Settings` → `Tools` → `File Watchers` → `+`
+
+3. **Ruff Format Watcher の設定**
+   ```
+   Name: Ruff Format
+   File type: Python
+   Scope: Project Files
+   Program: ruff
+   Arguments: format $FilePath$
+   Output paths to refresh: $FilePath$
+   Working directory: $ProjectFileDir$
+   
+   ☑ Auto-save edited files to trigger the watcher（保存時に自動実行）
+   ```
+
+4. **保存時に自動整形**
+   - ファイルを保存（Ctrl+S / Cmd+S）すると自動でフォーマット
+
+---
+
+### 📊 Ruffの出力例
+
+```bash
+# ターミナルで実行
+$ ruff check .
+
+# 出力例
+daifuku_shop.py:10:5: F841 Local variable `pric` is assigned to but never used
+daifuku_shop.py:15:1: E302 Expected 2 blank lines, found 1
+daifuku_shop.py:20:80: E501 Line too long (95 > 88 characters)
+daifuku_shop.py:25:1: I001 Import block is un-sorted or un-formatted
+
+Found 4 errors.
+[*] 2 fixable with the `--fix` option.
+```
+
+**エラーコードの読み方：**
+- `F841` → pyflakes: 未使用変数
+- `E302` → pycodestyle: 空行が足りない
+- `E501` → pycodestyle: 行が長すぎる
+- `I001` → isort: import文の順序が不正
+
+---
+
+## 4. Black（自動フォーマッタ）
+
+### 📖 Blackとは？
+
+**「妥協しない」Pythonコードフォーマッタ**
+
+- スタイルの議論を終わらせる（設定項目がほぼない）
+- Google、Facebook、Dropboxなどが採用
+- Ruffと併用可能
+
+---
+
+### 💻 インストール
+
+```bash
+# PyCharmのTerminalで実行
+pip install black
+
+# インストール確認
+black --version
+# 出力例: black, 24.1.0
+```
+
+---
+
+### ⚙️ 初期設定
+
+#### pyproject.toml に追加
+
+```toml
+# pyproject.toml
+
+[tool.black]
+line-length = 88  # デフォルト88文字
+target-version = ['py310']  # Python 3.10
+include = '\.pyi?$'  # .pyと.pyiファイル
+extend-exclude = '''
+/(
+  # 除外するディレクトリ
+  \.git
+  | \.venv
+  | venv
+  | build
+  | dist
+)/
+'''
+```
+
+---
+
+### 🚀 PyCharmでの使い方
+
+#### 方法1: ターミナルから実行
+
+```bash
+# ① すべてのファイルをフォーマット
+black .
+
+# ② 特定のファイルのみ
+black your_file.py
+
+# ③ チェックのみ（変更しない）
+black --check .
+
+# ④ 差分を表示
+black --diff your_file.py
+
+# ⑤ 1行の長さを変更
+black --line-length 100 your_file.py
+```
+
+---
+
+#### 方法2: PyCharmの External Tool として設定
+
+1. **Settings → Tools → External Tools → +**
+
+2. **Black の設定**
+   ```
+   Name: Black
+   Program: black
+   Arguments: $FilePath$
+   Working directory: $ProjectFileDir$
+   ```
+
+3. **ショートカットキーの設定（任意）**
+   - `Settings` → `Keymap`
+   - `External Tools` → `Black` を検索
+   - 右クリック → `Add Keyboard Shortcut`
+   - 例: `Ctrl+Alt+L`（既存のフォーマットと同じ）
+
+---
+
+#### 方法3: File Watcher で保存時に自動整形
+
+1. **Settings → Tools → File Watchers → +**
+
+2. **Black Watcher の設定**
+   ```
+   Name: Black
+   File type: Python
+   Scope: Project Files
+   Program: black
+   Arguments: $FilePath$
+   Output paths to refresh: $FilePath$
+   Working directory: $ProjectFileDir$
+   
+   ☑ Auto-save edited files to trigger the watcher
+   ```
+
+---
+
+### 📊 Blackの動作例
+
+```python
+# ❌ フォーマット前
+def sell_daifuku(quantity,price=150,discount=0):
+    total=quantity*price*(1-discount)
+    return total
+
+result=sell_daifuku(5,150,0.1)
+
+# ✅ フォーマット後（Blackを実行）
+def sell_daifuku(quantity, price=150, discount=0):
+    total = quantity * price * (1 - discount)
+    return total
+
+
+result = sell_daifuku(5, 150, 0.1)
+```
+
+---
+
+## 5. mypy（型チェッカー）
+
+### 📖 mypyとは？
+
+**Pythonの型ヒントをチェックするツール**
+
+- 型の不一致を実行前に検出
+- バグを早期発見
+- IDEの補完が強化される
+
+---
+
+### 💻 インストール
+
+```bash
+# PyCharmのTerminalで実行
+pip install mypy
+
+# インストール確認
+mypy --version
+# 出力例: mypy 1.8.0
+```
+
+---
+
+### ⚙️ 初期設定
+
+#### mypy.ini または pyproject.toml に設定
+
+```toml
+# pyproject.toml
+
+[tool.mypy]
+# Python バージョン
+python_version = "3.10"
+
+# 厳格モード（推奨）
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true  # 型ヒントなし関数を禁止
+disallow_any_generics = true
+
+# エラー表示
+show_error_codes = true
+show_column_numbers = true
+pretty = true
+
+# 除外するディレクトリ
+exclude = [
+    'venv/',
+    '.venv/',
+    'tests/',
+]
+
+# サードパーティライブラリの型スタブがない場合
+# （numpyなど）
+[[tool.mypy.overrides]]
+module = "numpy.*"
+ignore_missing_imports = true
+```
+
+または
+
+```ini
+# mypy.ini（プロジェクトルートに配置）
+
+[mypy]
+python_version = 3.10
+warn_return_any = True
+warn_unused_configs = True
+disallow_untyped_defs = True
+show_error_codes = True
+pretty = True
+
+[mypy-numpy.*]
+ignore_missing_imports = True
+```
+
+---
+
+### 🚀 PyCharmでの使い方
+
+#### 方法1: ターミナルから実行
+
+```bash
+# ① すべてのファイルをチェック
+mypy .
+
+# ② 特定のファイルのみ
+mypy your_file.py
+
+# ③ 詳細なレポート
+mypy . --show-error-codes --pretty
+
+# ④ 型カバレッジレポート
+mypy . --html-report ./mypy_report
+```
+
+---
+
+#### 方法2: PyCharmの External Tool として設定
+
+1. **Settings → Tools → External Tools → +**
+
+2. **mypy の設定**
+   ```
+   Name: mypy
+   Program: mypy
+   Arguments: $FilePath$ --show-error-codes --pretty
+   Working directory: $ProjectFileDir$
+   ```
+
+---
+
+#### 方法3: PyCharm組み込みの型チェック（推奨）
+
+PyCharmには組み込みの型チェック機能があります！
+
+1. **設定を開く**
+   - `Settings` → `Editor` → `Inspections`
+
+2. **Pythonの型チェックを有効化**
+   - `Python` → `Type checker` にチェック
+
+3. **レベルを調整**
+   ```
+   ☑ Type checker
+     Severity: Warning または Error
+   ```
+
+4. **コードエディタで確認**
+   - 型エラーがある箇所に波線が表示される
+
+---
+
+### 📊 mypyの動作例
+
+```python
+# 型ヒント付きコード
+def sell_daifuku(quantity: int, price: int = 150) -> int:
+    """大福を販売する"""
+    total = quantity * price
+    return total
+
+# ❌ 型エラー
+result = sell_daifuku("5")  # エラー！文字列を渡している
+# error: Argument 1 to "sell_daifuku" has incompatible type "str"; expected "int"
+
+result2 = sell_daifuku(5, "150")  # エラー！
+# error: Argument 2 to "sell_daifuku" has incompatible type "str"; expected "int"
+
+# ✅ 正しい使い方
+result = sell_daifuku(5)  # OK
+result = sell_daifuku(5, 150)  # OK
+```
+
+---
+
+## 6. PyCharm統合設定
+
+### 🎯 最強の開発環境を作る
+
+---
+
+### ステップ1: すべてのツールをインストール
+
+```bash
+# PyCharmのTerminalで実行
+
+# 一括インストール
+pip install ruff black mypy
+
+# requirements.txt に追加する場合
+echo "ruff>=0.1.0" >> requirements-dev.txt
+echo "black>=24.0.0" >> requirements-dev.txt
+echo "mypy>=1.8.0" >> requirements-dev.txt
+```
+
+---
+
+### ステップ2: プロジェクト構成
+
+```
+your_project/
+├── .git/
+├── .venv/               # 仮想環境
+├── src/                 # ソースコード
+│   ├── __init__.py
+│   └── daifuku_shop.py
+├── tests/               # テストコード
+│   └── test_daifuku.py
+├── pyproject.toml       # ツールの設定
+├── .gitignore
+└── README.md
+```
+
+---
+
+### ステップ3: pyproject.toml の完全版
+
+```toml
+# pyproject.toml（完全版）
+
+[project]
+name = "daifuku-shop"
+version = "0.1.0"
+description = "大福店管理システム"
+requires-python = ">=3.10"
+
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+exclude = [".git", ".venv", "venv", "__pycache__", "build", "dist"]
+
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+
+ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.black]
+line-length = 88
+target-version = ['py310']
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+show_error_codes = true
+pretty = true
+exclude = ['venv/', '.venv/', 'tests/']
+```
+
+---
+
+### ステップ4: .gitignore の設定
+
+```gitignore
+# .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# 仮想環境
+venv/
+.venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Ruff
+.ruff_cache/
+
+# pytest
+.pytest_cache/
+```
+
+---
+
+### ステップ5: Makefile または スクリプト作成（便利）
+
+#### Makefile（Linux/Mac）
+
+```makefile
+# Makefile
+
+.PHONY: format check test all
+
+# コードフォーマット
+format:
+	black .
+	ruff check . --fix
+	ruff format .
+
+# コードチェック（エラー検出のみ）
+check:
+	ruff check .
+	mypy .
+
+# テスト実行
+test:
+	pytest
+
+# すべて実行
+all: format check test
+```
+
+使い方:
+```bash
+make format  # フォーマット
+make check   # チェック
+make all     # すべて実行
+```
+
+---
+
+#### run_checks.sh（Windows対応）
+
+```bash
+#!/bin/bash
+# run_checks.sh
+
+echo "🔍 Ruffでコードチェック..."
+ruff check . --fix
+
+echo "✨ Blackでフォーマット..."
+black .
+
+echo "📝 mypyで型チェック..."
+mypy .
+
+echo "✅ すべて完了！"
+```
+
+使い方:
+```bash
+bash run_checks.sh
+```
+
+---
+
+#### run_checks.bat（Windows バッチファイル）
+
+```batch
+@echo off
+REM run_checks.bat
+
+echo 🔍 Ruffでコードチェック...
+ruff check . --fix
+
+echo ✨ Blackでフォーマット...
+black .
+
+echo 📝 mypyで型チェック...
+mypy .
+
+echo ✅ すべて完了！
+pause
+```
+
+---
+
+### ステップ6: PyCharmの設定まとめ
+
+#### A. External Tools 設定（まとめ）
+
+`Settings → Tools → External Tools`
+
+**1. Ruff Check**
+```
+Name: Ruff Check
+Program: ruff
+Arguments: check $FilePath$ --fix
+Working directory: $ProjectFileDir$
+```
+
+**2. Ruff Format**
+```
+Name: Ruff Format
+Program: ruff
+Arguments: format $FilePath$
+Working directory: $ProjectFileDir$
+```
+
+**3. Black**
+```
+Name: Black
+Program: black
+Arguments: $FilePath$
+Working directory: $ProjectFileDir$
+```
+
+**4. mypy**
+```
+Name: mypy
+Program: mypy
+Arguments: $FilePath$ --show-error-codes
+Working directory: $ProjectFileDir$
+```
+
+**5. All Checks（すべて実行）**
+```
+Name: All Checks
+Program: bash（またはcmd.exe）
+Arguments: run_checks.sh（またはrun_checks.bat）
+Working directory: $ProjectFileDir$
+```
+
+---
+
+#### B. File Watchers 設定（保存時に自動実行）
+
+`Settings → Tools → File Watchers`
+
+**Ruff Format Watcher**
+```
+Name: Ruff Format
+File type: Python
+Program: ruff
+Arguments: format $FilePath$
+Working directory: $ProjectFileDir$
+☑ Auto-save edited files to trigger the watcher
+```
+
+---
+
+#### C. PyCharm組み込み機能の活用
+
+1. **コードインスペクション**
+   - `Settings → Editor → Inspections → Python`
+   - すべての警告を有効化
+
+2. **保存時の自動アクション**
+   - `Settings → Tools → Actions on Save`
+   - ☑ `Reformat code`
+   - ☑ `Optimize imports`
+
+3. **型ヒントの表示**
+   - `Settings → Editor → Inlay Hints → Python`
+   - ☑ `Type hints`
+
+---
+
+## 7. 実践：エラーを修正してみよう
+
+### 🐰 問題のあるコード
+
+```python
+# daifuku_shop.py
+
+import os
+from typing import Optional
+import sys
+
+class DaifukuShop:
+    def __init__(self,owner_name,stock):
+        self.owner_name=owner_name
+        self.stock=stock
+        self.sold=0
+    
+    def sell(self,quantity,price=150,discount=0):
+        if quantity>self.stock:
+            return None
+        total=quantity*price*(1-discount)
+        self.stock-=quantity
+        self.sold+=quantity
+        return total
+    
+    def get_stats(self):
+        return {'owner':self.owner_name,'stock':self.stock,'sold':self.sold}
+
+shop=DaifukuShop("うさうさ",20)
+result=shop.sell(5)
+print(result)
+```
+
+---
+
+### 🔍 Ruffでチェック
+
+```bash
+$ ruff check daifuku_shop.py
+
+daifuku_shop.py:1:8: F401 `os` imported but unused
+daifuku_shop.py:3:8: F401 `sys` imported but unused
+daifuku_shop.py:5:1: I001 Import block is un-sorted or un-formatted
+daifuku_shop.py:6:5: D100 Missing docstring in public class
+daifuku_shop.py:8:26: E231 Missing whitespace after ','
+daifuku_shop.py:24:1: E302 Expected 2 blank lines, found 1
+
+Found 6 errors.
+[*] 4 fixable with the `--fix` option.
+```
+
+**自動修正:**
+```bash
+$ ruff check daifuku_shop.py --fix
+Fixed 4 errors
+```
+
+---
+
+### ✨ Blackでフォーマット
+
+```bash
+$ black daifuku_shop.py
+
+reformatted daifuku_shop.py
+All done! ✨ 🍰 ✨
+```
+
+---
+
+### 📝 mypyで型チェック
+
+```bash
+$ mypy daifuku_shop.py
+
+daifuku_shop.py:7: error: Function is missing a type annotation  [no-untyped-def]
+daifuku_shop.py:12: error: Function is missing a type annotation  [no-untyped-def]
+daifuku_shop.py:21: error: Function is missing a return type annotation  [no-untyped-def]
+
+Found 3 errors in 1 file (checked 1 source file)
+```
+
+---
+
+### ✅ 修正後のコード
+
+```python
+# daifuku_shop.py（修正後）
+
+from typing import Dict, Optional, Any
+
+
+class DaifukuShop:
+    """大福店クラス"""
+
+    def __init__(self, owner_name: str, stock: int) -> None:
+        """
+        大福店を初期化する
+
+        Args:
+            owner_name: 店長の名前
+            stock: 初期在庫数
+        """
+        self.owner_name = owner_name
+        self.stock = stock
+        self.sold = 0
+
+    def sell(
+        self, quantity: int, price: int = 150, discount: float = 0
+    ) -> Optional[int]:
+        """
+        大福を販売する
+
+        Args:
+            quantity: 販売個数
+            price: 単価
+            discount: 割引率（0.0-1.0）
+
+        Returns:
+            売上金額。在庫不足の場合はNone
+        """
+        if quantity > self.stock:
+            return None
+
+        total = int(quantity * price * (1 - discount))
+        self.stock -= quantity
+        self.sold += quantity
+        return total
+
+    def get_stats(self) -> Dict[str, Any]:
+        """
+        統計情報を取得する
+
+        Returns:
+            店舗の統計情報
+        """
+        return {
+            "owner": self.owner_name,
+            "stock": self.stock,
+            "sold": self.sold,
+        }
+
+
+def main() -> None:
+    """メイン処理"""
+    shop = DaifukuShop("うさうさ", 20)
+    result = shop.sell(5)
+    print(result)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+---
+
+### 🎉 すべてクリア！
+
+```bash
+# Ruff
+$ ruff check daifuku_shop.py
+All checks passed!
+
+# Black
+$ black daifuku_shop.py --check
+All done! ✨ 🍰 ✨
+1 file would be left unchanged.
+
+# mypy
+$ mypy daifuku_shop.py
+Success: no issues found in 1 source file
+```
+
+---
+
+## 8. チーム開発での設定
+
+### 📋 チーム全体で統一する設定
+
+---
+
+### ステップ1: プロジェクトに設定ファイルをコミット
+
+```bash
+# Gitにコミット
+git add pyproject.toml
+git add .gitignore
+git commit -m "Add linting and formatting configuration"
+git push
+```
+
+---
+
+### ステップ2: pre-commit フックの設定（コミット前に自動チェック）
+
+```bash
+# pre-commitのインストール
+pip install pre-commit
+
+# .pre-commit-config.yaml を作成
+```
+
+```.yaml
+# .pre-commit-config.yaml
+
+repos:
+  # Ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  # mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+```
+
+```bash
+# pre-commitフックをインストール
+pre-commit install
+
+# 手動で実行してテスト
+pre-commit run --all-files
+```
+
+**これで、`git commit` する前に自動チェックが走る！**
+
+---
+
+### ステップ3: GitHub Actions で CI/CD
+
+```.yaml
+# .github
