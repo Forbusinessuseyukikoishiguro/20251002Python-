@@ -1,0 +1,300 @@
+
+# Git・GitHub・Git Bash・Python 実務向けガイド
+
+新人エンジニアさん、ようこそ!実務で必要な基本操作をステップバイステップで教えますね。
+
+## 📚 第1章: 基本用語と読み方
+
+### Git関連の読み方
+- **Git** = ギット
+- **GitHub** = ギットハブ
+- **repository** = リポジトリ(略称:リポ)
+- **commit** = コミット
+- **push** = プッシュ
+- **pull** = プル
+- **branch** = ブランチ
+- **merge** = マージ
+- **clone** = クローン
+
+### 基本概念
+- **Git**: バージョン管理システム(変更履歴を記録)
+- **GitHub**: Gitのリモート保存場所(クラウドサービス)
+- **Git Bash**: WindowsでGitコマンドを使うためのツール
+
+---
+
+## 🚀 第2章: 実務の基本フロー
+
+### 【朝の作業開始】
+```bash
+# 1. 作業ディレクトリに移動
+cd /c/projects/your-project
+
+# 2. 最新のコードを取得
+git pull origin main
+# 読み方: ギット プル オリジン メイン
+# 意味: リモートの最新版をローカルに持ってくる
+```
+
+### 【開発作業】
+```bash
+# 3. 新しいブランチを作成(機能開発用)
+git checkout -b feature/add-login
+# 読み方: ギット チェックアウト -b フィーチャー/アッド-ログイン
+# 意味: 新しい作業用ブランチを作って移動
+
+# 4. 現在のブランチを確認
+git branch
+# 読み方: ギット ブランチ
+```
+
+### 【コード変更後】
+```bash
+# 5. 変更されたファイルを確認
+git status
+# 読み方: ギット ステータス
+# 赤字: まだ記録されていない変更
+
+# 6. 変更をステージングエリアに追加
+git add .
+# 読み方: ギット アッド ドット
+# 意味: すべての変更をコミット準備に追加
+
+# または特定ファイルのみ
+git add login.py
+
+# 7. 変更を記録(コミット)
+git commit -m "ログイン機能を追加"
+# 読み方: ギット コミット -m "メッセージ"
+# 意味: 変更を履歴として保存
+```
+
+### 【GitHub にアップロード】
+```bash
+# 8. リモートにプッシュ
+git push origin feature/add-login
+# 読み方: ギット プッシュ オリジン フィーチャー/アッド-ログイン
+# 意味: 自分の変更をGitHubにアップロード
+```
+
+---
+
+## 🔄 第3章: 実務でよく使うコマンド
+
+### 状況確認系
+```bash
+# 現在の状態を確認
+git status
+
+# コミット履歴を見る
+git log
+# 終了は「q」キー
+
+# 見やすい履歴
+git log --oneline --graph
+
+# 誰が書いたか確認
+git blame ファイル名.py
+```
+
+### ブランチ操作
+```bash
+# ブランチ一覧
+git branch
+
+# ブランチ切り替え
+git checkout main
+# または
+git switch main
+
+# ブランチ削除
+git branch -d feature/old-feature
+```
+
+### やり直し系(⚠️注意して使う)
+```bash
+# 直前のコミットメッセージを修正
+git commit --amend -m "正しいメッセージ"
+
+# ファイルの変更を取り消す(コミット前)
+git checkout -- ファイル名.py
+
+# addを取り消す
+git reset HEAD ファイル名.py
+
+# 最新のコミットを取り消す(変更は残る)
+git reset --soft HEAD^
+```
+
+---
+
+## 🐍 第4章: Python基本操作
+
+### Git Bashでのコマンド
+```bash
+# Pythonバージョン確認
+python --version
+# または
+python3 --version
+
+# Pythonファイル実行
+python app.py
+
+# pip(パッケージ管理)のバージョン確認
+pip --version
+
+# パッケージインストール
+pip install requests
+
+# インストール済みパッケージ一覧
+pip list
+
+# requirements.txtから一括インストール
+pip install -r requirements.txt
+
+# requirements.txt作成
+pip freeze > requirements.txt
+```
+
+### 仮想環境(重要!)
+```bash
+# 仮想環境作成
+python -m venv venv
+
+# 仮想環境有効化(Git Bash)
+source venv/Scripts/activate
+
+# 有効化すると(venv)が表示される
+(venv) user@PC MINGW64 ~/project
+
+# 無効化
+deactivate
+```
+
+---
+
+## 📋 第5章: 実務の1日の流れ(例)
+
+### 朝(9:00)
+```bash
+cd /c/projects/company-project
+git pull origin develop
+```
+
+### タスク開始(9:30)
+```bash
+git checkout -b feature/issue-123-user-profile
+# Pythonで開発...
+python app.py  # テスト実行
+```
+
+### お昼前(11:30)
+```bash
+git status
+git add .
+git commit -m "ユーザープロフィール画面の基本実装"
+```
+
+### 午後、機能完成(15:00)
+```bash
+git add .
+git commit -m "プロフィール編集機能を追加"
+git push origin feature/issue-123-user-profile
+# GitHubでPull Request作成
+```
+
+---
+
+## ⚠️ 第6章: 実務での注意点
+
+### やってはいけないこと
+```bash
+# ❌ mainブランチで直接作業
+git checkout main
+# コード変更... ← ダメ!
+
+# ✅ 必ずブランチを切る
+git checkout -b feature/my-work
+```
+
+### コミットメッセージの書き方
+```bash
+# ❌ 悪い例
+git commit -m "修正"
+git commit -m "aaa"
+
+# ✅ 良い例
+git commit -m "ログインAPIのエラーハンドリングを追加"
+git commit -m "ユーザー一覧画面のページネーション実装"
+```
+
+### .gitignoreファイル
+```.gitignore
+# Pythonプロジェクトで無視するファイル
+__pycache__/
+*.pyc
+venv/
+.env
+*.log
+.DS_Store
+```
+
+---
+
+## 🆘 第7章: トラブル時の対処
+
+### コンフリクト(衝突)が起きたら
+```bash
+# pullしたときにコンフリクト
+git pull origin main
+
+# コンフリクトしたファイルを開く
+# <<<<<<< HEAD と ======= と >>>>>>> の部分を手動修正
+
+# 修正後
+git add .
+git commit -m "コンフリクトを解決"
+```
+
+### 間違えてコミットしたら
+```bash
+# まだpushしていない場合
+git reset --soft HEAD^  # コミット取り消し(変更は残る)
+
+# すでにpushした場合は先輩に相談!
+```
+
+---
+
+## 📝 第8章: チートシート
+
+### 毎日使うコマンド TOP5
+```bash
+1. git status         # 状態確認
+2. git add .          # 変更を追加
+3. git commit -m ""   # 記録
+4. git push           # アップロード
+5. git pull           # ダウンロード
+```
+
+### Git Bashの便利なショートカット
+- `Ctrl + C`: 実行中の処理を中止
+- `Ctrl + L`: 画面クリア(または`clear`コマンド)
+- `Tab`: ファイル名・コマンド補完
+- `↑`キー: 前のコマンド呼び出し
+
+---
+
+## 🎯 実践練習
+
+最初の1週間はこの流れを毎日繰り返しましょう:
+
+1. `git pull` で最新取得
+2. `git checkout -b` で新ブランチ
+3. コード変更
+4. `git status` で確認
+5. `git add .` でステージング
+6. `git commit -m` で記録
+7. `git push` でアップロード
+
+わからないことがあったら、いつでも質問してくださいね!実務で具体的に困っている操作はありますか?
