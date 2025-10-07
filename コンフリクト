@@ -1,0 +1,367 @@
+# コンフリクト(衝突)の完全ガイド
+
+## 🔥 コンフリクトが起きる状況
+
+### よくあるシナリオ
+
+```bash
+# あなたの作業
+git checkout -b feature/my-work
+# login.py の10行目を修正
+git commit -m "ログイン処理を修正"
+
+# 同じ時間に同僚も作業
+# 同じlogin.py の10行目を別の内容に修正してmainにマージ済み
+
+# あなたがpullしようとすると...
+git pull origin main
+# ⚠️ コンフリクト発生!
+```
+
+---
+
+## 📊 実際の画面表示
+
+### 1. コンフリクト発生時のメッセージ
+
+```bash
+$ git pull origin main
+
+Auto-merging login.py
+CONFLICT (content): Merge conflict in login.py
+Automatic merge failed; fix conflicts and then commit the result.
+```
+
+**読み方:**
+- `CONFLICT (content)` = コンフリクト(コンテント) = 内容が衝突
+- `login.py` = 衝突しているファイル名
+
+### 2. git statusで確認
+
+```bash
+$ git status
+
+On branch feature/my-work
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
+
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
+        both modified:   login.py
+```
+
+**意味:**
+- `both modified` = 両方が同じファイルを修正した
+- 今は「衝突解決中」の状態
+
+---
+
+## 📝 コンフリクトしたファイルの中身
+
+### login.py を開くとこうなっている
+
+```python
+def login(username, password):
+    # 通常のコード...
+    
+<<<<<<< HEAD (Current Change)
+    # あなたの変更
+    if user.authenticate(password):
+        return True
+=======
+    # 同僚の変更(mainブランチの内容)
+    if user.verify_password(password):
+        return True
+>>>>>>> main (Incoming Change)
+    
+    return False
+```
+
+### 記号の意味
+
+```
+<<<<<<< HEAD
+  ↑ ここから下があなたの変更
+
+=======
+  ↑ 区切り線
+
+>>>>>>> main
+  ↑ ここまでが他の人の変更(またはmainの変更)
+```
+
+---
+
+## 🛠️ 解決方法(3パターン)
+
+### パターン1: 自分の変更を採用
+
+```python
+# <<<<<<< や ======= を全部削除して
+
+def login(username, password):
+    # あなたの変更だけ残す
+    if user.authenticate(password):
+        return True
+    return False
+```
+
+### パターン2: 相手の変更を採用
+
+```python
+def login(username, password):
+    # 相手の変更だけ残す
+    if user.verify_password(password):
+        return True
+    return False
+```
+
+### パターン3: 両方を組み合わせる(よくある!)
+
+```python
+def login(username, password):
+    # 両方の良いところを取る
+    if user.verify_password(password):  # 相手のメソッド名を使う
+        user.update_last_login()  # 自分の追加機能も入れる
+        return True
+    return False
+```
+
+---
+
+## 🔧 解決の手順(ステップバイステップ)
+
+### Step 1: コンフリクトファイルを確認
+
+```bash
+git status
+
+# 表示例:
+# both modified:   login.py
+# both modified:   config.py
+```
+
+### Step 2: ファイルを開いて手動で修正
+
+```bash
+# VSCodeで開く
+code login.py
+
+# または通常のエディタで開く
+```
+
+**重要:** `<<<<<<<`, `=======`, `>>>>>>>` を全部削除する!
+
+### Step 3: 動作確認
+
+```bash
+# Pythonなら実行してエラーがないか確認
+python login.py
+
+# テストがあれば実行
+pytest tests/test_login.py
+```
+
+### Step 4: 解決したファイルをadd
+
+```bash
+# 修正したファイルをステージング
+git add login.py
+
+# 全部解決したら
+git add .
+```
+
+### Step 5: コミット
+
+```bash
+# 通常のコミット
+git commit -m "コンフリクトを解決: ログイン処理をマージ"
+
+# または、何も書かずにコミット(デフォルトメッセージが入る)
+git commit
+```
+
+### Step 6: プッシュ
+
+```bash
+git push origin feature/my-work
+```
+
+---
+
+## 🎯 VSCodeでの解決(おすすめ!)
+
+VSCodeでコンフリクトファイルを開くと、こう表示されます:
+
+```
+<<<<<<< HEAD (Current Change)
+    if user.authenticate(password):
+        return True
+||||||| merged common ancestors
+    if user.check_password(password):
+        return True
+=======
+    if user.verify_password(password):
+        return True
+>>>>>>> main (Incoming Change)
+```
+
+**表示されるボタン:**
+- `Accept Current Change` = 自分の変更を採用
+- `Accept Incoming Change` = 相手の変更を採用
+- `Accept Both Changes` = 両方を残す
+- `Compare Changes` = 差分を詳しく見る
+
+ボタンをクリックするだけで解決できます!
+
+---
+
+## 🚨 よくある間違い
+
+### ❌ 間違い1: マーカーを残したままコミット
+
+```python
+<<<<<<< HEAD
+    if user.authenticate(password):
+=======
+    if user.verify_password(password):
+>>>>>>> main
+```
+
+これをコミットすると**実行時にエラー**になります!
+
+### ❌ 間違い2: 解決せずにpush
+
+```bash
+git push origin feature/my-work
+# エラー: コンフリクトが解決されていません
+```
+
+### ✅ 正しい流れ
+
+```bash
+# 1. ファイルを修正
+# 2. マーカー(<<<, ===, >>>)を全削除
+# 3. 動作確認
+# 4. git add
+# 5. git commit
+# 6. git push
+```
+
+---
+
+## 🆘 困ったときの対処法
+
+### コンフリクト解決を中断したい
+
+```bash
+# マージを中止して元に戻る
+git merge --abort
+
+# または
+git rebase --abort
+```
+
+### 自動的に相手の変更を全採用
+
+```bash
+# ⚠️ 注意: 自分の変更が全部消える
+git checkout --theirs ファイル名.py
+git add ファイル名.py
+```
+
+### 自動的に自分の変更を全採用
+
+```bash
+# ⚠️ 注意: 相手の変更が全部消える
+git checkout --ours ファイル名.py
+git add ファイル名.py
+```
+
+---
+
+## 📋 実践シミュレーション
+
+### シナリオ: 実際にやってみよう
+
+```bash
+# 1. コンフリクト発生
+$ git pull origin main
+CONFLICT (content): Merge conflict in app.py
+
+# 2. 確認
+$ git status
+both modified:   app.py
+
+# 3. ファイルを開く
+$ code app.py
+
+# 4. 手動で修正(マーカー削除)
+# 5. 保存
+
+# 6. テスト実行
+$ python app.py
+# エラーなし!
+
+# 7. 解決
+$ git add app.py
+$ git commit -m "コンフリクト解決"
+$ git push
+```
+
+---
+
+## 💡 コンフリクトを防ぐコツ
+
+### 1. こまめにpull
+
+```bash
+# 朝、昼、夕方にpull
+git pull origin main
+```
+
+### 2. 小さい単位でコミット
+
+```bash
+# ❌ 1日の終わりに1回だけコミット
+# ✅ 機能ごとに小まめにコミット
+```
+
+### 3. 同じファイルを複数人で触らない
+
+- チームで「誰がどのファイルを触るか」を共有
+- コードレビューで早めにマージ
+
+### 4. ブランチ戦略を守る
+
+```bash
+# 個人ブランチ → develop → main
+# の順番でマージ
+```
+
+---
+
+## 🎓 よくある質問
+
+**Q: コンフリクトは悪いこと?**  
+A: いいえ!チーム開発では普通のことです。怖がらなくて大丈夫👍
+
+**Q: どっちの変更を採用すべき?**  
+A: 先輩に相談しましょう。または、両方の機能を組み合わせることが多いです。
+
+**Q: 解決に自信がない...**  
+A: 先輩に「コンフリクトが起きたので一緒に見てもらえますか?」と聞きましょう!
+
+**Q: 複雑すぎて解決できない**  
+A: `git merge --abort` で一旦中止 → 先輩に相談
+
+---
+
+コンフリクトについて、他に知りたいことはありますか?例えば:
+- 「rebaseでのコンフリクト解決」
+- 「複数ファイルのコンフリクト対応」
+- 「GUIツールでの解決方法」
+
+など、具体的な状況があれば教えてください!
