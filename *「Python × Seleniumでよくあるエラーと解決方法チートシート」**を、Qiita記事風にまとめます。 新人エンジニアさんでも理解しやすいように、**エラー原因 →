@@ -1,0 +1,234 @@
+いいですね！✨
+それでは今回は、**「Python × Seleniumでよくあるエラーと解決方法チートシート」**を、Qiita記事風にまとめます。
+新人エンジニアさんでも理解しやすいように、**エラー原因 → 対処法 → サンプルコード** の順でステップ解説します🐍💨
+
+---
+
+# 🧭 Python × Selenium よくあるエラーと解決方法チートシート
+
+こんにちは、TechCommitメンバーの **友季子** です。
+PythonでWeb自動化を行う際、Seleniumを使っているとさまざまなエラーに出会いますよね。
+今回は、私自身が経験したエラーや新人エンジニアさんがつまずきやすいポイントをまとめた**チートシート**を作りました💡
+
+---
+
+## 1. `selenium.common.exceptions.NoSuchElementException`
+
+### 💥 エラー内容
+
+指定した要素が見つからないときに発生します。
+
+```
+selenium.common.exceptions.NoSuchElementException: Message: no such element: Unable to locate element
+```
+
+### 🧩 原因
+
+* XPathやCSSセレクタの指定ミス
+* ページがまだ読み込まれていない
+* iframe内の要素を直接指定している
+
+### ✅ 解決方法
+
+1️⃣ 正しいセレクタを確認する（開発者ツール → 要素を右クリック → Copy → Copy XPath）
+2️⃣ `WebDriverWait`でページ読み込みを待機する
+3️⃣ iframeの場合は `driver.switch_to.frame()` を使用
+
+```python
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+# 要素が表示されるまで待機
+element = WebDriverWait(driver, 10).until(
+    EC.presence_of_element_located((By.XPATH, '//input[@id="search"]'))
+)
+```
+
+---
+
+## 2. `selenium.common.exceptions.ElementClickInterceptedException`
+
+### 💥 エラー内容
+
+クリックしようとした要素が別の要素に覆われている。
+
+```
+ElementClickInterceptedException: element click intercepted
+```
+
+### 🧩 原因
+
+* モーダルウィンドウや広告がかぶっている
+* ページがまだスクロールされていない
+
+### ✅ 解決方法
+
+1️⃣ ページをスクロールしてからクリック
+2️⃣ JavaScriptで強制クリック
+
+```python
+# スクロールしてクリック
+element = driver.find_element(By.XPATH, '//button[@id="submit"]')
+driver.execute_script("arguments[0].scrollIntoView(true);", element)
+element.click()
+```
+
+または👇
+
+```python
+# JSでクリック
+driver.execute_script("arguments[0].click();", element)
+```
+
+---
+
+## 3. `selenium.common.exceptions.TimeoutException`
+
+### 💥 エラー内容
+
+指定時間内に要素が見つからなかったときに発生。
+
+```
+selenium.common.exceptions.TimeoutException: Message:
+```
+
+### ✅ 解決方法
+
+* `WebDriverWait` の待機時間を延ばす
+* セレクタが正しいか確認
+* ページ遷移が完了しているか確認
+
+```python
+# 待機時間を15秒に延長
+element = WebDriverWait(driver, 15).until(
+    EC.visibility_of_element_located((By.ID, "login-button"))
+)
+```
+
+---
+
+## 4. `selenium.common.exceptions.WebDriverException`
+
+### 💥 エラー内容
+
+WebDriver（ChromeDriverなど）の実行エラー。
+
+```
+WebDriverException: Message: 'chromedriver' executable needs to be in PATH.
+```
+
+### ✅ 解決方法
+
+* ChromeDriverのパスを明示的に指定
+* Chromeとドライバーのバージョンを一致させる
+
+```python
+from selenium import webdriver
+
+driver = webdriver.Chrome(executable_path=r"C:\Users\yukik\Desktop\chromedriver.exe")
+```
+
+---
+
+## 5. `selenium.common.exceptions.StaleElementReferenceException`
+
+### 💥 エラー内容
+
+要素が再描画（DOM更新）で消えたあとに参照した場合に発生。
+
+### ✅ 解決方法
+
+* 再度 `find_element` で要素を取得し直す
+
+```python
+try:
+    element.click()
+except StaleElementReferenceException:
+    element = driver.find_element(By.XPATH, '//button[@id="submit"]')
+    element.click()
+```
+
+---
+
+## 6. `selenium.common.exceptions.SessionNotCreatedException`
+
+### 💥 エラー内容
+
+ChromeDriverとブラウザのバージョンが合わない。
+
+```
+selenium.common.exceptions.SessionNotCreatedException: Message: session not created
+```
+
+### ✅ 解決方法
+
+* ChromeとChromeDriverのバージョンを合わせる
+* 最新のドライバーを[公式サイト](https://googlechromelabs.github.io/chrome-for-testing/#stable)から再ダウンロード
+
+---
+
+## 7. `selenium.common.exceptions.InvalidSelectorException`
+
+### 💥 エラー内容
+
+不正なセレクタ（例えばXPathの文法ミス）。
+
+### ✅ 解決方法
+
+* XPathやCSSセレクタを再確認（クォーテーションや閉じタグ忘れに注意）
+
+```python
+# ❌ 間違い
+driver.find_element(By.XPATH, "//input[@id=search]")
+
+# ✅ 正しい
+driver.find_element(By.XPATH, "//input[@id='search']")
+```
+
+---
+
+## 8. `selenium.common.exceptions.ElementNotInteractableException`
+
+### 💥 エラー内容
+
+要素が見えているが操作できない。
+
+### ✅ 解決方法
+
+* 要素が `display:none` の状態でないか確認
+* スクロールまたは待機を追加
+
+```python
+WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "login")))
+driver.find_element(By.ID, "login").click()
+```
+
+---
+
+## 🚀 まとめ
+
+| エラー名                               | 主な原因      | 主な解決方法          |
+| ---------------------------------- | --------- | --------------- |
+| `NoSuchElementException`           | 要素が見つからない | 待機 or セレクタ修正    |
+| `ElementClickInterceptedException` | 他要素に覆われてる | スクロール or JSクリック |
+| `TimeoutException`                 | 読み込み遅延    | 待機時間を延ばす        |
+| `WebDriverException`               | ドライバ設定    | パス or バージョン確認   |
+| `StaleElementReferenceException`   | 要素が再描画    | 要素再取得           |
+| `SessionNotCreatedException`       | バージョン不一致  | 最新ドライバ導入        |
+
+---
+
+## 🎯 終わりに
+
+Seleniumは慣れるまではエラーの嵐ですが、1つずつ原因を理解すると安定した自動化ができるようになります🌸
+この記事が、同じようにSeleniumを学ぶ新人エンジニアの方のお役に立てばうれしいです！
+
+---
+
+💬 次回予告：「Seleniumでログイン処理を自動化するテンプレート集」も執筆予定です🐍✨
+
+---
+
+ご希望があれば、この内容を **実際のQiita投稿Markdown形式**（タイトル・タグ・目次付き）でも整形できます。
+→ その形で出力しましょうか？
