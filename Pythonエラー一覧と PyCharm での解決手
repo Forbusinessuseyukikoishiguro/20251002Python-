@@ -1,0 +1,416 @@
+# Pythonエラー一覧と PyCharm での解決手順（新人エンジニア向け・ステップバイステップ）
+
+こんにちは、友季子さん！😊
+「Python＋PyCharm」でよく遭遇するエラーと、**原因の見つけ方・直し方を実践的に**まとめました。実際に手を動かしながら覚えるのがいちばん早いので、例と手順を順に示します。
+
+---
+
+## まず最初に：Traceback（トレースバック）の読み方（超重要）
+
+エラーが出たらまずTracebackを読む習慣をつけましょう。例：
+
+```
+Traceback (most recent call last):
+  File "app.py", line 10, in <module>
+    main()
+  File "app.py", line 6, in main
+    print(x + 1)
+NameError: name 'x' is not defined
+```
+
+読み方（手順）：
+
+1. **下から上へ**読む：最後の行にエラー種類とメッセージ（`NameError: ...`）。
+2. その上の一番直近の `File "..." line N` が「発生箇所」。
+3. そのファイルの該当行を開き、周囲のコードを確認する。
+
+---
+
+## よくある例外（代表） — 原因・サンプル・直し方（簡潔に）
+
+### 1. `SyntaxError`
+
+* **原因**：構文の間違い（コロン忘れ、カッコ閉じ忘れなど）。
+* **例**：
+
+  ```py
+  if x > 0
+      print("ok")
+  ```
+* **直し方**：エラーメッセージに従い該当行を修正（ここは `if x > 0:`）。PyCharm は赤い波線が出る。
+
+### 2. `IndentationError`
+
+* **原因**：インデント不一致（スペースとタブ混在など）。
+* **直し方**：`Code → Reformat Code`（Ctrl+Alt+L）やエディタ設定でタブ→スペース統一。混在していたら修正。
+
+### 3. `NameError`
+
+* **原因**：変数/関数が定義されていない（タイポが多い）。
+* **例**：`print(a)`（aが未定義）
+* **直し方**：変数名のスペル確認、定義の順序確認。PyCharm の「Find Usages」やデバッガで変数の有無を確認。
+
+### 4. `TypeError`
+
+* **原因**：型が合っていない（関数に不正な型を渡した等）。
+* **例**：`len(5)` → `TypeError: object of type 'int' has no len()`
+* **直し方**：渡す値の型を変換するか、使う関数を変更する。
+
+### 5. `ValueError`
+
+* **原因**：値が無効（例: `int("abc")`）。
+* **直し方**：入力検証・例外処理（try/except）を追加する。
+
+### 6. `ImportError` / `ModuleNotFoundError`
+
+* **原因**：モジュールが見つからない（インストール忘れ、仮想環境違い、ファイル名衝突）。
+* **直し方**：
+
+  1. PyCharm の **Project Interpreter** を確認（File → Settings → Project → Python Interpreter）。
+  2. 必要なら `pip install requests` を該当 interpreter に行う、またはPyCharmのパッケージ管理からインストール。
+  3. 自分のファイル名が `requests.py` 等で標準ライブラリを上書きしていないか確認（あれば改名）。
+
+### 7. `AttributeError`
+
+* **原因**：オブジェクトに存在しない属性/メソッドを呼ぶ。
+* **例**：`"str".append(1)`（文字列に `append` はない）
+* **直し方**：正しい型・メソッドを使う（list にする等）。
+
+### 8. `IndexError`
+
+* **原因**：リスト等の範囲外アクセス。
+* **直し方**：インデックスが範囲内か `len()` で確認、ループを安全にする。
+
+### 9. `KeyError`
+
+* **原因**：辞書に存在しないキーでアクセス。
+* **直し方**：`dict.get('k')` を使う、`in` で存在確認、例外処理を使う。
+
+### 10. `ZeroDivisionError`
+
+* **原因**：0で割った。
+* **直し方**：割る数をチェックする（`if denom == 0: ...`）。
+
+### 11. `FileNotFoundError` / `PermissionError`
+
+* **原因**：ファイルがない、権限がない。
+* **直し方**：パスを確認（相対/絶対）、working directory（後述）を確認、権限を修正。
+
+### 12. `UnicodeDecodeError/EncodeError`
+
+* **原因**：文字エンコードの不一致（ファイル読み込み時など）。
+* **直し方**：`open('f', encoding='utf-8')` を指定する、ファイルのエンコードを確認。
+
+### 13. `RecursionError`
+
+* **原因**：再帰が深すぎる（終了条件が無い）。
+* **直し方**：再帰の終了条件を追加、あるいはループに変える。
+
+### 14. `AssertionError`
+
+* **原因**：`assert` が偽。
+* **直し方**：前提条件を確認、テストや例外に置き換える。
+
+---
+
+## PyCharm 特有の問題と対処（よくあるトラップ）
+
+* **インタプリタ未設定／違う仮想環境を見ている**
+  → *File → Settings → Project → Python Interpreter* で正しい環境を選択。
+* **Working directory（作業ディレクトリ）が違う**
+  → Run → Edit Configurations → 該当構成の Working directory をプロジェクトルートにする。
+* **ファイル名が標準モジュールと被っている**（例：`json.py`, `requests.py`）
+  → ファイル名を変更し、`*.pyc` を削除して再実行。
+* **キャッシュが怪しい**
+  → File → Invalidate Caches / Restart を試す（最後の手段）。
+* **パッケージはインストール済みなのに ImportError が出る**
+  → PyCharm が見る interpreter と `pip` を使った環境が異なる可能性あり。`pip` の場所を確認（`which pip` / `pip -V`）または PyCharm のターミナルを使ってインストール。
+
+---
+
+## PyCharm デバッグ：実践ステップ（超具体的）
+
+1. **エラー行にブレークポイントを置く**
+
+   * エディタ左側のガター（行番号横）をクリック。
+   * ショートカット: **Toggle breakpoint** `Ctrl+F8`（Windows/Linux） / `⌘+F8`（mac）。
+2. **デバッグ実行**
+
+   * Run → Debug… または **Shift+F9**（Windows/Linux）。
+3. **ステップ実行**（キー）
+
+   * Step Over（次の行へ）: `F8`
+   * Step Into（関数の中へ）: `F7`
+   * Step Out（関数から抜ける）: `Shift+F8`
+   * Resume（続行）: `F9`
+4. **変数・スタックを見る**
+
+   * Debug ウィンドウで **Variables**、**Frames** を確認。
+5. **Evaluate Expression**（式を評価）
+
+   * 実行中に任意の式を評価して値を見る（Windows: `Alt+F8` 等）。
+6. **条件付きブレークポイント**
+
+   * 右クリックして「Condition...」を設定（例: `i == 10`）。
+7. **例外ブレークポイント**
+
+   * Run → View Breakpoints（ブレークポイント設定）で `Any Exception` を追加すると、例外が投げられた時点で止められる。
+8. **ログ出力とウォッチ**
+
+   * ブレークポイントで「ログにメッセージを出力」やウォッチ式を設定して状態を監視。
+
+---
+
+## 実践的なデバッグの流れ（問題解決チェックリスト）
+
+1. **Traceback を読む** → エラー種類と発生箇所を把握。
+2. **最小再現コードを作る**（問題箇所だけを切り出す）。
+3. **PyCharm デバッガで止めて中身確認** → 変数、型、スタックを確認。
+4. **ログを足す or `print()` / logging**（logging を推奨）。
+5. **原因を仮説立て→修正→再実行**（小さな変更で試す）。
+6. **同じエラーを検索**（エラーメッセージ全文で検索すると早い）。
+
+---
+
+## よく使うコマンド & ショートカット（覚えやすいもの）
+
+* Toggle breakpoint: `Ctrl+F8`（Win/Linux） / `⌘+F8`（Mac）
+* Debug 実行: `Shift+F9`
+* Step Over: `F8`
+* Step Into: `F7`
+* Step Out: `Shift+F8`
+* Resume: `F9`
+* Reformat code: `Ctrl+Alt+L`（Win/Linux）
+
+> ※ 環境や Keymap によって異なる場合があります。メニューから操作する方法も覚えておくと安心です。
+
+---
+
+## 実例（短い演習） — やってみよう
+
+### 演習1（NameError）
+
+```py
+# app.py
+def main():
+    print(a + 1)
+
+main()
+```
+
+**手順**：
+
+1. 実行 → Traceback を見る（`NameError: name 'a' is not defined`）。
+2. 定義漏れなので `a = 10` を `main()` の前に追加して再実行。
+3. 動くか確認。
+
+### 演習2（ImportError）
+
+```py
+# myscript.py
+import requests
+
+resp = requests.get("https://example.com")
+print(resp.status_code)
+```
+
+**手順**：
+
+1. 実行して `ModuleNotFoundError` が出たら、PyCharm の interpreter を確認。
+2. PyCharm の Terminal で `pip install requests`（ただし PyCharm が見る interpreter の pip を使うこと）。
+3. 再実行で解決。
+
+---
+
+## 最後に：覚えておくと速くなるコツ（3つ）
+
+1. **Tracebackを読むクセ**をつける（原因把握が圧倒的に早くなる）。
+2. **デバッガを先に使う**（print を大量に置くより効率的）。
+3. **仮説→検証**（小さな変更を繰り返す）を習慣にする。
+
+---
+
+必要なら、**あなたの直近のエラーのスクリーンショットや Traceback を貼って**ください。実際の出力を見れば、該当箇所を一緒にステップで直していきます — 実例ベースでやると身につきますよ！
+
+
+了解です🐍✨
+では、**新人エンジニアが実際に遭遇しやすい「Python × PyCharm エラーと解決方法」**をQiita記事風にまとめますね。
+読みやすく、手元で再現・確認できるように構成しています。
+
+---
+
+# 🐍【保存版】Python×PyCharmでよくあるエラーと解決方法チートシート（新人エンジニア向け）
+
+こんにちは、TechCommitメンバーの **友季子** です🌸
+今回は、私自身が学習中や実務で実際に出会った
+**「PythonとPyCharmのエラー」** をまとめました。
+
+「Tracebackってなに？」「インデントってどこが違うの？」
+そんなときにすぐ見返せる **エラー解決チートシート** です💡
+
+---
+
+## 🏁 はじめに
+
+エラーが出たら焦らず、
+まず **Traceback（エラー表示の最後の行）を読む** のが基本です👇
+
+```text
+Traceback (most recent call last):
+  File "app.py", line 10, in <module>
+    print(x + 1)
+NameError: name 'x' is not defined
+```
+
+ポイント：
+
+* **最後の行** がエラーの種類と原因
+* **その1行上** に、どのファイル・行で起きたか
+  → そこをPyCharmで開いて確認すればOK！
+
+---
+
+## 💥 Pythonでよく出るエラー一覧
+
+| エラー名                                  | 主な原因           | よくある例                  | 解決方法                             |
+| :------------------------------------ | :------------- | :--------------------- | :------------------------------- |
+| `SyntaxError`                         | 構文ミス（: やカッコ忘れ） | `if x > 0 print("OK")` | `if x > 0:` のように修正               |
+| `IndentationError`                    | インデント不一致       | タブとスペース混在              | PyCharmで「Code → Reformat Code」実行 |
+| `NameError`                           | 未定義の変数・関数を使用   | `print(a)`             | 定義追加 or スペル修正                    |
+| `TypeError`                           | 型が合わない         | `len(5)`               | `len("abc")` など正しい型に修正           |
+| `ValueError`                          | 値が不正           | `int("abc")`           | try/exceptで処理 or 値を確認            |
+| `ImportError` / `ModuleNotFoundError` | モジュール未インストール   | `import requests`      | `pip install requests`           |
+| `AttributeError`                      | 存在しない属性を呼び出し   | `"abc".append(1)`      | 正しい型（list等）を使う                   |
+| `IndexError`                          | リストの範囲外アクセス    | `[1,2,3][3]`           | `len()`で範囲確認                     |
+| `KeyError`                            | 辞書に存在しないキー     | `d = {}; d["x"]`       | `d.get("x")` or 存在チェック           |
+| `ZeroDivisionError`                   | 0で割る           | `1 / 0`                | 割る前に0チェック                        |
+| `FileNotFoundError`                   | ファイルが存在しない     | `open("no.txt")`       | パス・作業ディレクトリ確認                    |
+| `UnicodeDecodeError`                  | 文字コード不一致       | `open("file.txt")`     | `encoding="utf-8"`を指定            |
+
+---
+
+## 🧭 PyCharmでよくあるトラブルと対策
+
+| トラブル         | 原因                      | 対策ステップ                                                                                        |
+| :----------- | :---------------------- | :-------------------------------------------------------------------------------------------- |
+| モジュールが見つからない | PyCharmの仮想環境が違う         | ① File → Settings → Project → Python Interpreter で環境確認<br>② Terminalで `pip install <package>` |
+| 実行パスが違う      | Working directory の設定ミス | Run → Edit Configurations → Working directoryをプロジェクトルートに                                      |
+| importエラー    | 同名ファイルの衝突（例：`json.py`）  | ファイル名変更し `__pycache__` 削除                                                                     |
+| 実行が止まる       | ブレークポイントが残っている          | 赤丸（ブレークポイント）をクリックして削除                                                                         |
+| 文字化け         | エンコード不一致                | ファイル保存時にUTF-8を指定                                                                              |
+| 謎の挙動         | キャッシュ破損                 | File → Invalidate Caches / Restart                                                            |
+
+---
+
+## 🪄 デバッグの基本ショートカット（PyCharm）
+
+| 操作               | Windows/Linux  | macOS       |
+| :--------------- | :------------- | :---------- |
+| ブレークポイント切替       | Ctrl + F8      | ⌘ + F8      |
+| デバッグ実行           | Shift + F9     | Control + D |
+| Step Over（次の行へ）  | F8             | F8          |
+| Step Into（関数に入る） | F7             | F7          |
+| Step Out（関数から出る） | Shift + F8     | Shift + F8  |
+| 実行再開             | F9             | F9          |
+| コード整形            | Ctrl + Alt + L | ⌥ + ⌘ + L   |
+
+---
+
+## 🧩 実例：エラーを修正してみよう
+
+### 例1：`NameError`
+
+```python
+def main():
+    print(a + 1)
+
+main()
+```
+
+🔻実行結果
+`NameError: name 'a' is not defined`
+
+🧠解決：
+
+```python
+a = 10
+def main():
+    print(a + 1)
+
+main()
+```
+
+---
+
+### 例2：`ImportError`
+
+```python
+import requests
+r = requests.get("https://example.com")
+print(r.status_code)
+```
+
+🔻実行結果
+`ModuleNotFoundError: No module named 'requests'`
+
+🧠解決：
+
+1. PyCharm左下のTerminalを開く
+2. `pip install requests` を実行
+3. 再実行！
+
+---
+
+## 🔍 デバッグ活用の流れ（初心者でもOK）
+
+1. エラー行にブレークポイントを置く（左端クリック）
+2. **Shift + F9** でデバッグ実行
+3. 「Variables」タブで値を確認
+4. ステップ実行（F7, F8）で流れを追う
+5. 状況がわかれば修正！
+
+---
+
+## 🚑 緊急時チェックリスト
+
+✅ Traceback を下から読む
+✅ インタプリタとパッケージ環境を確認
+✅ ファイル名が標準モジュールとかぶっていないか
+✅ デバッグで変数の中身を見る
+✅ 最小の再現コードで検証する
+
+---
+
+## 🎁 まとめ
+
+* **エラーは「失敗」ではなく「ガイド」**
+  → Pythonが「ここがおかしいよ」と教えてくれているだけ。
+* **焦らずTracebackを読む**
+* **PyCharmデバッガで観察する**
+* **検索ワード：`Python <エラー名> 解決` で調べる習慣をつける**
+
+---
+
+## 💬 終わりに
+
+最初のうちはエラーがたくさん出るのが普通です。
+でも、エラーの種類と直し方を理解すると、
+だんだん「エラーを見るのが怖くなくなる」瞬間がきます😊
+
+この記事が、同じようにPythonを学ぶ方の
+「困った！」を少しでも減らす手助けになれば嬉しいです🌷
+
+---
+
+🧸 **参考になったら LGTM！**
+コメントで「このエラーも入れて！」など教えてください✨
+
+---
+
+書き出しやトーンは「Qiita初心者記事＋やさしい先生風」にしています。
+もし希望があれば👇のどちらの方向にも調整できます：
+
+1. 💼 **実務エンジニア向けに少し硬めのトーン**
+2. 🌸 **学習者向けにイラスト・絵文字多めのやわらかトーン**
+
+どちらで仕上げたいですか？
