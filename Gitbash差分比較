@@ -1,0 +1,550 @@
+# Git Bash 差分比較コマンド完全ガイド
+
+## 📚 第1章: ローカルとリモートって何?
+
+### 図で理解しよう
+
+```
+あなたのPC (ローカル)          GitHub (リモート)
+┌─────────────┐            ┌──────────────┐
+│  作業中の    │   push     │  みんなで    │
+│  コード     │  ─────→    │  共有する    │
+│            │            │  コード      │
+│            │  ←─────     │             │
+│            │   pull     │             │
+└─────────────┘            └──────────────┘
+```
+
+**用語の読み方:**
+- **ローカル** = ロ-カル (local) = あなたのPC
+- **リモート** = リモート (remote) = GitHub上のコード
+- **差分** = さぶん (diff/difference) = 違い・変更点
+
+---
+
+## 🔍 第2章: 基本の差分確認コマンド
+
+### 1. 作業中のファイルの変更を見る
+
+```bash
+git diff
+```
+
+**読み方:** ギット ディフ  
+**意味:** まだ`git add`していない変更を表示
+
+#### 実際の表示例:
+
+```bash
+$ git diff
+
+diff --git a/login.py b/login.py
+index 1234567..abcdefg 100644
+--- a/login.py
++++ b/login.py
+@@ -5,7 +5,7 @@ def login(username, password):
+     user = User.find(username)
+     
+     if user:
+-        return user.check_password(password)
++        return user.authenticate(password)
+     
+     return False
+```
+
+#### 記号の意味:
+
+```
+--- a/login.py    ← 変更前のファイル
++++ b/login.py    ← 変更後のファイル
+
+-        return user.check_password(password)
+         ↑ 赤い行(マイナス) = 削除した行
+
++        return user.authenticate(password)
+         ↑ 緑の行(プラス) = 追加した行
+```
+
+---
+
+### 2. ステージングエリアの変更を見る
+
+```bash
+git diff --staged
+```
+
+**読み方:** ギット ディフ --ステージド  
+**意味:** `git add`した後の変更を表示
+
+```bash
+# 流れ
+git add login.py          # ファイルをステージング
+git diff                  # 何も表示されない
+git diff --staged         # 変更が表示される!
+```
+
+---
+
+### 3. 特定のファイルだけ見る
+
+```bash
+git diff ファイル名
+```
+
+**例:**
+```bash
+git diff login.py
+git diff src/app.py
+git diff config/settings.py
+```
+
+---
+
+## 🌐 第3章: リモートとの差分比較
+
+### まず理解: originとは?
+
+```bash
+git remote -v
+```
+
+**読み方:** ギット リモート -v  
+**表示例:**
+```
+origin  https://github.com/username/project.git (fetch)
+origin  https://github.com/username/project.git (push)
+```
+
+**origin** = あなたのGitHubリポジトリの別名(ニックネーム)
+
+---
+
+### 1. リモートの最新情報を取得(まだマージしない)
+
+```bash
+git fetch origin
+```
+
+**読み方:** ギット フェッチ オリジン  
+**意味:** リモートの情報だけダウンロード(まだ自分のコードには反映しない)
+
+```bash
+# fetchとpullの違い
+git fetch origin    # 情報だけ取得(安全)
+git pull origin     # 取得して自動マージ(コンフリクトの可能性)
+```
+
+---
+
+### 2. ローカルとリモートの差分を見る
+
+```bash
+git diff origin/main
+```
+
+**読み方:** ギット ディフ オリジン/メイン  
+**意味:** 自分のコードとGitHub上のmainブランチの違いを表示
+
+#### ステップバイステップ:
+
+```bash
+# Step 1: リモートの最新情報を取得
+git fetch origin
+
+# Step 2: 現在のブランチを確認
+git branch
+# * feature/my-work  ← 今ここにいる
+
+# Step 3: mainブランチとの差分を見る
+git diff origin/main
+
+# Step 4: 自分のブランチとmainの差分
+git diff main..origin/main
+```
+
+---
+
+### 3. ブランチ間の差分
+
+```bash
+git diff ブランチA..ブランチB
+```
+
+**読み方:** ギット ディフ ブランチA..ブランチB  
+
+**よく使う例:**
+
+```bash
+# 自分のブランチとmainの違い
+git diff main..feature/my-work
+
+# リモートのmainと自分のmain
+git diff main..origin/main
+
+# 自分のブランチとリモートのmain
+git diff origin/main..HEAD
+```
+
+**HEAD** = 今いる場所(現在のブランチの最新コミット)
+
+---
+
+## 📊 第4章: 差分の見方(詳しく)
+
+### 基本構造
+
+```bash
+diff --git a/app.py b/app.py
+index 1234567..abcdefg 100644
+--- a/app.py
++++ b/app.py
+@@ -10,6 +10,7 @@ def calculate(x, y):
+ def calculate(x, y):
+     result = x + y
++    print(f"計算結果: {result}")  # 追加した行
+     return result
+```
+
+### 行番号の読み方
+
+```
+@@ -10,6 +10,7 @@
+    │   │  │  │
+    │   │  │  └─ 新しいファイルは7行
+    │   │  └──── 新しいファイルは10行目から
+    │   └─────── 古いファイルは6行
+    └──────────── 古いファイルは10行目から
+```
+
+---
+
+## 🎨 第5章: 見やすくする方法
+
+### 1. カラー表示(通常は自動)
+
+```bash
+git config --global color.ui auto
+```
+
+### 2. 横並びで表示
+
+```bash
+git diff --color-words
+```
+
+**通常:**
+```diff
+- return user.check_password(password)
++ return user.authenticate(password)
+```
+
+**--color-words:**
+```diff
+return user.check_password(password) authenticate(password)
+          ↑削除          ↑追加
+```
+
+### 3. 統計だけ見る
+
+```bash
+git diff --stat
+```
+
+**表示例:**
+```
+ login.py    |  5 +++--
+ app.py      | 12 ++++++++++
+ config.py   |  3 +--
+ 3 files changed, 16 insertions(+), 5 deletions(-)
+```
+
+**意味:**
+- `+` = 追加された行
+- `-` = 削除された行
+
+### 4. ファイル名だけ見る
+
+```bash
+git diff --name-only
+```
+
+**表示:**
+```
+login.py
+app.py
+config.py
+```
+
+---
+
+## 🔧 第6章: 実務でよく使うパターン
+
+### パターン1: プルリク前の確認
+
+```bash
+# 1. 最新情報を取得
+git fetch origin
+
+# 2. mainとの差分を確認
+git diff origin/main
+
+# 3. 変更されたファイル一覧
+git diff --name-only origin/main
+
+# 4. 統計を見る
+git diff --stat origin/main
+```
+
+### パターン2: コンフリクトが起きそうか確認
+
+```bash
+# 1. 最新のmainを取得
+git fetch origin
+
+# 2. 自分が変更したファイル
+git diff --name-only origin/main
+
+# 3. 他の人が変更したファイル
+git diff --name-only HEAD..origin/main
+
+# 4. 被っているか確認
+# 同じファイル名があればコンフリクトの可能性!
+```
+
+### パターン3: コミット前の確認
+
+```bash
+# まだaddしていない変更
+git diff
+
+# addした変更
+git diff --staged
+
+# 両方まとめて見る
+git diff HEAD
+```
+
+---
+
+## 📱 第7章: VSCodeで差分を見る(おすすめ!)
+
+### 方法1: Source Control
+
+1. VSCodeの左サイドバー「Source Control」アイコンクリック
+2. 変更されたファイルが一覧表示
+3. ファイルをクリック → 差分が見やすく表示される!
+
+### 方法2: GitLensプラグイン(超便利!)
+
+```bash
+# VSCodeの拡張機能で「GitLens」をインストール
+```
+
+**できること:**
+- 行ごとに「誰が・いつ」変更したか表示
+- ブランチ間の差分を視覚的に確認
+- コミット履歴を見やすく表示
+
+---
+
+## 🎯 第8章: 実践コマンド集
+
+### 朝の確認ルーチン
+
+```bash
+# 1. 現在の状態
+git status
+
+# 2. リモートの最新情報取得
+git fetch origin
+
+# 3. mainとの差分(ファイル名だけ)
+git diff --name-only origin/main
+
+# 4. 詳しい差分
+git diff origin/main
+```
+
+### プッシュ前の確認
+
+```bash
+# 1. 変更したファイル一覧
+git status
+
+# 2. 変更内容を確認
+git diff
+
+# 3. addしたものを確認
+git diff --staged
+
+# 4. リモートとの差分
+git fetch origin
+git diff origin/feature/my-work
+```
+
+### 他の人のコードを確認
+
+```bash
+# 1. 最新情報取得
+git fetch origin
+
+# 2. 特定のブランチとの差分
+git diff origin/feature/other-person-work
+
+# 3. ファイル一覧
+git diff --name-only origin/feature/other-person-work
+```
+
+---
+
+## 🆘 第9章: トラブルシューティング
+
+### Q: diffが多すぎて見きれない!
+
+```bash
+# ページ送りで見る(自動)
+git diff | less
+
+# 操作方法:
+# スペースキー = 次のページ
+# b = 前のページ
+# q = 終了
+```
+
+### Q: 色が付かない
+
+```bash
+git config --global color.ui auto
+```
+
+### Q: 差分が出ない
+
+```bash
+# addしちゃった?
+git diff --staged
+
+# 全部見る
+git diff HEAD
+```
+
+### Q: ファイル名が文字化け
+
+```bash
+git config --global core.quotepath false
+```
+
+---
+
+## 📋 第10章: チートシート
+
+### 基本コマンド
+
+```bash
+# まだaddしていない変更
+git diff
+
+# addした変更
+git diff --staged
+
+# 全ての変更
+git diff HEAD
+
+# 特定ファイル
+git diff ファイル名
+```
+
+### リモート比較
+
+```bash
+# まず情報取得
+git fetch origin
+
+# リモートのmainとの差分
+git diff origin/main
+
+# ブランチ間
+git diff ブランチA..ブランチB
+
+# ファイル名だけ
+git diff --name-only origin/main
+
+# 統計表示
+git diff --stat origin/main
+```
+
+### 見やすくする
+
+```bash
+# 単語単位
+git diff --color-words
+
+# 統計のみ
+git diff --stat
+
+# ファイル名のみ
+git diff --name-only
+```
+
+---
+
+## 🎓 実践練習
+
+### 練習1: 基本の流れ
+
+```bash
+# 1. ファイルを編集(VSCodeなどで)
+code test.py
+
+# 2. 差分確認
+git diff test.py
+
+# 3. add
+git add test.py
+
+# 4. staged差分確認
+git diff --staged test.py
+```
+
+### 練習2: リモート確認
+
+```bash
+# 1. 最新情報取得
+git fetch origin
+
+# 2. ファイル一覧で確認
+git diff --name-only origin/main
+
+# 3. 統計で確認
+git diff --stat origin/main
+
+# 4. 詳細確認
+git diff origin/main
+```
+
+---
+
+## 💡 覚えておくべきポイント
+
+1. **差分確認は怖くない!** 見るだけで何も壊れません
+2. **git fetch** してから比較が基本
+3. **git diff** は何回でも実行OK
+4. **VSCode** の差分表示が一番見やすい
+5. **わからなかったら先輩に画面を見せて質問!**
+
+---
+
+## 🚀 次のステップ
+
+慣れてきたら:
+- `git log -p` (コミット履歴と差分を同時表示)
+- `git difftool` (専用ツールで差分表示)
+- `GitHub Desktop` (GUIツール)
+
+---
+
+他に知りたいことはありますか?例えば:
+- 「コンフリクトの差分の見方」
+- 「2つのコミット間の差分」
+- 「特定の人の変更だけ見る方法」
+
+具体的な状況があれば教えてください!
