@@ -1,0 +1,315 @@
+いいね、友季子さん！😊
+新人エンジニア向けに「やさしい Python デバッグ方法」を**ステップバイステップ**でまとめます。まずは共通の基本手順を示して、そのあとよくあるケース別に具体的な手順と短いコード例を載せます。実際のエラーメッセージやコードを貼ってくれれば、その場で一緒にデバッグできますよ。
+
+# 共通のデバッグ基本（まずこれをやる）
+
+1. **再現する** — 問題がいつ・どう起きるかをはっきりさせる。最小の再現コード（MWE: Minimal Working Example）を作る。
+2. **エラーメッセージを読む** — Traceback は上から呼び出し履歴、最後の行が実際の発生箇所。まず最後の例外行を見る。
+3. **原因を絞る（隔離）** — 余計な部分を外して、どの関数／行が悪いか切り分ける（バイナリサーチ的に）。
+4. **観察する** — `print()` / `logging` / `pdb` で変数の中身・型・長さなどを確認。
+5. **修正してテスト** — 修正→単体テスト（pytestなど）→動作確認→リファクタ。小さいコミットで残す。
+
+---
+
+# ケース別：ステップバイステップ
+
+## ケース1：`SyntaxError` / `IndentationError`
+
+**症状**：プログラムが実行開始できない。
+**手順**：
+
+1. Traceback の行番号を見る（`File "x.py", line N`）。
+2. その行とその前後のインデント／コロン（`:`）を確認。
+3. エディタの自動整形や linter（flake8, pylint）で指摘を受ける。
+4. 修正して再実行。
+
+**例**
+
+```python
+# NG (IndentationError)
+def greet():
+print("hi")
+
+# OK
+def greet():
+    print("hi")
+```
+
+---
+
+## ケース2：`NameError` / `ModuleNotFoundError`（変数・インポート）
+
+**症状**：「名前がない」「モジュールがない」と言われる。
+**手順**：
+
+1. エラーメッセージの名前を確認（タイプミスが多い）。
+2. 変数なら定義されているスコープかを確認（ローカル/グローバル/引数）。
+3. モジュールなら virtualenv の有無、`pip freeze`、`sys.path` をチェック。
+4. 相対インポートの誤り（`from .module import x`）を疑う。
+
+**例**
+
+```python
+# NameError
+print(foo)   # NameError: name 'foo' is not defined
+
+# Import エラー対処
+# 仮想環境を作って requirements.txt を入れるのが基本
+# python -m venv venv
+# source venv/bin/activate  (Windows: venv\Scripts\activate)
+# pip install -r requirements.txt
+```
+
+---
+
+## ケース3：`TypeError` / `AttributeError` / `ValueError`
+
+**症状**：型が違う、属性がない、値が不正。
+**手順**：
+
+1. 例外が出た行の変数の**型**を確認（`print(type(x))` or `pdb`）。
+2. 期待する型でなければ変換（`int(...)` / `str(...)`）や早期検証（`assert isinstance(x, list)`）。
+3. メソッドや属性名のスペルミスを確認。
+
+**例**
+
+```python
+len(5)  # TypeError: object of type 'int' has no len()
+
+# 修正
+s = "hello"
+print(len(s))
+```
+
+---
+
+## ケース4：`IndexError` / `KeyError`
+
+**症状**：配列の添え字／辞書のキーが存在しない。
+**手順**：
+
+1. 配列なら `len()` を出力して範囲を確認。ループの終端 off-by-one を疑う。
+2. 辞書なら `d.get(key)` や `if key in d` を使う。
+3. 必要なら例外処理でログを残す。
+
+**例**
+
+```python
+a = [1,2,3]
+print(a[3])  # IndexError
+
+# 安全にアクセス
+if idx < len(a):
+    print(a[idx])
+```
+
+---
+
+## ケース5：期待する出力と違う（ロジックバグ）
+
+**症状**：エラーは出ないが結果がおかしい。
+**手順（バイナリサーチ）**：
+
+1. 小さな入力で再現する最小コードを作る。
+2. 中間値を `print()` か `logging.debug()` で確認（どこで期待と違うかを特定）。
+3. `assert` を入れて想定を強制的にチェック（例：`assert 0 <= index < len(a)`）。
+4. 単体テストを書く（pytest）。
+
+**例（よくある off-by-one）**
+
+```python
+for i in range(len(items)-1):  # -1 が不要で最後の要素を欠けさせる
+    process(items[i])
+# 正しくは range(len(items)) か、for item in items:
+```
+
+---
+
+## ケース6：本番で例外が落ちる（未捕捉例外）
+
+**手順**：
+
+1. まずローカルで再現→ログにスタックトレースを残す。
+2. 例外箇所で `logging.exception("...")` を使う（例外情報を含む）。
+3. 例外をサーバログ/監視ツールに送る（Sentry 等）。
+4. 必要なら例外を適切にハンドルして再試行やフォールバック処理を行う。
+
+**例**
+
+```python
+import logging
+logging.basicConfig(level=logging.INFO)
+
+try:
+    risky_operation()
+except Exception:
+    logging.exception("risky failed")
+    raise  # 必要なら再送出して上位で対応
+```
+
+---
+
+## ケース7：対話デバッガ（pdb / breakpoint()）
+
+**手順**：
+
+1. 問題箇所近くに `breakpoint()` を入れる（Python3.7+）または `import pdb; pdb.set_trace()`。
+2. 実行して対話モードで `n` (next)、`s` (step in)、`c` (continue)、`p var`（print）などを使う。
+3. 変数を調べつつ実行を進め、問題行を特定する。
+
+**例**
+
+```python
+def f():
+    x = 10
+    breakpoint()  # ここで停止して変数確認
+    y = x * 2
+    return y
+```
+
+主要コマンド：`n`, `s`, `c`, `l`（list）、`p <expr>`、`q`（quit）
+
+---
+
+## ケース8：IDE のデバッガ（VSCode / PyCharm）
+
+**手順**：
+
+1. ブレークポイントを行左のガターにセット。
+2. デバッガで実行（VSCode: F5、PyCharm: Debug）。
+3. 変数ウォッチ、コールスタック、式の評価を使って調べる。
+4. 条件付きブレークポイントやログ用ブレークポイントで絞り込む。
+
+---
+
+## ケース9：パフォーマンス問題（遅い）
+
+**手順**：
+
+1. まず計測（`time` や `timeit`）。
+2. プロファイラでボトルネックを特定（`cProfile`）。
+3. ホットスポットをアルゴリズム／データ構造で改善する（例：O(n^2→n log n 等））。
+4. 必要なら並列化やキャッシュを検討。
+
+**簡単な例**
+
+```python
+import cProfile
+cProfile.run("my_function()")
+```
+
+---
+
+## ケース10：メモリの問題（メモリ増大）
+
+**手順**：
+
+1. データを一度に全部読み込んでいないか確認（巨大ファイルは逐次読み）。
+2. `tracemalloc` でメモリのスナップショットを取得して増加箇所を探す。
+3. ジェネレータ、`yield`、`with open(...)` を使ってストリーム処理にする。
+4. 不要な参照を `del` するか、スコープを限定する。
+
+**例**
+
+```python
+import tracemalloc
+tracemalloc.start()
+# ここで問題の処理を実行
+print(tracemalloc.get_traced_memory())
+tracemalloc.stop()
+```
+
+---
+
+## ケース11：スレッド/プロセスの競合（race condition）
+
+**手順**：
+
+1. 再現が難しいのでログにスレッドID・時刻を出して再現条件を探す。
+2. 共有データには `Lock` や `Queue` を使用する。
+3. 単純なテストで同時実行を強制して再現させる（テストで再現可能にする）。
+
+**例（カウンタの保護）**
+
+```python
+from threading import Thread, Lock
+
+counter = 0
+lock = Lock()
+
+def inc():
+    global counter
+    for _ in range(10000):
+        with lock:
+            counter += 1
+```
+
+---
+
+## ケース12：環境・依存関係の問題
+
+**手順**：
+
+1. `python -V`, `pip --version`, `pip freeze` で環境確認。
+2. 仮想環境（venv/virtualenv/conda）を使う。
+3. `requirements.txt` を作って管理。バージョン指定（`pkg==1.2.3`）をする。
+4. Docker を使うと本番に近い環境を再現しやすい。
+
+---
+
+## ケース13：ネットワーク/API 呼び出しで失敗
+
+**手順**：
+
+1. `requests` の場合は `response.status_code`, `response.text` をログに出す。
+2. タイムアウトと例外を明示的に扱う（`timeout=` と `requests.exceptions`）。
+3. curl で再現して HTTP レスポンスを確認する。
+4. リトライ（指数バックオフ）を検討。
+
+**例**
+
+```python
+import requests
+
+try:
+    r = requests.get(url, timeout=5)
+    r.raise_for_status()
+    data = r.json()
+except requests.exceptions.RequestException as e:
+    print("HTTP error:", e)
+```
+
+---
+
+## ケース14：テストを使ったデバッグ（pytest）
+
+**手順**：
+
+1. 小さなユニットテストを追加して再現条件を固定する。
+2. `pytest -q` で実行、`-k` で特定テストだけ、`-x` で最初の失敗で止める。
+3. テスト駆動（TDD）的に直すと再発防止になる。
+
+**例**
+
+```python
+# test_math.py
+from mymod import add
+def test_add():
+    assert add(2, 3) == 5
+```
+
+---
+
+# デバッグの小ワザ（チェックリスト）
+
+* Traceback は**下（最後）**の行から読む。
+* まず `print()` で素早く確認 → 慣れたら `logging` に切り替え（後で削除/変更しやすい）。
+* `assert` は早期に不変条件を保証するのに便利。
+* 1つの変更で1つの修正（小さいコミット）。
+* エラーメッセージで Web 検索（公式ドキュメント + StackOverflow）すると似た事例があることが多い。
+* Rubber duck debugging（ラバーダックに説明する）で意外と気付く。🦆
+
+---
+
+もし良ければ、**実際のエラーメッセージ**か**問題のあるコード**を貼ってください。
+そのコードを使って一緒に「どこで何が起きているか」をステップで追って直していきます — 具体的で早く解決できますよ。
