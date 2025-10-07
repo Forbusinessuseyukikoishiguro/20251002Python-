@@ -1,0 +1,230 @@
+すばらしいテーマです🌸
+それでは、Qiita記事風に「**Seleniumでログイン処理を自動化するテンプレート集（初期設定付き・丁寧解説）**」を作成します。
+新人エンジニアの方でも、**環境構築 → コード理解 → ログイン実装**ができるように、ステップバイステップで解説します🐍✨
+
+---
+
+# 🧭 Seleniumでログイン処理を自動化するテンプレート集（初期設定から丁寧に）
+
+こんにちは、TechCommitメンバーの **友季子** です。
+PythonでWeb自動化を始めたばかりの新人エンジニアさんへ向けて、
+今回は **「Seleniumでログイン処理を自動化するテンプレート集」** をまとめました。
+
+「ChromeDriverって何？」「XPathってどう書くの？」という段階からでもOK！
+一緒に少しずつ理解していきましょう🌸
+
+---
+
+## 🪄 目次
+
+1. Seleniumとは？
+2. 初期設定（インストール〜環境構築）
+3. 最小構成でのログイン処理テンプレート
+4. 待機を入れて安定化するテンプレート
+5. ID・パスワードを安全に管理する方法
+6. おまけ：ヘッドレスモード（ブラウザ非表示）
+7. 終わりに
+
+---
+
+## 1. 🐍 Seleniumとは？
+
+**Selenium** は、ブラウザ操作をPythonなどのコードで自動化できるツールです。
+次のような操作をプログラムで行えます👇
+
+* ログインボタンをクリック
+* 入力フォームに文字を入力
+* ページ遷移やスクリーンショット取得
+
+💡つまり、「人がマウスで操作すること」をPythonで代わりにやってくれるんです！
+
+---
+
+## 2. ⚙️ 初期設定（環境構築）
+
+### 🧩 Step 1：Seleniumをインストール
+
+コマンドプロンプトまたはターミナルで以下を実行：
+
+```bash
+pip install selenium
+```
+
+---
+
+### 🧩 Step 2：ChromeDriverをダウンロード
+
+1. 自分の **Google Chromeのバージョン** を確認
+   → Chrome右上「︙」 → [ヘルプ] → [Google Chromeについて]
+
+2. [Chrome for Testing公式サイト](https://googlechromelabs.github.io/chrome-for-testing/#stable)
+   から同じバージョンの **ChromeDriver** をダウンロード
+
+3. ダウンロードした `chromedriver.exe` を
+   例：`C:\Users\yukik\Desktop\chromedriver.exe` に保存
+
+---
+
+### 🧩 Step 3：PyCharmでプロジェクト作成
+
+1️⃣ PyCharmを起動
+2️⃣ 「New Project」をクリック
+3️⃣ 任意の名前（例：`selenium_login_demo`）で新規プロジェクトを作成
+4️⃣ インタプリタにPythonを選択（venvが自動で作成されます）
+
+---
+
+## 3. 🧠 最小構成でのログイン処理テンプレート
+
+まずはシンプルなログイン自動化コードを作ってみましょう。
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+import time
+
+# ChromeDriverのパスを指定
+driver = webdriver.Chrome(executable_path=r"C:\Users\yukik\Desktop\chromedriver.exe")
+
+# ログインページを開く
+driver.get("https://example.com/login")
+
+# IDとパスワードを入力
+driver.find_element(By.ID, "username").send_keys("your_id")
+driver.find_element(By.ID, "password").send_keys("your_password")
+
+# ログインボタンをクリック
+driver.find_element(By.ID, "login-button").click()
+
+# 少し待ってページを確認
+time.sleep(3)
+
+# 結果確認
+print("ログイン処理が完了しました")
+
+# ブラウザを閉じる
+driver.quit()
+```
+
+### 💡ポイント
+
+* `driver.get()`：指定したURLにアクセス
+* `find_element(By.ID, "username")`：入力フォームを取得
+* `.send_keys()`：入力操作
+* `.click()`：クリック操作
+
+---
+
+## 4. ⏳ 待機を入れて安定化するテンプレート
+
+Seleniumはページの読み込みが完了する前に次の操作をすると、
+**`NoSuchElementException`** や **`TimeoutException`** が発生することがあります。
+
+そのため、**WebDriverWait** を使って「要素が出るまで待つ」ようにします。
+
+```python
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
+driver = webdriver.Chrome(executable_path=r"C:\Users\yukik\Desktop\chromedriver.exe")
+driver.get("https://example.com/login")
+
+# 要素が表示されるまで待機（最大10秒）
+WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "username")))
+
+# IDとパスワード入力
+driver.find_element(By.ID, "username").send_keys("your_id")
+driver.find_element(By.ID, "password").send_keys("your_password")
+
+# ログインボタン待機＋クリック
+login_button = WebDriverWait(driver, 10).until(
+    EC.element_to_be_clickable((By.ID, "login-button"))
+)
+login_button.click()
+
+print("✅ ログイン成功！")
+driver.quit()
+```
+
+---
+
+## 5. 🔐 ID・パスワードを安全に管理する方法
+
+IDやパスワードをソースコードに直接書くのは危険です。
+代わりに、**環境変数** や **`.env` ファイル** を使いましょう。
+
+### `.env` ファイル例
+
+```
+LOGIN_ID=your_id
+LOGIN_PASSWORD=your_password
+```
+
+### Python側で読み込む
+
+```python
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+USER = os.getenv("LOGIN_ID")
+PASS = os.getenv("LOGIN_PASSWORD")
+
+driver.find_element(By.ID, "username").send_keys(USER)
+driver.find_element(By.ID, "password").send_keys(PASS)
+```
+
+👉 `python-dotenv` が必要なので、事前にインストールします：
+
+```bash
+pip install python-dotenv
+```
+
+---
+
+## 6. 🕶️ おまけ：ヘッドレスモード（ブラウザ非表示）
+
+ブラウザを開かずにバックグラウンドで実行するには「ヘッドレスモード」を使います。
+
+```python
+from selenium.webdriver.chrome.options import Options
+
+options = Options()
+options.add_argument('--headless')
+driver = webdriver.Chrome(executable_path=r"C:\Users\yukik\Desktop\chromedriver.exe", options=options)
+
+driver.get("https://example.com/login")
+```
+
+これでブラウザが画面に表示されずに自動実行できます✨
+
+---
+
+## 🌸 終わりに
+
+今回は「Seleniumでログイン処理を自動化するテンプレート」を紹介しました。
+Seleniumは最初少しむずかしく感じますが、
+1️⃣ ページを開く → 2️⃣ 要素を探す → 3️⃣ 操作する
+という3ステップを覚えると、どんなサイトでも自動化できるようになります💪
+
+---
+
+### 💬 次回予告
+
+次回は「ログイン後のページ遷移やスクリーンショット保存」編を予定しています📸
+
+---
+
+### 🏷️ タグ
+
+`#Python` `#Selenium` `#自動化` `#新人エンジニア` `#ログイン処理`
+
+---
+
+ご希望があれば、次に
+💡**「ログイン後にデータを取得・スクレイピングするテンプレート」**
+を続編として書けます。
+
+👉 作ってみましょうか？
